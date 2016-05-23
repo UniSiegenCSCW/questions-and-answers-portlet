@@ -1,8 +1,11 @@
 dependencies {
-	compile 'com.liferay.portal:com.liferay.portal.kernel:1.0.2'
-	compile 'javax.portlet:portlet-api:2.0'
-	compile 'javax.servlet:javax.servlet-api:3.0.1'
-	compile 'org.osgi:org.osgi.service.component.annotations:1.3.0'
-	compile  project(':modules:questions-and-answers-portlet:questions-and-answers-portlet-api')
-	compile  project(':modules:questions-and-answers-portlet:questions-and-answers-portlet-service')
+    compile 'com.liferay.portal:com.liferay.portal.kernel:1.0.2'
+    compile 'javax.portlet:portlet-api:2.0'
+    compile 'javax.servlet:javax.servlet-api:3.0.1'
+    compile 'org.osgi:org.osgi.service.component.annotations:1.3.0'
+    compile  project(':modules:questions-and-answers-portlet:questions-and-answers-portlet-api')
+    compile  project(':modules:questions-and-answers-portlet:questions-and-answers-portlet-service')
+    compile 'jstl:jstl:1.2'
+    compile 'com.liferay.portal:util-taglib:7.0.0-SNAPSHOT'
+    compile 'org.osgi:org.osgi.compendium:5.0.0'
 }
