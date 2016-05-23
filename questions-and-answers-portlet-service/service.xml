@@ -104,6 +104,8 @@
         <column name="modifiedDate" type="Date" />
 
         <column name="title" type="String" />
+        <column name="categories" type="Collection" />
+        <column name="tags" type="Collection" />
 
         <!-- Finder methods -->
 
@@ -185,7 +187,6 @@
 
         <column name="name" type="String" />
         <column name="color" type="String" />
-        <column name="questionID" type="long" />
 
         <!-- Finder methods -->
 
@@ -213,7 +214,6 @@
         <column name="modifiedDate" type="Date" />
 
         <column name="name" type="String" />
-        <column name="questionID" type="long" />
 
         <!-- Finder methods -->
 
