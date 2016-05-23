@@ -1,0 +1,36 @@
+.question {
+    display: block;
+}
+
+.categories {
+    display: inline;
+    padding-left: 0;
+}
+.categories li {
+    display: inline;
+    list-style: none;
+    background-color: deepskyblue;
+    color: white;
+    border-radius: 0.4rem;
+    padding: 0.3rem;
+}
+
+.tags {
+    display: inline;
+    padding-left: 0;
+}
+
+.tags li {
+    display: inline;
+    list-style: none;
+    background-color: deepskyblue;
+    color: white;
+    border-radius: 0.4rem;
+    padding: 0.3rem;
+}
+
+.isAnswered {
+    position: relative;
+    float: right;
+    font-size: 200%;
+}
