@@ -2,6 +2,11 @@
     display: block;
 }
 
+.questionText{
+    font-size: 150%;
+    margin-bottom: 1rem;
+}
+
 .categories {
     display: inline;
     padding-left: 0;
@@ -33,4 +38,5 @@
     position: relative;
     float: right;
     font-size: 200%;
+    margin: auto 1rem;
 }

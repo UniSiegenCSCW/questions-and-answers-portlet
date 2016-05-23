@@ -5,7 +5,7 @@
 <ul class="questions question list-group">
     <li class="list-group-item">
         <i class="isAnswered glyphicon glyphicon-ok"></i>
-        <h2 class="questionText">Das ist eine tolle Frage!</h2>
+        <div class="questionText">Das ist eine tolle Frage!</div>
         Kategorien:
         <ul class="categories">
             <li>ISMS</li>
