@@ -1,10 +1,9 @@
 package de.sidate.questions_and_answers.portlet;
 
-import javax.portlet.Portlet;
-
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import org.osgi.service.component.annotations.Component;
 
-import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import javax.portlet.Portlet;
 
 @Component(
 	immediate = true,
@@ -21,4 +20,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 )
 public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
+	public static void main(String[] args) {
+
+	}
 }
