@@ -2,6 +2,7 @@
 <!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.0.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_0_0.dtd">
 
 <service-builder package-path="de.sidate.questions_and_answers">
+
 	<namespace>SIDATE</namespace>
 
     <entity name="Content" uuid="true" local-service="true" remote-service="true">
@@ -27,7 +28,7 @@
         <!-- Finder methods -->
 
         <finder name="GroupId" return-type="Collection">
-            <finder-column name="groupID" />
+            <finder-column name="groupId" />
         </finder>
     </entity>
 
@@ -53,7 +54,7 @@
 		<!-- Finder methods -->
 
 		<finder name="GroupId" return-type="Collection">
-			<finder-column name="groupID" />
+			<finder-column name="groupId" />
 		</finder>
 	</entity>
 
@@ -80,7 +81,7 @@
         <!-- Finder methods -->
 
         <finder name="GroupId" return-type="Collection">
-            <finder-column name="groupID" />
+            <finder-column name="groupId" />
         </finder>
     </entity>
 
@@ -107,7 +108,7 @@
         <!-- Finder methods -->
 
         <finder name="GroupId" return-type="Collection">
-            <finder-column name="groupID" />
+            <finder-column name="groupId" />
         </finder>
     </entity>
 
@@ -135,7 +136,7 @@
         <!-- Finder methods -->
 
         <finder name="GroupId" return-type="Collection">
-            <finder-column name="groupID" />
+            <finder-column name="groupId" />
         </finder>
     </entity>
 
@@ -160,7 +161,7 @@
         <!-- Finder methods -->
 
         <finder name="GroupId" return-type="Collection">
-            <finder-column name="groupID" />
+            <finder-column name="groupId" />
         </finder>
     </entity>
 
@@ -189,7 +190,7 @@
         <!-- Finder methods -->
 
         <finder name="GroupId" return-type="Collection">
-            <finder-column name="groupID" />
+            <finder-column name="groupId" />
         </finder>
     </entity>
 
@@ -217,8 +218,8 @@
         <!-- Finder methods -->
 
         <finder name="GroupId" return-type="Collection">
-            <finder-column name="groupID" />
+            <finder-column name="groupId" />
         </finder>
     </entity>
-    
+
 </service-builder>
