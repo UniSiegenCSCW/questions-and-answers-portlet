@@ -16,6 +16,8 @@ package de.sidate.questions_and_answers.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import de.sidate.questions_and_answers.model.Category;
 import de.sidate.questions_and_answers.service.base.CategoryLocalServiceBaseImpl;
