@@ -50,21 +50,16 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 		String color = ParamUtil.getString(request, "color");
 
 		try {
-            _categoryLocalService.addCategory(name, serviceContext, color);
+            CategoryLocalServiceUtil.addCategory(name, serviceContext, color);
             SessionMessages.add(request, "categoryAdded");
         } catch (Exception e) {
 			SessionErrors.add(request, e.getClass().getName());
 			PortalUtil.copyRequestParameters(request, response);
 			response.setRenderParameter("mvcPath", "/view.jsp");
 
-            String stacktrace = Arrays.asList(e.getStackTrace()).stream()
-                                        .map(StackTraceElement::toString)
-                                        .collect(joining("\n"));
-
-            log.error("EXCEPTION CLASS: " + e.getClass());
+            log.error("Error: ", e);
 		}
 
 	}
 
-    private CategoryLocalService _categoryLocalService;
 }
