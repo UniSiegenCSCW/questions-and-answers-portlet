@@ -21,11 +21,17 @@
 </ul>
 
 <portlet:actionURL name="addCategory" var="addCategoryURL"/>
+<portlet:renderURL var="newQuestionURL">
+    <portlet:param name="mvcPath" value="/newQuestion.jsp"/>
+</portlet:renderURL>
 
-<aui:form action="<%= addCategoryURL %>" name="<portlet:namespace />fm">
+<p>;-)</p>
+
+<aui:form action="<%= addCategoryURL%>" name="<portlet:namespace />fm">
     <aui:fieldset>
         <aui:input name="name"/>
         <aui:input name="color"/>
     </aui:fieldset>
     <aui:button type="submit"/>
+    <aui:button onClick="<%= newQuestionURL%>" value="New Question"/>
 </aui:form>
