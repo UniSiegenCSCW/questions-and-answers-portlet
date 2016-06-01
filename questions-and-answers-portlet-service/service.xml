@@ -104,14 +104,15 @@
         <column name="modifiedDate" type="Date" />
 
         <column name="title" type="String" />
-        <column name="categories" type="Collection" />
-        <column name="tags" type="Collection" />
+        <column name="text" type="String"/>
 
         <!-- Finder methods -->
 
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId" />
         </finder>
+
+        <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
     </entity>
 
     <entity name="Rating" uuid="true" local-service="true" remote-service="true">
@@ -221,5 +222,10 @@
             <finder-column name="groupId" />
         </finder>
     </entity>
+
+    <exceptions>
+        <exception>QuestionTitle</exception>
+        <exception>QuestionText</exception>
+    </exceptions>
 
 </service-builder>

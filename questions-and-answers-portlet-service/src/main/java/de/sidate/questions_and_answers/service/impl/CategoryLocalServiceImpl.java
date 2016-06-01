@@ -16,8 +16,6 @@ package de.sidate.questions_and_answers.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import de.sidate.questions_and_answers.model.Category;
 import de.sidate.questions_and_answers.service.base.CategoryLocalServiceBaseImpl;
@@ -46,8 +44,8 @@ public class CategoryLocalServiceImpl extends CategoryLocalServiceBaseImpl {
 	 * Never reference this class directly. Always use {@link de.sidate.questions_and_answers.service.CategoryLocalServiceUtil} to access the category local service.
 	 */
 
-    public List<Category> getCategories(long categoryId) {
-        return categoryPersistence.findByGroupId(categoryId);
+    public List<Category> getCategories(long groupId) {
+        return categoryPersistence.findByGroupId(groupId);
     }
 
     public Category addCategory(String name, ServiceContext serviceContext, String color) {

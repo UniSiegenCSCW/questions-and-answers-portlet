@@ -16,7 +16,13 @@ package de.sidate.questions_and_answers.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.service.ServiceContext;
+import de.sidate.questions_and_answers.model.Category;
+import de.sidate.questions_and_answers.model.Content;
+import de.sidate.questions_and_answers.model.Question;
 import de.sidate.questions_and_answers.service.base.ContentLocalServiceBaseImpl;
+
+import java.util.List;
 
 /**
  * The implementation of the content local service.
@@ -34,9 +40,24 @@ import de.sidate.questions_and_answers.service.base.ContentLocalServiceBaseImpl;
  */
 @ProviderType
 public class ContentLocalServiceImpl extends ContentLocalServiceBaseImpl {
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Always use {@link de.sidate.questions_and_answers.service.ContentLocalServiceUtil} to access the content local service.
-	 */
+
+    public List<Content> getContents(long groupId) {
+        return contentPersistence.findByGroupId(groupId);
+    }
+
+    public Content addContent(String text, ServiceContext serviceContext) {
+
+        long groupId = serviceContext.getScopeGroupId();
+        long contentId = counterLocalService.increment();
+        Content content = contentPersistence.create(contentId);
+
+        content.setUuid(serviceContext.getUuid());
+        content.setGroupId(groupId);
+        content.setExpandoBridgeAttributes(serviceContext);
+        content.setText(text);
+
+        contentPersistence.update(content);
+
+        return content;
+    }
 }
