@@ -65,38 +65,38 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
             throws PortalException {
 
         // Validation
-        if (Validator.isNull(title)) throw new QuestionTitleException();
-        if (Validator.isNull(text)) throw new QuestionTextException();
-        User user = userPersistence.findByPrimaryKey(userId);
-
-        long groupId = serviceContext.getScopeGroupId();
+//        if (Validator.isNull(title)) throw new QuestionTitleException();
+//        if (Validator.isNull(text)) throw new QuestionTextException();
+//        User user = userPersistence.findByPrimaryKey(userId);
+//
+//        long groupId = serviceContext.getScopeGroupId();
         long questionId = counterLocalService.increment();
-        Date createDate = serviceContext.getCreateDate();
-        Date modifiedDate = serviceContext.getModifiedDate();
-        String uuid = serviceContext.getUuid();
+//        Date createDate = serviceContext.getCreateDate();
+//        Date modifiedDate = serviceContext.getModifiedDate();
+//        String uuid = serviceContext.getUuid();
         Question question = questionPersistence.create(questionId);
-
-        question.setCreateDate(createDate);
-        question.setModifiedDate(modifiedDate);
-        question.setUserId(userId);
-        question.setUserName(user.getFullName());
-        question.setUuid(uuid);
-        question.setCompanyId(user.getCompanyId());
-        question.setGroupId(groupId);
-        question.setExpandoBridgeAttributes(serviceContext);
+//
+//        question.setCreateDate(createDate);
+//        question.setModifiedDate(modifiedDate);
+//        question.setUserId(userId);
+//        question.setUserName(user.getFullName());
+//        question.setUuid(uuid);
+//        question.setCompanyId(user.getCompanyId());
+//        question.setGroupId(groupId);
+//        question.setExpandoBridgeAttributes(serviceContext);
         question.setTitle(title);
         question.setText(text);
-
+//
         questionPersistence.update(question);
 
-        assetEntryLocalService.updateEntry(
-                userId, question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
-                Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
-                categoryIds, tagNames, true,
-                true, null, null,
-                null, ContentTypes.TEXT_HTML, question.getTitle(),
-                "Question Description appears here", null, null, null,
-                0, 0, 0D);
+//        assetEntryLocalService.updateEntry(
+//                userId, question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
+//                Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
+//                categoryIds, tagNames, true,
+//                true, null, null,
+//                null, ContentTypes.TEXT_HTML, question.getTitle(),
+//                "Question Description appears here", null, null, null,
+//                0, 0, 0D);
 
 
         return question;

@@ -13,7 +13,9 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import de.sidate.questions_and_answers.model.Category;
 import de.sidate.questions_and_answers.model.CategoryModel;
+import de.sidate.questions_and_answers.model.Question;
 import de.sidate.questions_and_answers.service.CategoryLocalServiceUtil;
+import de.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 import org.osgi.service.component.annotations.Component;
 
 import javax.portlet.ActionRequest;
@@ -42,17 +44,50 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     private static Log log = LogFactoryUtil.getLog(QuestionsAndAnswersPortlet.class);
 
-	public void addCategory(ActionRequest request, ActionResponse response)
+	public void newQuestion(ActionRequest request, ActionResponse response)
 			throws PortalException, SystemException {
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 				Category.class.getName(), request);
 
-		String name = ParamUtil.getString(request, "name");
-		String color = ParamUtil.getString(request, "color");
+		String title = ParamUtil.getString(request, "title");
+		String text = ParamUtil.getString(request, "text");
 
+        long[] categoryIds = {};
+        String[] tagNames = {};
 
 		try {
+            QuestionLocalServiceUtil.addQuestion(serviceContext.getUserId(), title, serviceContext, text,
+                    categoryIds, tagNames);
+            SessionMessages.add(request, "questionAdded");
+
+            long groupID = serviceContext.getScopeGroupId();
+            List<Question> questions = QuestionLocalServiceUtil.getQuestions(groupID);
+
+            log.info(questions.stream()
+                    .map(question -> question.getTitle())
+                    .collect(joining(" ")));
+
+        } catch (Exception e) {
+			SessionErrors.add(request, e.getClass().getName());
+			PortalUtil.copyRequestParameters(request, response);
+			response.setRenderParameter("mvcPath", "/view.jsp");
+            log.error(e.getClass().getName() + "\n" + e.getMessage());
+		}
+
+	}
+
+    public void addCategory(ActionRequest request, ActionResponse response)
+            throws PortalException, SystemException {
+
+        ServiceContext serviceContext = ServiceContextFactory.getInstance(
+                Category.class.getName(), request);
+
+        String name = ParamUtil.getString(request, "name");
+        String color = ParamUtil.getString(request, "color");
+
+
+        try {
             CategoryLocalServiceUtil.addCategory(name, serviceContext, color);
             SessionMessages.add(request, "categoryAdded");
 
@@ -64,13 +99,12 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                     .collect(joining(" ")));
 
         } catch (Exception e) {
-			SessionErrors.add(request, e.getClass().getName());
-			PortalUtil.copyRequestParameters(request, response);
-			response.setRenderParameter("mvcPath", "/view.jsp");
+            SessionErrors.add(request, e.getClass().getName());
+            PortalUtil.copyRequestParameters(request, response);
+            response.setRenderParameter("mvcPath", "/view.jsp");
 
             log.error("Error: ", e);
-		}
+        }
 
-	}
-
+    }
 }
