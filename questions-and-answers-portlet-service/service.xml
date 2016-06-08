@@ -62,59 +62,6 @@
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
     </entity>
 
-    <entity name="Rating" uuid="true" local-service="true" remote-service="false">
-
-        <!-- PK fields -->
-
-        <column name="ratingID" type="long" primary="true" />
-
-        <!-- Group instance -->
-
-        <column name="groupId" type="long" />
-
-        <!-- Audit fields -->
-
-        <column name="companyId" type="long" />
-        <column name="userId" type="long" />
-        <column name="userName" type="String" />
-        <column name="createDate" type="Date" />
-        <column name="modifiedDate" type="Date" />
-
-        <column name="isUpvote" type="Boolean" />
-        <column name="contentID" type="long" />
-
-        <!-- Finder methods -->
-
-        <finder name="GroupId" return-type="Collection">
-            <finder-column name="groupId" />
-        </finder>
-    </entity>
-
-    <entity name="Reputation" uuid="true" local-service="true" remote-service="false">
-
-        <!-- PK fields -->
-
-        <column name="reputationID" type="long" primary="true" />
-
-        <!-- Group instance -->
-
-        <column name="groupId" type="long" />
-
-        <!-- Audit fields -->
-
-        <column name="companyId" type="long" />
-        <column name="userId" type="long" />
-        <column name="userName" type="String" />
-        <column name="createDate" type="Date" />
-        <column name="modifiedDate" type="Date" />
-
-        <!-- Finder methods -->
-
-        <finder name="GroupId" return-type="Collection">
-            <finder-column name="groupId" />
-        </finder>
-    </entity>
-
     <exceptions>
         <exception>QuestionTitle</exception>
         <exception>QuestionText</exception>
