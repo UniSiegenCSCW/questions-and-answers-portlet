@@ -15,25 +15,11 @@
 package de.sidate.questions_and_answers.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.asset.kernel.model.AssetEntry;
-import com.liferay.asset.kernel.service.AssetEntryLocalService;
-import com.liferay.portal.kernel.exception.NoSuchUserException;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
 import de.sidate.questions_and_answers.exception.QuestionTextException;
 import de.sidate.questions_and_answers.exception.QuestionTitleException;
-import de.sidate.questions_and_answers.model.Category;
-import de.sidate.questions_and_answers.model.Content;
 import de.sidate.questions_and_answers.model.Question;
-import de.sidate.questions_and_answers.service.ContentLocalService;
-import de.sidate.questions_and_answers.service.ContentLocalServiceUtil;
-import de.sidate.questions_and_answers.service.QuestionLocalService;
-import de.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 import de.sidate.questions_and_answers.service.base.QuestionLocalServiceBaseImpl;
 
 import java.util.Date;
@@ -60,33 +46,28 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         return questionPersistence.findByGroupId(groupId);
     }
 
-    public Question addQuestion(long userId, String title, ServiceContext serviceContext, String text,
-                                long[] categoryIds, String[] tagNames)
-            throws PortalException {
+    public Question addQuestion(long userId, String title, String text, ServiceContext serviceContext) throws QuestionTitleException, QuestionTextException {
 
         // Validation
-//        if (Validator.isNull(title)) throw new QuestionTitleException();
-//        if (Validator.isNull(text)) throw new QuestionTextException();
-//        User user = userPersistence.findByPrimaryKey(userId);
-//
-//        long groupId = serviceContext.getScopeGroupId();
+        if (Validator.isNull(title)) throw new QuestionTitleException();
+        if (Validator.isNull(text)) throw new QuestionTextException();
+
+        long groupId = serviceContext.getScopeGroupId();
         long questionId = counterLocalService.increment();
-//        Date createDate = serviceContext.getCreateDate();
-//        Date modifiedDate = serviceContext.getModifiedDate();
-//        String uuid = serviceContext.getUuid();
+        Date createDate = serviceContext.getCreateDate();
+        Date modifiedDate = serviceContext.getModifiedDate();
+        String uuid = serviceContext.getUuid();
         Question question = questionPersistence.create(questionId);
-//
-//        question.setCreateDate(createDate);
-//        question.setModifiedDate(modifiedDate);
-//        question.setUserId(userId);
-//        question.setUserName(user.getFullName());
-//        question.setUuid(uuid);
-//        question.setCompanyId(user.getCompanyId());
-//        question.setGroupId(groupId);
-//        question.setExpandoBridgeAttributes(serviceContext);
+
+        question.setUuid(uuid);
+        question.setCreateDate(createDate);
+        question.setModifiedDate(modifiedDate);
+        question.setUserId(userId);
+        question.setGroupId(groupId);
+        question.setExpandoBridgeAttributes(serviceContext);
         question.setTitle(title);
         question.setText(text);
-//
+
         questionPersistence.update(question);
 
 //        assetEntryLocalService.updateEntry(

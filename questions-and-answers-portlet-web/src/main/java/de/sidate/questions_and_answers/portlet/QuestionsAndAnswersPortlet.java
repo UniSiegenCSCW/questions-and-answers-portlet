@@ -53,12 +53,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 		String title = ParamUtil.getString(request, "title");
 		String text = ParamUtil.getString(request, "text");
 
-        long[] categoryIds = {};
-        String[] tagNames = {};
-
 		try {
-            QuestionLocalServiceUtil.addQuestion(serviceContext.getUserId(), title, serviceContext, text,
-                    categoryIds, tagNames);
+            QuestionLocalServiceUtil.addQuestion(serviceContext.getUserId(), title, text, serviceContext);
             SessionMessages.add(request, "questionAdded");
 
             long groupID = serviceContext.getScopeGroupId();
