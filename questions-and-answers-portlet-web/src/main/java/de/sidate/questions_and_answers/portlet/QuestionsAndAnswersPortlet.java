@@ -22,6 +22,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.joining;
 
+
 @Component(
 	immediate = true,
 	property = {
@@ -35,6 +36,7 @@ import static java.util.stream.Collectors.joining;
 	},
 	service = Portlet.class
 )
+
 public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     private static Log log = LogFactoryUtil.getLog(QuestionsAndAnswersPortlet.class);
@@ -55,11 +57,12 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             long groupID = serviceContext.getScopeGroupId();
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(groupID);
 
+            // Logging sucessful DB access
             log.info(questions.stream()
                     .map(question -> question.getTitle())
                     .collect(joining(" ")));
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
 			SessionErrors.add(request, e.getClass().getName());
 			PortalUtil.copyRequestParameters(request, response);
 			response.setRenderParameter("mvcPath", "/view.jsp");

@@ -15,7 +15,11 @@
 package de.sidate.questions_and_answers.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
 import de.sidate.questions_and_answers.exception.QuestionTextException;
 import de.sidate.questions_and_answers.exception.QuestionTitleException;
@@ -58,6 +62,8 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         Date modifiedDate = serviceContext.getModifiedDate();
         String uuid = serviceContext.getUuid();
         Question question = questionPersistence.create(questionId);
+        String[] tagNames = serviceContext.getAssetTagNames();
+        long[] categoryIds = serviceContext.getAssetCategoryIds();
 
         question.setUuid(uuid);
         question.setCreateDate(createDate);
@@ -70,14 +76,23 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
         questionPersistence.update(question);
 
-//        assetEntryLocalService.updateEntry(
-//                userId, question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
-//                Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
-//                categoryIds, tagNames, true,
-//                true, null, null,
-//                null, ContentTypes.TEXT_HTML, question.getTitle(),
-//                "Question Description appears here", null, null, null,
-//                0, 0, 0D);
+        try {
+            assetEntryLocalService.updateEntry(
+                    userId, question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
+                    Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
+                    categoryIds, tagNames, true,
+                    true, null, null,
+                    null, ContentTypes.TEXT_HTML, question.getTitle(),
+                    "Question Description appears here", null, null, null,
+                    0, 0, 0D);
+
+            // Indexing
+            Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
+            indexer.reindex(question);
+
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
 
 
         return question;
