@@ -23,6 +23,7 @@
 		<column name="createDate" type="Date" />
 		<column name="modifiedDate" type="Date" />
         <column name="text" type="String"/>
+        <column name="questionId" type="long"/>
 
 
 		<!-- Finder methods -->
@@ -66,6 +67,7 @@
         <exception>QuestionTitle</exception>
         <exception>QuestionText</exception>
         <exception>AnswerText</exception>
+        <exception>AnswerQuestionId</exception>
     </exceptions>
 
 </service-builder>

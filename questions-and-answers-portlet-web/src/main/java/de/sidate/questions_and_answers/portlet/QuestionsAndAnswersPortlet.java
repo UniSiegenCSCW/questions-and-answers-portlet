@@ -13,11 +13,13 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import de.sidate.questions_and_answers.model.Question;
 import de.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
+import de.sidate.questions_and_answers.service.persistence.QuestionPersistence;
+import de.sidate.questions_and_answers.service.persistence.impl.QuestionPersistenceImpl;
 import org.osgi.service.component.annotations.Component;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.Portlet;
+import javax.portlet.*;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.joining;
@@ -28,7 +30,7 @@ import static java.util.stream.Collectors.joining;
 	property = {
 		"com.liferay.portlet.display-category=category.sample",
 		"com.liferay.portlet.instanceable=true",
-		"javax.portlet.display-name=questions-and-answers-portlet Portlet",
+		"javax.portlet.display-name=Questions and Answers",
 		"javax.portlet.security-role-ref=power-user,user",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view.jsp",
@@ -70,4 +72,25 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 		}
 
 	}
+
+    @Override
+    public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException {
+
+        try {
+            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), renderRequest);
+            long groupID = serviceContext.getScopeGroupId();
+
+            ArrayList<Question> questions = new ArrayList<>(QuestionLocalServiceUtil.getQuestions(groupID));
+
+            System.out.println(!questions.isEmpty());
+            if (!questions.isEmpty()) {
+                renderRequest.setAttribute("questions", questions);
+            }
+
+            super.render(renderRequest, renderResponse);
+        } catch (PortalException | PortletException e) {
+            log.error(e.getClass().getName() + "\n" + e.getMessage());
+        }
+
+    }
 }
