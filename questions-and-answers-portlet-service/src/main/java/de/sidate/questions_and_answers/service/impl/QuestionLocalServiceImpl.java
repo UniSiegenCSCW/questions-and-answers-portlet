@@ -110,4 +110,10 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
         return question;
     }
+
+
+//    public Question deleteQuestion(long questionsId) throws PortalException {
+//
+//        return super.deleteQuestion(questionsId);
+//    }
 }

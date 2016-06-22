@@ -164,4 +164,30 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
+    public void testDeleteAnswer(ActionRequest request, ActionResponse response){
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+
+            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+            Question question = questions.get(0);
+
+            List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
+            System.out.println("Vor dem löschen");
+            answers.forEach(a -> System.out.println(a.getText()));
+
+
+            Answer answer = answers.get(3);
+            AnswerLocalServiceUtil.deleteAnswer(answer);
+
+            answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
+            System.out.println("Nach dem löschen");
+            answers.forEach(a -> System.out.println(a.getText()));
+
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
