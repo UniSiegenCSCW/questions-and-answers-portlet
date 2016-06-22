@@ -21,8 +21,8 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
-import de.sidate.questions_and_answers.exception.QuestionTextException;
-import de.sidate.questions_and_answers.exception.QuestionTitleException;
+import de.sidate.questions_and_answers.exception.EmptyQuestionTextException;
+import de.sidate.questions_and_answers.exception.EmptyQuestionTitleException;
 import de.sidate.questions_and_answers.model.Answer;
 import de.sidate.questions_and_answers.model.Question;
 import de.sidate.questions_and_answers.service.base.QuestionLocalServiceBaseImpl;
@@ -63,11 +63,11 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         return answerPersistence.fetchByPrimaryKey(answerId);
     }
 
-    public Question addQuestion(long userId, String title, String text, ServiceContext serviceContext) throws QuestionTitleException, QuestionTextException {
+    public Question addQuestion(long userId, String title, String text, ServiceContext serviceContext) throws EmptyQuestionTitleException, EmptyQuestionTextException {
 
         // Validation
-        if (Validator.isNull(title)) throw new QuestionTitleException();
-        if (Validator.isNull(text)) throw new QuestionTextException();
+        if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
+        if (Validator.isNull(text)) throw new EmptyQuestionTextException();
 
         long groupId = serviceContext.getScopeGroupId();
         long questionId = counterLocalService.increment();

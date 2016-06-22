@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
-import de.sidate.questions_and_answers.exception.AnswerQuestionIdException;
 import de.sidate.questions_and_answers.exception.AnswerTextValidationException;
 import de.sidate.questions_and_answers.exception.EmptyAnswerTextException;
 import de.sidate.questions_and_answers.model.Answer;
