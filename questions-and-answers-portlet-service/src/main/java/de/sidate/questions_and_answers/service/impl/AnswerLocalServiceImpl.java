@@ -22,10 +22,12 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
-import de.sidate.questions_and_answers.exception.AnswerTextException;
+import de.sidate.questions_and_answers.exception.AnswerQuestionIdException;
+import de.sidate.questions_and_answers.exception.AnswerTextValidationException;
+import de.sidate.questions_and_answers.exception.EmptyAnswerTextException;
 import de.sidate.questions_and_answers.model.Answer;
+import de.sidate.questions_and_answers.model.Question;
 import de.sidate.questions_and_answers.service.base.AnswerLocalServiceBaseImpl;
-import de.sidate.questions_and_answers.service.persistence.AnswerPersistence;
 
 import java.util.Date;
 import java.util.List;
@@ -46,14 +48,20 @@ import java.util.List;
  */
 @ProviderType
 public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
-    public List<Answer> getAnswers(long groupId) {
-        return answerPersistence.findByGroupId(groupId);
+	/*
+	 * NOTE FOR DEVELOPERS:
+	 *
+	 * Never reference this class directly. Always use {@link de.sidate.questions_and_answers.service.AnswerLocalServiceUtil} to access the answer local service.
+	 */
+
+    public List<Answer> getAnswersForQuestion(long questionId) {
+        return answerPersistence.findByQuestionId(questionId);
     }
 
-    public Answer addQuestion(long userId, String text, ServiceContext serviceContext) throws AnswerTextException {
+    public Answer addAnswer(long userId, String text, long questionId, ServiceContext serviceContext) throws PortalException {
 
         // Validation
-        if (Validator.isNull(text)) throw new AnswerTextException();
+        if (Validator.isNull(text)) throw new EmptyAnswerTextException();
 
         long groupId = serviceContext.getScopeGroupId();
         long answerId = counterLocalService.increment();
@@ -71,16 +79,17 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         answer.setGroupId(groupId);
         answer.setExpandoBridgeAttributes(serviceContext);
         answer.setText(text);
+        answer.setQuestionId(questionId);
 
         answerPersistence.update(answer);
 
         try {
             assetEntryLocalService.updateEntry(
                     userId, answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
-                    Answer.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
+                    Question.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
                     categoryIds, tagNames, true,
                     true, null, null,
-                    null, ContentTypes.TEXT_HTML, "Answer Title",
+                    null, ContentTypes.TEXT_HTML, "Title appears here",
                     "Question Description appears here", null, null, null,
                     0, 0, 0D);
 
@@ -91,7 +100,6 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         } catch (PortalException e) {
             e.printStackTrace();
         }
-
 
         return answer;
     }

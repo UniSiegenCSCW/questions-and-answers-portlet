@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
 import de.sidate.questions_and_answers.exception.QuestionTextException;
 import de.sidate.questions_and_answers.exception.QuestionTitleException;
+import de.sidate.questions_and_answers.model.Answer;
 import de.sidate.questions_and_answers.model.Question;
 import de.sidate.questions_and_answers.service.base.QuestionLocalServiceBaseImpl;
 
@@ -48,6 +49,18 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
     public List<Question> getQuestions(long groupId) {
         return questionPersistence.findByGroupId(groupId);
+    }
+
+    public void setCorrectAnswer(long answerId, long questionId) {
+        Question question = questionPersistence.fetchByPrimaryKey(questionId);
+        question.setCorrectAnswerId(answerId);
+        questionPersistence.update(question);
+    }
+    
+    public Answer getCorrectAnswer(long questionId) {
+        Question question = questionPersistence.fetchByPrimaryKey(questionId);
+        long answerId = question.getCorrectAnswerId();
+        return answerPersistence.fetchByPrimaryKey(answerId);
     }
 
     public Question addQuestion(long userId, String title, String text, ServiceContext serviceContext) throws QuestionTitleException, QuestionTextException {
