@@ -16,7 +16,19 @@ package de.sidate.questions_and_answers.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.Validator;
+import de.sidate.questions_and_answers.exception.AnswerTextException;
+import de.sidate.questions_and_answers.model.Answer;
 import de.sidate.questions_and_answers.service.base.AnswerLocalServiceBaseImpl;
+import de.sidate.questions_and_answers.service.persistence.AnswerPersistence;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * The implementation of the answer local service.
@@ -34,9 +46,53 @@ import de.sidate.questions_and_answers.service.base.AnswerLocalServiceBaseImpl;
  */
 @ProviderType
 public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Always use {@link de.sidate.questions_and_answers.service.AnswerLocalServiceUtil} to access the answer local service.
-	 */
+    public List<Answer> getAnswers(long groupId) {
+        return answerPersistence.findByGroupId(groupId);
+    }
+
+    public Answer addQuestion(long userId, String text, ServiceContext serviceContext) throws AnswerTextException {
+
+        // Validation
+        if (Validator.isNull(text)) throw new AnswerTextException();
+
+        long groupId = serviceContext.getScopeGroupId();
+        long answerId = counterLocalService.increment();
+        Date createDate = serviceContext.getCreateDate();
+        Date modifiedDate = serviceContext.getModifiedDate();
+        String uuid = serviceContext.getUuid();
+        Answer answer = answerPersistence.create(answerId);
+        String[] tagNames = serviceContext.getAssetTagNames();
+        long[] categoryIds = serviceContext.getAssetCategoryIds();
+
+        answer.setUuid(uuid);
+        answer.setCreateDate(createDate);
+        answer.setModifiedDate(modifiedDate);
+        answer.setUserId(userId);
+        answer.setGroupId(groupId);
+        answer.setExpandoBridgeAttributes(serviceContext);
+        answer.setText(text);
+
+        answerPersistence.update(answer);
+
+        try {
+            assetEntryLocalService.updateEntry(
+                    userId, answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
+                    Answer.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
+                    categoryIds, tagNames, true,
+                    true, null, null,
+                    null, ContentTypes.TEXT_HTML, "Answer Title",
+                    "Question Description appears here", null, null, null,
+                    0, 0, 0D);
+
+            // Indexing
+            Indexer<Answer> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Answer.class);
+            indexer.reindex(answer);
+
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+
+
+        return answer;
+    }
 }
