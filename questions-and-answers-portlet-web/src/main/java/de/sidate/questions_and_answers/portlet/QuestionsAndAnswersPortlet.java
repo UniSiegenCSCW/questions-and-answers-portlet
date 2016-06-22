@@ -11,7 +11,9 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import de.sidate.questions_and_answers.model.Answer;
 import de.sidate.questions_and_answers.model.Question;
+import de.sidate.questions_and_answers.service.AnswerLocalServiceUtil;
 import de.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 import de.sidate.questions_and_answers.service.persistence.QuestionPersistence;
 import de.sidate.questions_and_answers.service.persistence.impl.QuestionPersistenceImpl;
@@ -55,9 +57,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 		try {
             QuestionLocalServiceUtil.addQuestion(serviceContext.getUserId(), title, text, serviceContext);
             SessionMessages.add(request, "questionAdded");
-
-            long groupID = serviceContext.getScopeGroupId();
-            List<Question> questions = QuestionLocalServiceUtil.getQuestions(groupID);
         }
         catch (Exception e) {
 			SessionErrors.add(request, e.getClass().getName());
@@ -67,6 +66,27 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 		}
 
 	}
+
+    public void newAnswer(ActionRequest request, ActionResponse response, long questionId)
+            throws PortalException, SystemException {
+
+        ServiceContext serviceContext = ServiceContextFactory.getInstance(
+                Answer.class.getName(), request);
+
+        String text = ParamUtil.getString(request, "text");
+
+        try {
+            AnswerLocalServiceUtil.addAnswer(serviceContext.getUserId(), text, questionId, serviceContext);
+            SessionMessages.add(request, "answerAdded");
+        }
+        catch (Exception e) {
+            SessionErrors.add(request, e.getClass().getName());
+            PortalUtil.copyRequestParameters(request, response);
+            response.setRenderParameter("mvcPath", "/view.jsp");
+            log.error(e.getClass().getName() + "\n" + e.getMessage());
+        }
+
+    }
 
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException {

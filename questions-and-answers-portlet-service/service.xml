@@ -28,8 +28,8 @@
 
 		<!-- Finder methods -->
 
-		<finder name="GroupId" return-type="Collection">
-			<finder-column name="groupId" />
+		<finder name="QuestionId" return-type="Collection">
+			<finder-column name="questionId" />
 		</finder>
 
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
