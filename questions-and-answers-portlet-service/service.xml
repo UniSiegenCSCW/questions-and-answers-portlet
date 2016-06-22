@@ -31,7 +31,9 @@
 		<finder name="GroupId" return-type="Collection">
 			<finder-column name="groupId" />
 		</finder>
-	</entity>
+
+        <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
+    </entity>
 
     <entity name="Question" uuid="true" local-service="true" remote-service="false">
 
@@ -53,6 +55,7 @@
 
         <column name="title" type="String" />
         <column name="text" type="String"/>
+        <column name="correctAnswerId" type="long"/>
 
         <!-- Finder methods -->
 
@@ -64,10 +67,12 @@
     </entity>
 
     <exceptions>
-        <exception>QuestionTitle</exception>
-        <exception>QuestionText</exception>
-        <exception>AnswerText</exception>
-        <exception>AnswerQuestionId</exception>
+        <exception>EmptyQuestionTitle</exception>
+        <exception>QuestionTitleValidation</exception>
+        <exception>EmptyQuestionText</exception>
+        <exception>QuestionTextValidation</exception>
+        <exception>EmptyAnswerText</exception>
+        <exception>AnswerTextValidation</exception>
     </exceptions>
 
 </service-builder>

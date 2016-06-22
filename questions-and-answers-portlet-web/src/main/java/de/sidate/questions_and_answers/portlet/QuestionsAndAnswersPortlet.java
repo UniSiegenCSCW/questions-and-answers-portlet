@@ -58,11 +58,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             long groupID = serviceContext.getScopeGroupId();
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(groupID);
-
-            // Logging sucessful DB access
-            log.info(questions.stream()
-                    .map(question -> question.getTitle())
-                    .collect(joining(" ")));
         }
         catch (Exception e) {
 			SessionErrors.add(request, e.getClass().getName());
