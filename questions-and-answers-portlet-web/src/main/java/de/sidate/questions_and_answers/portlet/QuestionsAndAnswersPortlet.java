@@ -67,13 +67,13 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
 	}
 
-    public void newAnswer(ActionRequest request, ActionResponse response, long questionId, String text)
+    public void newAnswer(ActionRequest request, ActionResponse response, long questionId)
             throws PortalException, SystemException {
 
         ServiceContext serviceContext = ServiceContextFactory.getInstance(
                 Answer.class.getName(), request);
 
-        //String text = ParamUtil.getString(request, "text");
+        String text = ParamUtil.getString(request, "text");
 
         try {
             AnswerLocalServiceUtil.addAnswer(serviceContext.getUserId(), text, questionId, serviceContext);
@@ -114,9 +114,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
-
-
-
+    // WARNING: Asssumes a text field is availabe via paramUtil!
+    // If necessary rewrite newAnswer for testing
     public void testAnswer(ActionRequest request, ActionResponse response){
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
@@ -125,8 +124,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             Question question2 = questions.get(1);
             String text = "Dies ist eine tolle Antwort! auf die erste Frage";
             String text2 = "Dies ist eine tolle Antwort auf die zweite Frage";
-            newAnswer(request, response, question.getQuestionID(), text);
-            newAnswer(request, response, question2.getQuestionID(), text2);
+            newAnswer(request, response, question.getQuestionID());
+            newAnswer(request, response, question2.getQuestionID());
 
 
             List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
@@ -143,6 +142,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
+    // Sets and gets the correct answer
     public void testCorrectAnswer(ActionRequest request, ActionResponse response){
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
