@@ -24,4 +24,8 @@
 
 <aui:button-row>
     <aui:button onClick="<%= newQuestionURL%>" value="New Question"></aui:button>
+    <portlet:actionURL name="testAnswer" var="testAnswerURL"/>
+    <aui:button onClick="<%= testAnswerURL%>" value="Test new Answer"></aui:button>
+    <portlet:actionURL name="testCorrectAnswer" var="testAcceptAnswerURL"/>
+    <aui:button onClick="<%= testAcceptAnswerURL%>" value="Display correct Answer (in the Terminal)"></aui:button>
 </aui:button-row>
