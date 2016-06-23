@@ -3,7 +3,6 @@ questions-and-answers-portlet-service/src/main/java/de/sidate/questions_and_answ
 questions-and-answers-portlet-service/src/main/java/de/sidate/questions_and_answers/service/persistence
 questions-and-answers-portlet-service/src/main/java/de/sidate/questions_and_answers/service/http
 questions-and-answers-portlet-service/src/main/java/de/sidate/questions_and_answers/service/base
-questions-and-answers-portlet-service/src/main/java/de/sidate/questions_and_answers/model
 questions-and-answers-portlet-api/src
 questions-and-answers-portlet-service/src/main/resources
 questions-and-answers-portlet-service/src/main/test
