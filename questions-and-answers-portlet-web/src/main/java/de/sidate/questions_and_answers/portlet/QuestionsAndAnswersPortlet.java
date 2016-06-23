@@ -114,6 +114,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
+
+
     // WARNING: Asssumes a text field is availabe via paramUtil!
     // If necessary rewrite newAnswer for testing
     public void testAnswer(ActionRequest request, ActionResponse response){

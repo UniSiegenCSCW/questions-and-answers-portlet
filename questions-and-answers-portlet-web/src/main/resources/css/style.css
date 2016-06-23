@@ -1,17 +1,42 @@
-.question {
-    display: block;
+.qaQuestionEntryContainer {
+    border-top: 1px solid #aaaaaa;
+    padding: 1rem 0;
+}
+.qaRatingBox, .qaAnswersBox {
+    float:right;
+    padding: 1rem 1rem;
+    width: 9rem;
 }
 
-.questionText{
+.qaCounterValue{
     font-size: 150%;
-    margin-bottom: 1rem;
+    text-align: center;
 }
 
-.categories {
+.qaCounterLabel {
+    text-align: center;
+    font-size: 85%;
+}
+
+.qaDateTime {
+    float:left;
+    font-size: 75%;
+}
+
+.qaAnswersBox.answered{
+    border: solid 2px green;
+}
+
+.qaTagContainer, .qaCategoryContainer{
+    float: left;
+    margin: 1rem 1rem 1rem 0;
+}
+
+.qaCategories {
     display: inline;
     padding-left: 0;
 }
-.categories li {
+.qaCategories li {
     display: inline;
     list-style: none;
     background-color: deepskyblue;
@@ -20,23 +45,16 @@
     padding: 0.3rem;
 }
 
-.tags {
+.qaTags {
     display: inline;
     padding-left: 0;
 }
 
-.tags li {
+.qaTags li {
     display: inline;
     list-style: none;
     background-color: deepskyblue;
     color: white;
     border-radius: 0.4rem;
     padding: 0.3rem;
-}
-
-.isAnswered {
-    position: relative;
-    float: right;
-    font-size: 200%;
-    margin: 1.5rem 1rem;
 }

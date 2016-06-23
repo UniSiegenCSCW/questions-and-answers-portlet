@@ -1,26 +1,74 @@
+<%@ page import="de.sidate.questions_and_answers.model.Question" %>
 <%@ include file="init.jsp" %>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
-<h1><liferay-ui:message key="questions_and_answersde.sidate.questions_and_answers.portletQuestionsAndAnswersPortlet.caption"/></h1>
 
 <portlet:renderURL var="newQuestionURL">
     <portlet:param name="mvcPath" value="/newQuestion.jsp"/>
 </portlet:renderURL>
 
-<p>;-)</p>
 
 <jsp:useBean id="questions" class="java.util.ArrayList" scope="request"/>
 
-<liferay-ui:search-container>
-    <liferay-ui:search-container-results results="<%= questions %>"/>
+<% String tabNames = "Neue Fragen,Beste Fragen"; %>
+<liferay-ui:tabs
+        names="<%= tabNames %>"
+/>
 
-    <liferay-ui:search-container-row className="de.sidate.questions_and_answers.model.Question" modelVar="question">
-        <liferay-ui:search-container-column-text property="title" />
+<aui:container>
+    <c:forEach var="question" items="${questions}">
+        <aui:container cssClass="qaQuestionEntryContainer">
+            <aui:row>
+                <aui:col span="8">
+                    <aui:row>
+                        <aui:col>
+                            <h5>${question.title}</h5>
+                        </aui:col>
+                    </aui:row>
+                </aui:col>
+                <aui:col span="4">
 
-        <liferay-ui:search-container-column-text property="text" />
-    </liferay-ui:search-container-row>
-
-    <liferay-ui:search-iterator />
-</liferay-ui:search-container>
+                    <div class="qaRatingBox">
+                        <div class="qaCounterValue">10</div>
+                        <div class="qaCounterLabel">Bewertungen</div>
+                    </div>
+                    <div class="qaAnswersBox
+                        <c:if test="${question.correctAnswerId != 0}">
+                            answered
+                        </c:if>
+                        ">
+                        <div class="qaCounterValue">3</div>
+                        <div class="qaCounterLabel">Antworten</div>
+                    </div>
+                </aui:col>
+            </aui:row>
+            <aui:row>
+                <aui:col>
+                    <div class="qaTagContainer">
+                        <strong>Tags:</strong>
+                        <ul class="qaTags">
+                            <li>toll</li>
+                            <li>super</li>
+                            <li>perfekt</li>
+                        </ul>
+                    </div>
+                    <div class="qaCategoryContainer">
+                        <strong>Kategorien:</strong>
+                        <ul class="qaCategories">
+                            <li>toll</li>
+                            <li>super</li>
+                            <li>perfekt</li>
+                        </ul>
+                    </div>
+                </aui:col>
+            </aui:row>
+            <aui:row>
+                <aui:col>
+                    <span class="qaDateTime">Frage ${question.getTimeDifferenceString()} gestellt</span>
+                </aui:col>
+            </aui:row>
+        </aui:container>
+    </c:forEach>
+</aui:container>
 
 <aui:button-row>
     <aui:button onClick="<%= newQuestionURL%>" value="New Question"></aui:button>
