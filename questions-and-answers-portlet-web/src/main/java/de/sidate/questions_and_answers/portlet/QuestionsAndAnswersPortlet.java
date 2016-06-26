@@ -1,5 +1,6 @@
 package de.sidate.questions_and_answers.portlet;
 
+import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -14,6 +15,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import de.sidate.questions_and_answers.model.Answer;
 import de.sidate.questions_and_answers.model.Question;
 import de.sidate.questions_and_answers.service.AnswerLocalServiceUtil;
+import de.sidate.questions_and_answers.service.QuestionLocalService;
 import de.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 import de.sidate.questions_and_answers.service.persistence.QuestionPersistence;
 import de.sidate.questions_and_answers.service.persistence.impl.QuestionPersistenceImpl;
@@ -67,6 +69,21 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
 	}
 
+    public void editQuestion(ActionRequest request, ActionResponse response, long questionId) {
+        String title = ParamUtil.getString(request, "title");
+        String text = ParamUtil.getString(request, "text");
+
+        QuestionLocalServiceUtil.editQuestion(questionId, title, text);
+    }
+
+    public void deleteQuestion(ActionRequest request, ActionResponse response, long questionId){
+        try {
+            QuestionLocalServiceUtil.deleteQuestion(questionId);
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void newAnswer(ActionRequest request, ActionResponse response, long questionId)
             throws PortalException, SystemException {
 
@@ -88,10 +105,23 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
+    public void editAnswer(ActionRequest request, ActionResponse response, long answerId) {
+        String text = ParamUtil.getString(request, "text");
+        AnswerLocalServiceUtil.editAnswer(answerId, text);
+    }
+
     public void acceptAnswer(ActionRequest request, ActionResponse response, long questionId, long answerId) {
         QuestionLocalServiceUtil.setCorrectAnswer(answerId, questionId);
         SessionMessages.add(request, "answerAccepted");
 
+    }
+
+    public void deleteAnswer(ActionRequest request, ActionResponse response, long answerId){
+        try {
+            AnswerLocalServiceUtil.deleteAnswer(answerId);
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -115,9 +145,25 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
 
+    private void testNewAnswer(ActionRequest request, ActionResponse response, long questionId, String text)
+            throws PortalException, SystemException {
 
-    // WARNING: Asssumes a text field is availabe via paramUtil!
-    // If necessary rewrite newAnswer for testing
+        ServiceContext serviceContext = ServiceContextFactory.getInstance(
+                Answer.class.getName(), request);
+
+        try {
+            AnswerLocalServiceUtil.addAnswer(serviceContext.getUserId(), text, questionId, serviceContext);
+            SessionMessages.add(request, "answerAdded");
+        }
+        catch (Exception e) {
+            SessionErrors.add(request, e.getClass().getName());
+            PortalUtil.copyRequestParameters(request, response);
+            response.setRenderParameter("mvcPath", "/view.jsp");
+            log.error(e.getClass().getName() + "\n" + e.getMessage());
+        }
+
+    }
+
     public void testAnswer(ActionRequest request, ActionResponse response){
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
@@ -126,8 +172,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             Question question2 = questions.get(1);
             String text = "Dies ist eine tolle Antwort! auf die erste Frage";
             String text2 = "Dies ist eine tolle Antwort auf die zweite Frage";
-            newAnswer(request, response, question.getQuestionID());
-            newAnswer(request, response, question2.getQuestionID());
+            testNewAnswer(request, response, question.getQuestionID(), text);
+            testNewAnswer(request, response, question2.getQuestionID(), text2);
 
 
             List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
@@ -135,7 +181,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             answers.forEach(answer -> System.out.println(answer.getText()));
 
             List<Answer> answers2 = AnswerLocalServiceUtil.getAnswersForQuestion(question2.getQuestionID());
-            System.out.println("Zweit Frage:");
+            System.out.println("Zweite Frage:");
             answers2.forEach(answer -> System.out.println(answer.getText()));
 
         } catch (PortalException e) {
@@ -151,10 +197,9 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
             Question question = questions.get(0);
-            //List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
-            //Answer answer = answers.get(0);
+            List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
+            Answer answer = answers.get(0);
 
-            Answer answer = AnswerLocalServiceUtil.addAnswer(serviceContext.getUserId(), "Korrekte Antwort", question.getQuestionID(), serviceContext);
             acceptAnswer(request,response, question.getQuestionID(), answer.getAnswerID());
 
             Answer correctAnswer = AnswerLocalServiceUtil.getAnswer(question.getCorrectAnswerId());
@@ -178,11 +223,10 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             System.out.println("Vor dem löschen");
             answers.forEach(a -> System.out.println(a.getText()));
 
-
-            Answer answer = answers.get(3);
+            Answer answer = answers.get(2);
             AnswerLocalServiceUtil.deleteAnswer(answer);
-
             answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
+
             System.out.println("Nach dem löschen");
             answers.forEach(a -> System.out.println(a.getText()));
 
@@ -190,6 +234,59 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             e.printStackTrace();
         }
 
+    }
+
+    public void testEditQuestion(ActionRequest request, ActionResponse response) {
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+
+            Question question = questions.get(0);
+
+            System.out.println("Vor dem edit: " + question.getTitle() + ": " + question.getText());
+
+            QuestionLocalServiceUtil.editQuestion(question.getQuestionID(), "Ganz neuer Titel", "Ganz neuer Text");
+
+            questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+            question = questions.get(0);
+
+            System.out.println("Nach dem edit: " + question.getTitle() + ": " + question.getText());
+
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void testEditAnswer(ActionRequest request, ActionResponse response) {
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
+            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+            Question question = questions.get(0);
+            List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
+            Answer answer = answers.get(0);
+
+            System.out.println("Vor dem edit: " + answer.getText() + " editiert am " + answer.getModifiedDate());
+
+            AnswerLocalServiceUtil.editAnswer(answer.getAnswerID(), "Ganz neue Antwort");
+
+            answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
+            answer = answers.get(0);
+
+            System.out.println("Nach dem edit: " + answer.getText() + " editiert am " + answer.getModifiedDate());
+
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void testDisplayAssets(ActionRequest request, ActionResponse response) {
+        System.out.println(AssetEntryLocalServiceUtil.getAssetEntriesCount());
     }
 
 }

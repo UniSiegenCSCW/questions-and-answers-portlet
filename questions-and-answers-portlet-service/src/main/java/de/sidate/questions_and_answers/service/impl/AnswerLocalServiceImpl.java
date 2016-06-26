@@ -88,7 +88,7 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
                     Question.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
                     categoryIds, tagNames, true,
                     true, null, null,
-                    null, ContentTypes.TEXT_HTML, "Title appears here",
+                    null, null, ContentTypes.TEXT_HTML, "Title appears here",
                     "Question Description appears here", null, null, null,
                     0, 0, 0D);
 
@@ -101,5 +101,13 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         }
 
         return answer;
+    }
+
+    public void editAnswer(long answerId, String text) {
+        Answer answer = answerPersistence.fetchByPrimaryKey(answerId);
+
+        answer.setText(text);
+
+        answerPersistence.update(answer);
     }
 }

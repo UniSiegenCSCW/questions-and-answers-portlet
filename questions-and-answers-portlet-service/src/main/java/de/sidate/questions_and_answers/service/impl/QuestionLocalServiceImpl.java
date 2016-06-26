@@ -95,7 +95,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
                     Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
                     categoryIds, tagNames, true,
                     true, null, null,
-                    null, ContentTypes.TEXT_HTML, question.getTitle(),
+                    null, null, ContentTypes.TEXT_HTML, question.getTitle(),
                     "Question Description appears here", null, null, null,
                     0, 0, 0D);
 
@@ -111,9 +111,13 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         return question;
     }
 
+    public void editQuestion(long questionId, String title, String text) {
+        Question question = questionPersistence.fetchByPrimaryKey(questionId);
 
-//    public Question deleteQuestion(long questionsId) throws PortalException {
-//
-//        return super.deleteQuestion(questionsId);
-//    }
+        question.setTitle(title);
+        question.setText(text);
+
+        questionPersistence.update(question);
+    }
+
 }

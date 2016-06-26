@@ -2,11 +2,6 @@
 <%@ include file="init.jsp" %>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
 
-<portlet:renderURL var="newQuestionURL">
-    <portlet:param name="mvcPath" value="/newQuestion.jsp"/>
-</portlet:renderURL>
-
-
 <jsp:useBean id="questions" class="java.util.ArrayList" scope="request"/>
 
 <% String tabNames = "Neue Fragen,Beste Fragen"; %>
@@ -71,9 +66,9 @@
 </aui:container>
 
 <aui:button-row>
+    <portlet:renderURL var="newQuestionURL"><portlet:param name="mvcPath" value="/newQuestion.jsp"/></portlet:renderURL>
     <aui:button onClick="<%= newQuestionURL%>" value="New Question"></aui:button>
-    <portlet:actionURL name="testAnswer" var="testAnswerURL"/>
-    <aui:button onClick="<%= testAnswerURL%>" value="Test new Answer"></aui:button>
-    <portlet:actionURL name="testCorrectAnswer" var="testAcceptAnswerURL"/>
-    <aui:button onClick="<%= testAcceptAnswerURL%>" value="Display correct Answer (in the Terminal)"></aui:button>
+
+    <portlet:renderURL var="testURL"><portlet:param name="mvcPath" value="/test.jsp"/></portlet:renderURL>
+    <aui:button onClick="<%= testURL%>" value="Go to testing view"></aui:button>
 </aui:button-row>
