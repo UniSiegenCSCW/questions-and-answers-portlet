@@ -47,6 +47,10 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     private static Log log = LogFactoryUtil.getLog(QuestionsAndAnswersPortlet.class);
 
+    
+    // #### Question ####
+
+
 	public void newQuestion(ActionRequest request, ActionResponse response)
 			throws PortalException, SystemException {
 
@@ -83,6 +87,10 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             e.printStackTrace();
         }
     }
+
+
+    // #### Answers ####
+
 
     public void newAnswer(ActionRequest request, ActionResponse response, long questionId)
             throws PortalException, SystemException {
@@ -143,6 +151,9 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
 
     }
+
+
+    // #### Testing ####
 
 
     private void testNewAnswer(ActionRequest request, ActionResponse response, long questionId, String text)
