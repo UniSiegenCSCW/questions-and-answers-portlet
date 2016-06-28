@@ -1,5 +1,5 @@
 .qaQuestionEntryContainer {
-    border-top: 1px solid #aaaaaa;
+    border-bottom: 1px solid #ddd;
     padding: 1rem 0;
 }
 .qaRatingBox, .qaAnswersBox {
@@ -57,4 +57,113 @@
     color: white;
     border-radius: 0.4rem;
     padding: 0.3rem;
+}
+
+.qaAuthorbox {
+    float: right;
+    width: 23rem;
+    font-size: 85%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+}
+
+.qaAuthorInfo {
+    font-size: 110%;
+    margin-top: 0.5rem;
+    float: left;
+}
+
+.qaAuthorImage {
+    margin: 0.5rem 0.5rem 0 0;
+    float: left;
+}
+
+.qaAuthorImage > img {
+    width: 50px;
+    height: 50px;
+}
+.qaContentContainer {
+    padding: 3rem 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.qaQuestionWrapper .nav-tabs >li{
+    float: right;
+}
+.qaQuestionWrapper .nav-tabs {
+    margin-bottom: 0;
+}
+
+.qaAnswerTabBarTitle > h5{
+    margin: 0;
+}
+.qaAnswerTabBarTitle {
+    position: relative;
+    top: -4rem;
+    width: 30rem;
+}
+.qaAnswersTitleBarWrapper {
+    padding-bottom: 0;
+}
+.qaAnswersWrapper {
+    padding-top: 0;
+}
+
+.qaCorreckAnswerCheckmark{
+    font-size: 200%;
+    color: green;
+}
+
+.qaQuestionWrapper .taglib-ratings {
+    float: none;
+    font-size: 150%;
+    top: -1.1rem;
+    left: 0.3rem;
+    position: relative;
+}
+
+.qaQuestionWrapper .rating-element {
+    color: #555;
+    font-family: "Glyphicons Halflings", "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.qaAnswerRatingCol, .qaQuestionRatingCol {
+    text-align: center;
+}
+
+.qaDiscussionWrapper {
+    margin-top: 1rem;
+    font-size: 85%;
+}
+
+.qaDiscussionWrapper .lfr-discussion-details{
+    display: none;
+}
+.qaDiscussionWrapper .subscribe-link {
+    display: none;
+}
+.qaDiscussionWrapper .reply-action {
+    display: none;
+}
+
+.qaDiscussionWrapper .fieldset.add-comment {
+    display: none;
+}
+
+.qaDiscussionWrapper .fieldset.add-comment.unhidden{
+    display: block;
+}
+
+
+.qaDiscussionWrapper .card.list-group-card.panel {
+    border-color: #ddd;
+
+    margin: 0;
+    border-width: 1px 0 0 0;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
 }
