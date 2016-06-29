@@ -16,6 +16,10 @@ package de.sidate.questions_and_answers.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.asset.kernel.service.persistence.AssetTagFinderUtil;
+import com.liferay.asset.kernel.service.persistence.AssetTagPersistence;
+import com.liferay.asset.kernel.service.persistence.AssetTagUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
@@ -57,7 +61,7 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         return answerPersistence.findByQuestionId(questionId);
     }
 
-    public Answer addAnswer(long userId, String text, long questionId, ServiceContext serviceContext) throws PortalException {
+    public Answer addAnswer(String text, long questionId, ServiceContext serviceContext) throws PortalException {
 
         // Validation
         if (Validator.isNull(text)) throw new EmptyAnswerTextException();
@@ -68,13 +72,11 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         Date modifiedDate = serviceContext.getModifiedDate();
         String uuid = serviceContext.getUuid();
         Answer answer = answerPersistence.create(answerId);
-        String[] tagNames = serviceContext.getAssetTagNames();
-        long[] categoryIds = serviceContext.getAssetCategoryIds();
 
         answer.setUuid(uuid);
         answer.setCreateDate(createDate);
         answer.setModifiedDate(modifiedDate);
-        answer.setUserId(userId);
+        answer.setUserId(serviceContext.getUserId());
         answer.setGroupId(groupId);
         answer.setExpandoBridgeAttributes(serviceContext);
         answer.setText(text);
@@ -84,13 +86,11 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 
         try {
             assetEntryLocalService.updateEntry(
-                    userId, answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
+                    serviceContext.getUserId(), answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
                     Question.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
-                    categoryIds, tagNames, true,
-                    true, null, null,
-                    null, null, ContentTypes.TEXT_HTML, "Title appears here",
-                    "Question Description appears here", null, null, null,
-                    0, 0, 0D);
+                    serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null,
+                    null, null, ContentTypes.TEXT_HTML, "Title appears here", "Question Description appears here",
+                    null, null, null, 0, 0, 0D);
 
             // Indexing
             Indexer<Answer> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Answer.class);
@@ -103,11 +103,21 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         return answer;
     }
 
-    public void editAnswer(long answerId, String text) {
+    public void editAnswer(long answerId, String text, ServiceContext serviceContext) throws PortalException {
         Answer answer = answerPersistence.fetchByPrimaryKey(answerId);
 
         answer.setText(text);
 
         answerPersistence.update(answer);
+
+        assetEntryLocalService.updateEntry(
+                serviceContext.getUserId(), answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
+                Question.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
+                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null,
+                null, ContentTypes.TEXT_HTML, "Title appears here", "Question Description appears here", null, null,
+                null, 0, 0, 0D);
+
+        Indexer<Answer> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Answer.class);
+        indexer.reindex(answer);
     }
 }
