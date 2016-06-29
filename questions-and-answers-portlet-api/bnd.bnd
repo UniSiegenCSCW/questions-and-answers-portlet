@@ -1,7 +1,7 @@
 Bundle-Version: 1.0.0
 Export-Package: \
-	de.sidate.questions_and_answers.exception,\
-	de.sidate.questions_and_answers.model,\
-	de.sidate.questions_and_answers.service,\
-	de.sidate.questions_and_answers.service.persistence
+	org.sidate.questions_and_answers.exception,\
+	org.sidate.questions_and_answers.model,\
+	org.sidate.questions_and_answers.service,\
+	org.sidate.questions_and_answers.service.persistence
 -sources: true
