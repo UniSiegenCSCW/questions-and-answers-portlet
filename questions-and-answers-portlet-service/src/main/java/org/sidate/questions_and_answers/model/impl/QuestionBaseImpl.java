@@ -12,12 +12,12 @@
  * details.
  */
 
-package de.sidate.questions_and_answers.model.impl;
+package org.sidate.questions_and_answers.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
-import de.sidate.questions_and_answers.model.Question;
-import de.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
+import org.sidate.questions_and_answers.model.Question;
+import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 
 /**
  * The extended model base implementation for the Question service. Represents a row in the &quot;SIDATE_Question&quot; database table, with each column mapped to a property of this class.
