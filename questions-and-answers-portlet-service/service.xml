@@ -57,6 +57,8 @@
         <column name="text" type="String"/>
         <column name="correctAnswerId" type="long"/>
 
+        <column name="modifiedBy" type="long"/>
+
         <!-- Finder methods -->
 
         <finder name="GroupId" return-type="Collection">

@@ -122,6 +122,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
         question.setTitle(title);
         question.setText(text);
+        question.setModifiedBy(serviceContext.getUserId());
 
         questionPersistence.update(question);
 
