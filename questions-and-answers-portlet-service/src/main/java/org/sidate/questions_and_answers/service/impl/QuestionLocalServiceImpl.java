@@ -122,6 +122,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
         question.setTitle(title);
         question.setText(text);
+        question.setModifiedBy(serviceContext.getUserId());
 
         questionPersistence.update(question);
 
@@ -141,7 +142,10 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         for (Answer a : answers) {
             answerLocalService.deleteAnswer(a.getAnswerID());
         }
+
         assetEntryLocalService.deleteEntry(Question.class.getName(), questionId);
+        Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
+        indexer.delete(questionPersistence.fetchByPrimaryKey(questionId));
         return super.deleteQuestion(questionId);
     }
 

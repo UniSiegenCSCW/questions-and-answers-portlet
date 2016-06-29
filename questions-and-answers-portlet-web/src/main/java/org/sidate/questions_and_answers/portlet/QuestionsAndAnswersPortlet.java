@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.service.UserServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -257,8 +258,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
 
             Question question = questions.get(0);
-
-            System.out.println("Vor dem edit: " + question.getTitle() + ": " + question.getText());
+            System.out.println("Vor dem edit: " + question.getTitle() + ": " + question.getText()+" von " +
+                    question.getModifiedBy());
 
             QuestionLocalServiceUtil.editQuestion(question.getQuestionID(), "Ganz neuer Titel", "Ganz neuer Text",
                     serviceContext);
@@ -266,7 +267,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
             question = questions.get(0);
 
-            System.out.println("Nach dem edit: " + question.getTitle() + ": " + question.getText());
+            System.out.println("Nach dem edit: " + question.getTitle() + ": " + question.getText()+" von " +
+                    question.getModifiedBy());
 
         } catch (PortalException e) {
             e.printStackTrace();
