@@ -1,5 +1,6 @@
 package org.sidate.questions_and_answers.portlet;
 
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -58,7 +59,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 		String text = ParamUtil.getString(request, "text");
 
 		try {
-            QuestionLocalServiceUtil.addQuestion(serviceContext.getUserId(), title, text, serviceContext);
+            QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
             SessionMessages.add(request, "questionAdded");
         }
         catch (Exception e) {
@@ -70,11 +71,12 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
 	}
 
-    public void editQuestion(ActionRequest request, ActionResponse response, long questionId) {
+    public void editQuestion(ActionRequest request, ActionResponse response, long questionId) throws PortalException {
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
+        ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
 
-        QuestionLocalServiceUtil.editQuestion(questionId, title, text);
+        QuestionLocalServiceUtil.editQuestion(questionId, title, text, serviceContext);
     }
 
     public void deleteQuestion(ActionRequest request, ActionResponse response, long questionId){
@@ -98,7 +100,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         String text = ParamUtil.getString(request, "text");
 
         try {
-            AnswerLocalServiceUtil.addAnswer(serviceContext.getUserId(), text, questionId, serviceContext);
+            AnswerLocalServiceUtil.addAnswer(text, questionId, serviceContext);
             SessionMessages.add(request, "answerAdded");
         }
         catch (Exception e) {
@@ -110,13 +112,15 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
-    public void editAnswer(ActionRequest request, ActionResponse response, long answerId) {
+    public void editAnswer(ActionRequest request, ActionResponse response, long answerId) throws PortalException {
+        ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
         String text = ParamUtil.getString(request, "text");
-        AnswerLocalServiceUtil.editAnswer(answerId, text);
+        AnswerLocalServiceUtil.editAnswer(answerId, text, serviceContext);
     }
 
-    public void acceptAnswer(ActionRequest request, ActionResponse response, long questionId, long answerId) {
-        QuestionLocalServiceUtil.setCorrectAnswer(answerId, questionId);
+    public void acceptAnswer(ActionRequest request, ActionResponse response, long questionId, long answerId) throws PortalException {
+        ServiceContext serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
+        QuestionLocalServiceUtil.setCorrectAnswer(answerId, questionId, serviceContext);
         SessionMessages.add(request, "answerAccepted");
 
     }
@@ -160,7 +164,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                 Answer.class.getName(), request);
 
         try {
-            AnswerLocalServiceUtil.addAnswer(serviceContext.getUserId(), text, questionId, serviceContext);
+            AnswerLocalServiceUtil.addAnswer(text, questionId, serviceContext);
             SessionMessages.add(request, "answerAdded");
         }
         catch (Exception e) {
@@ -254,7 +258,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             System.out.println("Vor dem edit: " + question.getTitle() + ": " + question.getText());
 
-            QuestionLocalServiceUtil.editQuestion(question.getQuestionID(), "Ganz neuer Titel", "Ganz neuer Text");
+            QuestionLocalServiceUtil.editQuestion(question.getQuestionID(), "Ganz neuer Titel", "Ganz neuer Text",
+                    serviceContext);
 
             questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
             question = questions.get(0);
@@ -279,7 +284,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             System.out.println("Vor dem edit: " + answer.getText() + " editiert am " + answer.getModifiedDate());
 
-            AnswerLocalServiceUtil.editAnswer(answer.getAnswerID(), "Ganz neue Antwort");
+            AnswerLocalServiceUtil.editAnswer(answer.getAnswerID(), "Ganz neue Antwort", serviceContext);
 
             answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             answer = answers.get(0);

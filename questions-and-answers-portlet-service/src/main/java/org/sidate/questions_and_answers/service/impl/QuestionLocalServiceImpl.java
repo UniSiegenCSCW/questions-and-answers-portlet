@@ -53,10 +53,20 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         return questionPersistence.findByGroupId(groupId);
     }
 
-    public void setCorrectAnswer(long answerId, long questionId) {
+    public void setCorrectAnswer(long answerId, long questionId, ServiceContext serviceContext) throws PortalException {
         Question question = questionPersistence.fetchByPrimaryKey(questionId);
         question.setCorrectAnswerId(answerId);
         questionPersistence.update(question);
+
+        assetEntryLocalService.updateEntry(
+                serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
+                Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
+                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null,
+                null, ContentTypes.TEXT_HTML, question.getTitle(), "Question Description appears here", null, null,
+                null, 0, 0, 0D);
+
+        Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
+        indexer.reindex(question);
     }
     
     public Answer getCorrectAnswer(long questionId) {
@@ -65,7 +75,8 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         return answerPersistence.fetchByPrimaryKey(answerId);
     }
 
-    public Question addQuestion(long userId, String title, String text, ServiceContext serviceContext) throws EmptyQuestionTitleException, EmptyQuestionTextException {
+    public Question addQuestion(String title, String text, ServiceContext serviceContext) throws
+            EmptyQuestionTitleException, EmptyQuestionTextException {
 
         // Validation
         if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
@@ -77,13 +88,11 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         Date modifiedDate = serviceContext.getModifiedDate();
         String uuid = serviceContext.getUuid();
         Question question = questionPersistence.create(questionId);
-        String[] tagNames = serviceContext.getAssetTagNames();
-        long[] categoryIds = serviceContext.getAssetCategoryIds();
 
         question.setUuid(uuid);
         question.setCreateDate(createDate);
         question.setModifiedDate(modifiedDate);
-        question.setUserId(userId);
+        question.setUserId(serviceContext.getUserId());
         question.setGroupId(groupId);
         question.setExpandoBridgeAttributes(serviceContext);
         question.setTitle(title);
@@ -93,33 +102,37 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
         try {
             assetEntryLocalService.updateEntry(
-                    userId, question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
+                    serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
                     Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
-                    categoryIds, tagNames, true,
-                    true, null, null,
-                    null, null, ContentTypes.TEXT_HTML, question.getTitle(),
-                    "Question Description appears here", null, null, null,
-                    0, 0, 0D);
+                    serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null,
+                    null, null, ContentTypes.TEXT_HTML, question.getTitle(), "Question Description appears here", null,
+                    null, null, 0, 0, 0D);
 
-            // Indexing
-            Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
-            indexer.reindex(question);
-
+                    Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
+                    indexer.reindex(question);
         } catch (PortalException e) {
             e.printStackTrace();
         }
 
-
         return question;
     }
 
-    public void editQuestion(long questionId, String title, String text) {
+    public void editQuestion(long questionId, String title, String text, ServiceContext serviceContext) throws PortalException {
         Question question = questionPersistence.fetchByPrimaryKey(questionId);
 
         question.setTitle(title);
         question.setText(text);
 
         questionPersistence.update(question);
+
+        assetEntryLocalService.updateEntry(
+                serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
+                Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
+                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null, null, ContentTypes.TEXT_HTML, question.getTitle(),
+                "Question Description appears here", null, null, null, 0, 0, 0D);
+
+        Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
+        indexer.reindex(question);
     }
 
     @Override
