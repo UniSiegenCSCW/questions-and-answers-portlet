@@ -1,4 +1,4 @@
-package de.sidate.questions_and_answers.portlet;
+package org.sidate.questions_and_answers.portlet;
 
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
@@ -13,13 +13,10 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import de.sidate.questions_and_answers.model.Answer;
-import de.sidate.questions_and_answers.model.Question;
-import de.sidate.questions_and_answers.service.AnswerLocalServiceUtil;
-import de.sidate.questions_and_answers.service.QuestionLocalService;
-import de.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
-import de.sidate.questions_and_answers.service.persistence.QuestionPersistence;
-import de.sidate.questions_and_answers.service.persistence.impl.QuestionPersistenceImpl;
+import org.sidate.questions_and_answers.model.Answer;
+import org.sidate.questions_and_answers.model.Question;
+import org.sidate.questions_and_answers.service.AnswerLocalServiceUtil;
+import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 import org.osgi.service.component.annotations.Component;
 
 import javax.portlet.*;

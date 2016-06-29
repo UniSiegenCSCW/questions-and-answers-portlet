@@ -12,7 +12,7 @@
  * details.
  */
 
-package de.sidate.questions_and_answers.service.impl;
+package org.sidate.questions_and_answers.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -26,11 +26,12 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
-import de.sidate.questions_and_answers.exception.AnswerTextValidationException;
-import de.sidate.questions_and_answers.exception.EmptyAnswerTextException;
-import de.sidate.questions_and_answers.model.Answer;
-import de.sidate.questions_and_answers.model.Question;
-import de.sidate.questions_and_answers.service.base.AnswerLocalServiceBaseImpl;
+import org.sidate.questions_and_answers.exception.EmptyAnswerTextException;
+import org.sidate.questions_and_answers.model.Answer;
+import org.sidate.questions_and_answers.model.Question;
+import org.sidate.questions_and_answers.service.AnswerLocalService;
+import org.sidate.questions_and_answers.service.AnswerLocalServiceUtil;
+import org.sidate.questions_and_answers.service.base.AnswerLocalServiceBaseImpl;
 
 import java.util.Date;
 import java.util.List;
@@ -39,7 +40,7 @@ import java.util.List;
  * The implementation of the answer local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link de.sidate.questions_and_answers.service.AnswerLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link AnswerLocalService} interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -47,14 +48,14 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see AnswerLocalServiceBaseImpl
- * @see de.sidate.questions_and_answers.service.AnswerLocalServiceUtil
+ * @see AnswerLocalServiceUtil
  */
 @ProviderType
 public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link de.sidate.questions_and_answers.service.AnswerLocalServiceUtil} to access the answer local service.
+	 * Never reference this class directly. Always use {@link AnswerLocalServiceUtil} to access the answer local service.
 	 */
 
     public List<Answer> getAnswersForQuestion(long questionId) {
@@ -119,5 +120,11 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 
         Indexer<Answer> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Answer.class);
         indexer.reindex(answer);
+    }
+
+    @Override
+    public Answer deleteAnswer(long answerId) throws PortalException {
+        assetEntryLocalService.deleteEntry(Question.class.getName(), answerId);
+        return super.deleteAnswer(answerId);
     }
 }

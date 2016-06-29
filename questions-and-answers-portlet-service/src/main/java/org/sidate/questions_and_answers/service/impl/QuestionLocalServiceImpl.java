@@ -12,7 +12,7 @@
  * details.
  */
 
-package de.sidate.questions_and_answers.service.impl;
+package org.sidate.questions_and_answers.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -21,11 +21,13 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
-import de.sidate.questions_and_answers.exception.EmptyQuestionTextException;
-import de.sidate.questions_and_answers.exception.EmptyQuestionTitleException;
-import de.sidate.questions_and_answers.model.Answer;
-import de.sidate.questions_and_answers.model.Question;
-import de.sidate.questions_and_answers.service.base.QuestionLocalServiceBaseImpl;
+import org.sidate.questions_and_answers.exception.EmptyQuestionTextException;
+import org.sidate.questions_and_answers.exception.EmptyQuestionTitleException;
+import org.sidate.questions_and_answers.model.Answer;
+import org.sidate.questions_and_answers.model.Question;
+import org.sidate.questions_and_answers.service.QuestionLocalService;
+import org.sidate.questions_and_answers.service.base.QuestionLocalServiceBaseImpl;
+import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -34,7 +36,7 @@ import java.util.List;
  * The implementation of the question local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link de.sidate.questions_and_answers.service.QuestionLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link QuestionLocalService} interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -42,7 +44,7 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see QuestionLocalServiceBaseImpl
- * @see de.sidate.questions_and_answers.service.QuestionLocalServiceUtil
+ * @see QuestionLocalServiceUtil
  */
 @ProviderType
 public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
@@ -131,6 +133,16 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
         Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
         indexer.reindex(question);
+    }
+
+    @Override
+    public Question deleteQuestion(long questionId) throws PortalException {
+        List<Answer> answers = answerLocalService.getAnswersForQuestion(questionId);
+        for (Answer a : answers) {
+            answerLocalService.deleteAnswer(a.getAnswerID());
+        }
+        assetEntryLocalService.deleteEntry(Question.class.getName(), questionId);
+        return super.deleteQuestion(questionId);
     }
 
 }
