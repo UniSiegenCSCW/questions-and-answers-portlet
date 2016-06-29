@@ -19,6 +19,6 @@ dependencies {
 buildService {
 	apiDir = "../questions-and-answers-portlet-api/src/main/java"
 	osgiModule = true
-	propsUtil = "de.sidate.questions_and_answers.service.util.PropsUtil"
+	propsUtil = "org.sidate.questions_and_answers.service.util.PropsUtil"
 	testDir = "src/main/test"
 }
