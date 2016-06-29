@@ -125,6 +125,8 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
     @Override
     public Answer deleteAnswer(long answerId) throws PortalException {
         assetEntryLocalService.deleteEntry(Question.class.getName(), answerId);
+        Indexer<Answer> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Answer.class);
+        indexer.delete(answerPersistence.fetchByPrimaryKey(answerId));
         return super.deleteAnswer(answerId);
     }
 }
