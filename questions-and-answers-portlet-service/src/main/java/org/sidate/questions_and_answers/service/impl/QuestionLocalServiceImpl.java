@@ -122,4 +122,14 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         questionPersistence.update(question);
     }
 
+    @Override
+    public Question deleteQuestion(long questionId) throws PortalException {
+        List<Answer> answers = answerLocalService.getAnswersForQuestion(questionId);
+        for (Answer a : answers) {
+            answerLocalService.deleteAnswer(a.getAnswerID());
+        }
+        assetEntryLocalService.deleteEntry(Question.class.getName(), questionId);
+        return super.deleteQuestion(questionId);
+    }
+
 }

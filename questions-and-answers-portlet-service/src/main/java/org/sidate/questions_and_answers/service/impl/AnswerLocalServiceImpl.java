@@ -111,4 +111,10 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 
         answerPersistence.update(answer);
     }
+
+    @Override
+    public Answer deleteAnswer(long answerId) throws PortalException {
+        assetEntryLocalService.deleteEntry(Question.class.getName(), answerId);
+        return super.deleteAnswer(answerId);
+    }
 }
