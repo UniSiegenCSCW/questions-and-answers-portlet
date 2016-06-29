@@ -12,7 +12,7 @@
  * details.
  */
 
-package de.sidate.questions_and_answers.model.impl;
+package org.sidate.questions_and_answers.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -21,7 +21,7 @@ import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 
-import de.sidate.questions_and_answers.model.Answer;
+import org.sidate.questions_and_answers.model.Question;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -31,27 +31,27 @@ import java.io.ObjectOutput;
 import java.util.Date;
 
 /**
- * The cache model class for representing Answer in entity cache.
+ * The cache model class for representing Question in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see Answer
+ * @see Question
  * @generated
  */
 @ProviderType
-public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
+public class QuestionCacheModel implements CacheModel<Question>, Externalizable {
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
 
-		if (!(obj instanceof AnswerCacheModel)) {
+		if (!(obj instanceof QuestionCacheModel)) {
 			return false;
 		}
 
-		AnswerCacheModel answerCacheModel = (AnswerCacheModel)obj;
+		QuestionCacheModel questionCacheModel = (QuestionCacheModel)obj;
 
-		if (answerID == answerCacheModel.answerID) {
+		if (questionID == questionCacheModel.questionID) {
 			return true;
 		}
 
@@ -60,17 +60,17 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 
 	@Override
 	public int hashCode() {
-		return HashUtil.hash(0, answerID);
+		return HashUtil.hash(0, questionID);
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
-		sb.append(", answerID=");
-		sb.append(answerID);
+		sb.append(", questionID=");
+		sb.append(questionID);
 		sb.append(", groupId=");
 		sb.append(groupId);
 		sb.append(", companyId=");
@@ -83,71 +83,80 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
+		sb.append(", title=");
+		sb.append(title);
 		sb.append(", text=");
 		sb.append(text);
-		sb.append(", questionId=");
-		sb.append(questionId);
+		sb.append(", correctAnswerId=");
+		sb.append(correctAnswerId);
 		sb.append("}");
 
 		return sb.toString();
 	}
 
 	@Override
-	public Answer toEntityModel() {
-		AnswerImpl answerImpl = new AnswerImpl();
+	public Question toEntityModel() {
+		QuestionImpl questionImpl = new QuestionImpl();
 
 		if (uuid == null) {
-			answerImpl.setUuid(StringPool.BLANK);
+			questionImpl.setUuid(StringPool.BLANK);
 		}
 		else {
-			answerImpl.setUuid(uuid);
+			questionImpl.setUuid(uuid);
 		}
 
-		answerImpl.setAnswerID(answerID);
-		answerImpl.setGroupId(groupId);
-		answerImpl.setCompanyId(companyId);
-		answerImpl.setUserId(userId);
+		questionImpl.setQuestionID(questionID);
+		questionImpl.setGroupId(groupId);
+		questionImpl.setCompanyId(companyId);
+		questionImpl.setUserId(userId);
 
 		if (userName == null) {
-			answerImpl.setUserName(StringPool.BLANK);
+			questionImpl.setUserName(StringPool.BLANK);
 		}
 		else {
-			answerImpl.setUserName(userName);
+			questionImpl.setUserName(userName);
 		}
 
 		if (createDate == Long.MIN_VALUE) {
-			answerImpl.setCreateDate(null);
+			questionImpl.setCreateDate(null);
 		}
 		else {
-			answerImpl.setCreateDate(new Date(createDate));
+			questionImpl.setCreateDate(new Date(createDate));
 		}
 
 		if (modifiedDate == Long.MIN_VALUE) {
-			answerImpl.setModifiedDate(null);
+			questionImpl.setModifiedDate(null);
 		}
 		else {
-			answerImpl.setModifiedDate(new Date(modifiedDate));
+			questionImpl.setModifiedDate(new Date(modifiedDate));
+		}
+
+		if (title == null) {
+			questionImpl.setTitle(StringPool.BLANK);
+		}
+		else {
+			questionImpl.setTitle(title);
 		}
 
 		if (text == null) {
-			answerImpl.setText(StringPool.BLANK);
+			questionImpl.setText(StringPool.BLANK);
 		}
 		else {
-			answerImpl.setText(text);
+			questionImpl.setText(text);
 		}
 
-		answerImpl.setQuestionId(questionId);
+		questionImpl.setCorrectAnswerId(correctAnswerId);
 
-		answerImpl.resetOriginalValues();
+		questionImpl.resetOriginalValues();
 
-		return answerImpl;
+		return questionImpl;
 	}
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		uuid = objectInput.readUTF();
 
-		answerID = objectInput.readLong();
+		questionID = objectInput.readLong();
 
 		groupId = objectInput.readLong();
 
@@ -157,9 +166,10 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+		title = objectInput.readUTF();
 		text = objectInput.readUTF();
 
-		questionId = objectInput.readLong();
+		correctAnswerId = objectInput.readLong();
 	}
 
 	@Override
@@ -172,7 +182,7 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 			objectOutput.writeUTF(uuid);
 		}
 
-		objectOutput.writeLong(answerID);
+		objectOutput.writeLong(questionID);
 
 		objectOutput.writeLong(groupId);
 
@@ -190,6 +200,13 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
 
+		if (title == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(title);
+		}
+
 		if (text == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -197,17 +214,18 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 			objectOutput.writeUTF(text);
 		}
 
-		objectOutput.writeLong(questionId);
+		objectOutput.writeLong(correctAnswerId);
 	}
 
 	public String uuid;
-	public long answerID;
+	public long questionID;
 	public long groupId;
 	public long companyId;
 	public long userId;
 	public String userName;
 	public long createDate;
 	public long modifiedDate;
+	public String title;
 	public String text;
-	public long questionId;
+	public long correctAnswerId;
 }
