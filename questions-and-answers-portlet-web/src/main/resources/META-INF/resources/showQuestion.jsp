@@ -11,8 +11,6 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="com.liferay.portal.kernel.service.UserLocalServiceUtil" %>
 <%@ page import="com.liferay.portal.kernel.model.User" %>
-<%@ page import="com.liferay.portal.kernel.model.Company" %>
-<%@ page import="com.liferay.portal.kernel.service.CompanyLocalServiceUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.PortalUtil" %>
 <%@ include file="init.jsp" %>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
@@ -28,12 +26,12 @@
     AssetEntry asset = AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), questionID);
     List<AssetTag> tags = asset.getTags();
     List<AssetCategory> categories = asset.getCategories();
-
     List<Answer> answerList = AnswerLocalServiceUtil.getAnswersForQuestion(questionID);
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy 'um' hh:mm");
 
     User author = UserLocalServiceUtil.getUser(question.getUserId());
+
 %>
 
 <liferay-ui:header
@@ -106,7 +104,7 @@
                                            formName='<%="questionForm_"+question.getQuestionID()%>'
                                            ratingsEnabled="<%=false%>"
                                            redirect="<%=currentUrl%>"
-                                           userId="<%=question.getUserId()%>" />
+                                           userId="<%=themeDisplay.getUserId()%>" />
 
                 </aui:row>
             </aui:col>
@@ -173,7 +171,7 @@
                                                formName='<%="answerForm_"+answer.getAnswerID()%>'
                                                ratingsEnabled="<%=false%>"
                                                redirect="<%=currentUrl%>"
-                                               userId="<%=answer.getUserId()%>" />
+                                               userId="<%=themeDisplay.getUserId()%>" />
 
                     </aui:row>
                 </aui:col>
