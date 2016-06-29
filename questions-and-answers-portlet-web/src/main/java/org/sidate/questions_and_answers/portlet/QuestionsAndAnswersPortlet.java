@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import org.sidate.questions_and_answers.constants.QuestionsAndAnswersPortletKeys;
 import org.sidate.questions_and_answers.model.Answer;
 import org.sidate.questions_and_answers.model.Question;
 import org.sidate.questions_and_answers.service.AnswerLocalServiceUtil;
@@ -36,7 +37,8 @@ import static java.util.stream.Collectors.joining;
 		"javax.portlet.security-role-ref=power-user,user",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view.jsp",
-		"javax.portlet.resource-bundle=content.Language"
+		"javax.portlet.resource-bundle=content.Language",
+        "javax.portlet.name=" + QuestionsAndAnswersPortletKeys.QUESTIONS_AND_ANSWERS
 	},
 	service = Portlet.class
 )
