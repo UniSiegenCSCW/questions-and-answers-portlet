@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="org.sidate.questions_and_answers.model.Answer">
+		<field name="uuid" type="String" />
+		<field name="answerID" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="text" type="String">
+			<hint-collection name="TEXTAREA" />
+		</field>
+		<field name="questionId" type="long" />
+	</model>
+	<model name="org.sidate.questions_and_answers.model.Question">
+		<field name="uuid" type="String" />
+		<field name="questionID" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="title" type="String" />
+		<field name="text" type="String">
+			<hint-collection name="TEXTAREA" />
+		</field>
+		<field name="correctAnswerId" type="long" />
+		<field name="modifiedBy" type="long" />
+	</model>
+</model-hints>
