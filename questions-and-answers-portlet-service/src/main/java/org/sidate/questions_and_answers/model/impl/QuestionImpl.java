@@ -15,9 +15,16 @@
 package org.sidate.questions_and_answers.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
+import com.liferay.asset.kernel.service.AssetEntryServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import org.sidate.questions_and_answers.model.Question;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * The extended model implementation for the Question service. Represents a row in the &quot;SIDATE_Question&quot; database table, with each column mapped to a property of this class.
@@ -77,4 +84,13 @@ public class QuestionImpl extends QuestionBaseImpl {
 			}
 		}
 	}
+
+	public List<AssetTag> getTags() throws PortalException {
+		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTags();
+	}
+
+    public List<AssetCategory> getCategories() throws PortalException {
+        return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategories();
+    }
+
 }
