@@ -75,7 +75,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         return answerPersistence.fetchByPrimaryKey(answerId);
     }
 
-    public Question addQuestion(long userId, String title, String text, ServiceContext serviceContext) throws
+    public Question addQuestion(String title, String text, ServiceContext serviceContext) throws
             EmptyQuestionTitleException, EmptyQuestionTextException {
 
         // Validation
@@ -92,7 +92,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         question.setUuid(uuid);
         question.setCreateDate(createDate);
         question.setModifiedDate(modifiedDate);
-        question.setUserId(userId);
+        question.setUserId(serviceContext.getUserId());
         question.setGroupId(groupId);
         question.setExpandoBridgeAttributes(serviceContext);
         question.setTitle(title);
@@ -102,7 +102,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
         try {
             assetEntryLocalService.updateEntry(
-                    userId, question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
+                    serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
                     Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
                     serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null,
                     null, null, ContentTypes.TEXT_HTML, question.getTitle(), "Question Description appears here", null,
