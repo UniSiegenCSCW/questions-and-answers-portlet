@@ -32,6 +32,11 @@
 
     User author = UserLocalServiceUtil.getUser(question.getUserId());
 
+    long groupId = scopeGroupId;
+    String name = portletDisplay.getRootPortletId();
+    String primKey = portletDisplay.getResourcePK();
+    String actionId = "ADD_SOMETHING";
+
 %>
 
 <liferay-ui:header
@@ -84,6 +89,9 @@
                             </div>
                         </div>
                     </div>
+                </aui:row>
+                <aui:row>
+
                 </aui:row>
                 <aui:row cssClass='<%="qaDiscussionWrapper questionDiscussion_"+question.getQuestionID()%>'>
                     <a id="toggleQuestionComment_<%=question.getQuestionID()%>">neuen Kommentar hinzuf&uuml;gen</a>

@@ -78,7 +78,8 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "title", Types.VARCHAR },
 			{ "text_", Types.VARCHAR },
-			{ "correctAnswerId", Types.BIGINT }
+			{ "correctAnswerId", Types.BIGINT },
+			{ "modifiedBy", Types.BIGINT }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -94,9 +95,10 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		TABLE_COLUMNS_MAP.put("title", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("text_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("correctAnswerId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("modifiedBy", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table SIDATE_Question (uuid_ VARCHAR(75) null,questionID LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,title VARCHAR(75) null,text_ VARCHAR(75) null,correctAnswerId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table SIDATE_Question (uuid_ VARCHAR(75) null,questionID LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,title VARCHAR(75) null,text_ VARCHAR(75) null,correctAnswerId LONG,modifiedBy LONG)";
 	public static final String TABLE_SQL_DROP = "drop table SIDATE_Question";
 	public static final String ORDER_BY_JPQL = " ORDER BY question.questionID ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY SIDATE_Question.questionID ASC";
@@ -167,6 +169,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		attributes.put("title", getTitle());
 		attributes.put("text", getText());
 		attributes.put("correctAnswerId", getCorrectAnswerId());
+		attributes.put("modifiedBy", getModifiedBy());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -240,6 +243,12 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 		if (correctAnswerId != null) {
 			setCorrectAnswerId(correctAnswerId);
+		}
+
+		Long modifiedBy = (Long)attributes.get("modifiedBy");
+
+		if (modifiedBy != null) {
+			setModifiedBy(modifiedBy);
 		}
 	}
 
@@ -428,6 +437,16 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 	}
 
 	@Override
+	public long getModifiedBy() {
+		return _modifiedBy;
+	}
+
+	@Override
+	public void setModifiedBy(long modifiedBy) {
+		_modifiedBy = modifiedBy;
+	}
+
+	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(PortalUtil.getClassNameId(
 				Question.class.getName()));
@@ -475,6 +494,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		questionImpl.setTitle(getTitle());
 		questionImpl.setText(getText());
 		questionImpl.setCorrectAnswerId(getCorrectAnswerId());
+		questionImpl.setModifiedBy(getModifiedBy());
 
 		questionImpl.resetOriginalValues();
 
@@ -616,12 +636,14 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 		questionCacheModel.correctAnswerId = getCorrectAnswerId();
 
+		questionCacheModel.modifiedBy = getModifiedBy();
+
 		return questionCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(25);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -645,6 +667,8 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		sb.append(getText());
 		sb.append(", correctAnswerId=");
 		sb.append(getCorrectAnswerId());
+		sb.append(", modifiedBy=");
+		sb.append(getModifiedBy());
 		sb.append("}");
 
 		return sb.toString();
@@ -652,7 +676,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(37);
+		StringBundler sb = new StringBundler(40);
 
 		sb.append("<model><model-name>");
 		sb.append("org.sidate.questions_and_answers.model.Question");
@@ -702,6 +726,10 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 			"<column><column-name>correctAnswerId</column-name><column-value><![CDATA[");
 		sb.append(getCorrectAnswerId());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>modifiedBy</column-name><column-value><![CDATA[");
+		sb.append(getModifiedBy());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -729,6 +757,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 	private String _title;
 	private String _text;
 	private long _correctAnswerId;
+	private long _modifiedBy;
 	private long _columnBitmask;
 	private Question _escapedModel;
 }

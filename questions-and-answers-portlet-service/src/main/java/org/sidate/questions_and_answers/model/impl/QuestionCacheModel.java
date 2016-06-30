@@ -65,7 +65,7 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(25);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -89,6 +89,8 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		sb.append(text);
 		sb.append(", correctAnswerId=");
 		sb.append(correctAnswerId);
+		sb.append(", modifiedBy=");
+		sb.append(modifiedBy);
 		sb.append("}");
 
 		return sb.toString();
@@ -146,6 +148,7 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		}
 
 		questionImpl.setCorrectAnswerId(correctAnswerId);
+		questionImpl.setModifiedBy(modifiedBy);
 
 		questionImpl.resetOriginalValues();
 
@@ -170,6 +173,8 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		text = objectInput.readUTF();
 
 		correctAnswerId = objectInput.readLong();
+
+		modifiedBy = objectInput.readLong();
 	}
 
 	@Override
@@ -215,6 +220,8 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		}
 
 		objectOutput.writeLong(correctAnswerId);
+
+		objectOutput.writeLong(modifiedBy);
 	}
 
 	public String uuid;
@@ -228,4 +235,5 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 	public String title;
 	public String text;
 	public long correctAnswerId;
+	public long modifiedBy;
 }
