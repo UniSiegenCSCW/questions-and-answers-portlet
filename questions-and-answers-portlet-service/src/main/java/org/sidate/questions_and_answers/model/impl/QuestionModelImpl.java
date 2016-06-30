@@ -98,7 +98,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		TABLE_COLUMNS_MAP.put("modifiedBy", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table SIDATE_Question (uuid_ VARCHAR(75) null,questionID LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,title VARCHAR(75) null,text_ VARCHAR(75) null,correctAnswerId LONG,modifiedBy LONG)";
+	public static final String TABLE_SQL_CREATE = "create table SIDATE_Question (uuid_ VARCHAR(75) null,questionID LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,title VARCHAR(75) null,text_ STRING null,correctAnswerId LONG,modifiedBy LONG)";
 	public static final String TABLE_SQL_DROP = "drop table SIDATE_Question";
 	public static final String ORDER_BY_JPQL = " ORDER BY question.questionID ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY SIDATE_Question.questionID ASC";

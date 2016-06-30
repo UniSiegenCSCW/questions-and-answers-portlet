@@ -94,7 +94,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		TABLE_COLUMNS_MAP.put("questionId", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table SIDATE_Answer (uuid_ VARCHAR(75) null,answerID LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,text_ VARCHAR(75) null,questionId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table SIDATE_Answer (uuid_ VARCHAR(75) null,answerID LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,text_ STRING null,questionId LONG)";
 	public static final String TABLE_SQL_DROP = "drop table SIDATE_Answer";
 	public static final String ORDER_BY_JPQL = " ORDER BY answer.answerID ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY SIDATE_Answer.answerID ASC";

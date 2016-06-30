@@ -31,6 +31,7 @@ import org.sidate.questions_and_answers.model.Answer;
 import org.sidate.questions_and_answers.model.Question;
 import org.sidate.questions_and_answers.service.AnswerLocalService;
 import org.sidate.questions_and_answers.service.AnswerLocalServiceUtil;
+import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 import org.sidate.questions_and_answers.service.base.AnswerLocalServiceBaseImpl;
 
 import java.util.Date;
@@ -123,10 +124,17 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
     }
 
     @Override
-    public Answer deleteAnswer(long answerId) throws PortalException {
+    public Answer deleteAnswer(long answerId, ServiceContext serviceContext) throws PortalException {
         assetEntryLocalService.deleteEntry(Question.class.getName(), answerId);
         Indexer<Answer> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Answer.class);
-        indexer.delete(answerPersistence.fetchByPrimaryKey(answerId));
+        Answer answer = answerPersistence.fetchByPrimaryKey(answerId);
+        indexer.delete(answer);
+        Question question = QuestionLocalServiceUtil.getQuestion(answer.getQuestionId());
+
+        if (question.getCorrectAnswerId() == answerId) {
+            QuestionLocalServiceUtil.setCorrectAnswer(0, question.getQuestionID(), serviceContext);
+        }
+
         return super.deleteAnswer(answerId);
     }
 }

@@ -55,6 +55,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
     public void setCorrectAnswer(long answerId, long questionId, ServiceContext serviceContext) throws PortalException {
         Question question = questionPersistence.fetchByPrimaryKey(questionId);
+        question.setModifiedBy(serviceContext.getUserId());
         question.setCorrectAnswerId(answerId);
         questionPersistence.update(question);
 

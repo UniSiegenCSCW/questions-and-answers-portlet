@@ -14,7 +14,6 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import org.sidate.questions_and_answers.constants.QuestionsAndAnswersPortletKeys;
 import org.sidate.questions_and_answers.model.Answer;
 import org.sidate.questions_and_answers.model.Question;
 import org.sidate.questions_and_answers.service.AnswerLocalServiceUtil;
@@ -30,62 +29,63 @@ import static java.util.stream.Collectors.joining;
 
 
 @Component(
-	immediate = true,
-	property = {
-		"com.liferay.portlet.display-category=category.sample",
-		"com.liferay.portlet.instanceable=true",
-		"javax.portlet.display-name=Questions and Answers",
-		"javax.portlet.security-role-ref=power-user,user",
-		"javax.portlet.init-param.template-path=/",
-		"javax.portlet.init-param.view-template=/view.jsp",
-		"javax.portlet.resource-bundle=content.Language",
-        "javax.portlet.name=" + QuestionsAndAnswersPortletKeys.QUESTIONS_AND_ANSWERS
-	},
-	service = Portlet.class
+        immediate = true,
+        property = {
+                "com.liferay.portlet.display-category=category.sample",
+                "com.liferay.portlet.instanceable=true",
+                "javax.portlet.display-name=Questions and Answers",
+                "javax.portlet.security-role-ref=power-user,user",
+                "javax.portlet.init-param.template-path=/",
+                "javax.portlet.init-param.view-template=/view.jsp",
+                "javax.portlet.resource-bundle=content.Language"
+        },
+        service = Portlet.class
 )
 
 public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     private static Log log = LogFactoryUtil.getLog(QuestionsAndAnswersPortlet.class);
 
-    
+
     // #### Question ####
 
 
-	public void newQuestion(ActionRequest request, ActionResponse response)
-			throws PortalException, SystemException {
+    public void newQuestion(ActionRequest request, ActionResponse response)
+            throws PortalException, SystemException {
 
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(
-				Question.class.getName(), request);
+        ServiceContext serviceContext = ServiceContextFactory.getInstance(
+                Question.class.getName(), request);
 
-		String title = ParamUtil.getString(request, "title");
-		String text = ParamUtil.getString(request, "text");
+        String title = ParamUtil.getString(request, "title");
+        String text = ParamUtil.getString(request, "text");
 
-		try {
+        try {
             QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
             SessionMessages.add(request, "questionAdded");
         }
         catch (Exception e) {
-			SessionErrors.add(request, e.getClass().getName());
-			PortalUtil.copyRequestParameters(request, response);
-			response.setRenderParameter("mvcPath", "/view.jsp");
+            SessionErrors.add(request, e.getClass().getName());
+            PortalUtil.copyRequestParameters(request, response);
+            response.setRenderParameter("mvcPath", "/view.jsp");
             log.error(e.getClass().getName() + "\n" + e.getMessage());
-		}
+        }
 
-	}
+    }
 
-    public void editQuestion(ActionRequest request, ActionResponse response, long questionId) throws PortalException {
+    public void editQuestion(ActionRequest request, ActionResponse response) throws PortalException {
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
+        long questionId = ParamUtil.getLong(request, "questionID");
         ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
 
         QuestionLocalServiceUtil.editQuestion(questionId, title, text, serviceContext);
     }
 
-    public void deleteQuestion(ActionRequest request, ActionResponse response, long questionId){
+    public void deleteQuestion(ActionRequest request, ActionResponse response){
+        long questionId = ParamUtil.getLong(request, "questionID");
         try {
             QuestionLocalServiceUtil.deleteQuestion(questionId);
-        } catch (PortalException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -94,17 +94,20 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     // #### Answers ####
 
 
-    public void newAnswer(ActionRequest request, ActionResponse response, long questionId)
+    public void newAnswer(ActionRequest request, ActionResponse response)
             throws PortalException, SystemException {
 
         ServiceContext serviceContext = ServiceContextFactory.getInstance(
                 Answer.class.getName(), request);
 
         String text = ParamUtil.getString(request, "text");
+        String redirectUrl = ParamUtil.getString(request, "redirectURL");
+        long questionId = ParamUtil.getLong(request, "questionID");
 
         try {
             AnswerLocalServiceUtil.addAnswer(text, questionId, serviceContext);
             SessionMessages.add(request, "answerAdded");
+            response.sendRedirect(redirectUrl);
         }
         catch (Exception e) {
             SessionErrors.add(request, e.getClass().getName());
@@ -128,10 +131,14 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
-    public void deleteAnswer(ActionRequest request, ActionResponse response, long answerId){
+    public void deleteAnswer(ActionRequest request, ActionResponse response) throws PortalException{
+        ServiceContext serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
+        long answerId = ParamUtil.getLong(request, "answerID");
+        String redirectUrl = ParamUtil.getString(request, "redirectURL");
         try {
-            AnswerLocalServiceUtil.deleteAnswer(answerId);
-        } catch (PortalException e) {
+            AnswerLocalServiceUtil.deleteAnswer(answerId, serviceContext);
+            response.sendRedirect(redirectUrl);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
