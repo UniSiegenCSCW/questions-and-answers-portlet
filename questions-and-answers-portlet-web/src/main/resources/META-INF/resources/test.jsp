@@ -15,6 +15,9 @@
 <portlet:actionURL name="testEditAnswer" var="testEditAnswerURL"/>
 <aui:button onClick="<%= testEditAnswerURL%>" value="Edit the first answer of first question"></aui:button>
 
-<portlet:actionURL name="testDisplayAssets" var="testDisplayAssetsURL"/>
+<portlet:actionURL name="testDisplayAssetCount" var="testDisplayAssetsURL"/>
 <aui:button onClick="<%= testDisplayAssetsURL%>" value="Display the asset count"></aui:button>
+
+<portlet:actionURL name="testDisplayAssets" var="testDisplayAssetsURL"/>
+<aui:button onClick="<%= testDisplayAssetsURL%>" value="Display the assets"></aui:button>
 

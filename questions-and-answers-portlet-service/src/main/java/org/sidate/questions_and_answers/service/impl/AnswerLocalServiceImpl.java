@@ -89,7 +89,7 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         try {
             assetEntryLocalService.updateEntry(
                     serviceContext.getUserId(), answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
-                    Question.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
+                    Answer.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
                     serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null,
                     null, null, ContentTypes.TEXT_HTML, QuestionLocalServiceUtil.getQuestion(questionId).getTitle(), text,
                     null, null, null, 0, 0, 0D);
@@ -123,17 +123,17 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 
     @Override
     public Answer deleteAnswer(long answerId, ServiceContext serviceContext) throws PortalException {
-        assetEntryLocalService.deleteEntry(Question.class.getName(), answerId);
+        Answer answer = super.deleteAnswer(answerId);
+        assetEntryLocalService.deleteEntry(Answer.class.getName(), answerId);
         Indexer<Answer> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Answer.class);
-        Answer answer = answerPersistence.fetchByPrimaryKey(answerId);
         indexer.delete(answer);
-        Question question = QuestionLocalServiceUtil.getQuestion(answer.getQuestionId());
 
+        Question question = QuestionLocalServiceUtil.getQuestion(answer.getQuestionId());
         //if answer is correct answer, correct answer is set to 0
         if (question.getCorrectAnswerId() == answerId) {
             QuestionLocalServiceUtil.setCorrectAnswer(0, question.getQuestionID(), serviceContext);
         }
 
-        return super.deleteAnswer(answerId);
+        return answer;
     }
 }

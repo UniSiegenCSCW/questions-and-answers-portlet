@@ -1,5 +1,6 @@
 package org.sidate.questions_and_answers.portlet;
 
+import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -261,8 +262,9 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             for (Answer answer:answers) {
                 System.out.println(answer.getText());
             }
-
-            Answer answer = answers.get(2);
+            System.out.println("Asset Count");
+            testDisplayAssetCount(request, response);
+            Answer answer = answers.get(0);
             AnswerLocalServiceUtil.deleteAnswer(answer);
             answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
 
@@ -270,6 +272,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             for (Answer editedAnswer:answers) {
                 System.out.println(editedAnswer.getText());
             }
+            System.out.println("Asset Count");
+            testDisplayAssetCount(request, response);
 
         } catch (PortalException e) {
             e.printStackTrace();
@@ -328,8 +332,15 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
-    public void testDisplayAssets(ActionRequest request, ActionResponse response) {
+    public void testDisplayAssetCount(ActionRequest request, ActionResponse response) {
         System.out.println(AssetEntryLocalServiceUtil.getAssetEntriesCount());
+    }
+
+    public void testDisplayAssets(ActionRequest request, ActionResponse response) {
+        List<AssetEntry> entries = AssetEntryLocalServiceUtil.getAssetEntries(0, AssetEntryLocalServiceUtil.getAssetEntriesCount());
+        for (AssetEntry entry:entries) {
+            System.out.println(entry.getDescription());
+        }
     }
 
 }

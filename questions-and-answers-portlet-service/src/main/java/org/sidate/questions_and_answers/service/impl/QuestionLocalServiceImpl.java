@@ -136,14 +136,16 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
     @Override
     public Question deleteQuestion(long questionId) throws PortalException {
         List<Answer> answers = answerLocalService.getAnswersForQuestion(questionId);
-        for (Answer a : answers) {
-            answerLocalService.deleteAnswer(a.getAnswerID());
+        for (Answer answer : answers) {
+            answerLocalService.deleteAnswer(answer.getAnswerID());
         }
 
+		Question question = super.deleteQuestion(questionId);
         assetEntryLocalService.deleteEntry(Question.class.getName(), questionId);
         Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
-        indexer.delete(questionPersistence.fetchByPrimaryKey(questionId));
-        return super.deleteQuestion(questionId);
+        indexer.delete(question);
+
+        return question;
     }
 
 }
