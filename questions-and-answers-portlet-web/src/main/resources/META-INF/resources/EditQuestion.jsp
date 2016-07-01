@@ -40,11 +40,11 @@
             <aui:input label="Titel der Frage" name="title"/>
             <br/>
                 <liferay-ui:input-editor name="text" initMethod="initEditor" />
-                <script type="text/javascript">
+                <aui:script>
                     function <portlet:namespace />initEditor() {
                         return "<%= questionText %>";
                     }
-                </script>
+                </aui:script>
         </aui:fieldset>
         <aui:fieldset>
             <div>

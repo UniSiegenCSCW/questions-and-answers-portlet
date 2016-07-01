@@ -118,10 +118,21 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
-    public void editAnswer(ActionRequest request, ActionResponse response, long answerId) throws PortalException {
+    public void editAnswer(ActionRequest request, ActionResponse response) throws PortalException {
         ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+        long answerId = ParamUtil.getLong(request, "answerID");
         String text = ParamUtil.getString(request, "text");
-        AnswerLocalServiceUtil.editAnswer(answerId, text, serviceContext);
+        String redirectUrl = ParamUtil.getString(request, "redirectURL");
+        try {
+            AnswerLocalServiceUtil.editAnswer(answerId, text, serviceContext);
+            response.sendRedirect(redirectUrl);
+        }
+        catch (Exception e) {
+            SessionErrors.add(request, e.getClass().getName());
+            PortalUtil.copyRequestParameters(request, response);
+            response.setRenderParameter("mvcPath", "/view.jsp");
+            log.error(e.getClass().getName() + "\n" + e.getMessage());
+        }
     }
 
     public void acceptAnswer(ActionRequest request, ActionResponse response, long questionId, long answerId) throws PortalException {

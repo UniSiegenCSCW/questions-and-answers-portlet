@@ -125,7 +125,12 @@
                         <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
                     </portlet:actionURL>
                     <aui:button onClick="<%=deleteQuestionURL%>" value="Frage l&ouml;schen"/>
-                    <aui:button onClick="#" value="Frage beantworten"/>
+                    <aui:button id="addNewAnswerButton" value="Frage beantworten"/>
+                    <aui:script>
+                        $("#<portlet:namespace/>addNewAnswerButton").click(function () {
+                            $(".main-container").animate({scrollTop: $("#newAnswerFormContainer").position().top}, 500, 'swing');
+                        });
+                    </aui:script>
                 </aui:button-row>
                 <aui:row cssClass='<%="qaDiscussionWrapper questionDiscussion_"+question.getQuestionID()%>'>
                     <a id="toggleQuestionComment_<%=question.getQuestionID()%>">neuen Kommentar hinzuf&uuml;gen</a>
@@ -211,7 +216,7 @@
                                 List<Organization> answerEditorOrganizations = answerEditor.getOrganizations();
                             %>
                             <div class="qaAuthorbox">
-                                <div>editiert am <%=sdf.format(question.getModifiedDate())%></div>
+                                <div>editiert am <%=sdf.format(answer.getModifiedDate())%></div>
                                 <div class="qaAuthorImage">
                                     <img src="<%=answerEditor.getPortraitURL(themeDisplay)%>"/>
                                 </div>
@@ -226,7 +231,14 @@
                         </c:if>
                     </aui:row>
                     <aui:button-row cssClass="qaButtonRow">
-                        <aui:button onClick="#" value="Antwort bearbeiten"/>
+
+                        <portlet:renderURL var="editAnswerURL">
+                            <portlet:param name="mvcPath" value="/editAnswer.jsp"/>
+                            <portlet:param name="backURL" value="<%= showQuestionsURL%>"/>
+                            <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
+                        </portlet:renderURL>
+
+                        <aui:button onClick="<%=editAnswerURL%>" value="Antwort bearbeiten"/>
                         <portlet:actionURL name="deleteAnswer" var="deleteAnswerURL">
                             <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
                             <portlet:param name="redirectURL" value="<%=showQuestionsURL%>"/>
@@ -264,11 +276,18 @@
         <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
         <portlet:param name="redirectURL" value="<%=showQuestionsURL%>"/>
     </portlet:actionURL>
-    <aui:form action="<%= newAnswerURL %>" name="<portlet:namespace />newAnswer">
-        <h5>Ihre Antwort</h5>
-        <liferay-ui:input-editor name="text"/>
-        <aui:button-row>
-            <aui:button value="Antwort absenden" type="submit"/>
-        </aui:button-row>
-    </aui:form>
+    <aui:container>
+        <aui:form action="<%= newAnswerURL %>" name="AnswerForm">
+            <h5 id="newAnswerFormContainer">Ihre Antwort</h5>
+            <liferay-ui:input-editor name="text"/>
+            <aui:script>
+                function <portlet:namespace />initEditor() {
+                    return "";
+                }
+            </aui:script>
+            <aui:button-row>
+                <aui:button value="Antwort absenden" type="submit"/>
+            </aui:button-row>
+        </aui:form>
+    </aui:container>
 </aui:container>
