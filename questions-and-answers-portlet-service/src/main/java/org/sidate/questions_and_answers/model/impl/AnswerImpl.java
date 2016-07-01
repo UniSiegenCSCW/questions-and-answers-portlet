@@ -15,6 +15,9 @@
 package org.sidate.questions_and_answers.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
+import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import org.sidate.questions_and_answers.model.Answer;
 
 /**
  * The extended model implementation for the Answer service. Represents a row in the &quot;SIDATE_Answer&quot; database table, with each column mapped to a property of this class.
@@ -33,5 +36,9 @@ public class AnswerImpl extends AnswerBaseImpl {
 	 * Never reference this class directly. All methods that expect a answer model instance should use the {@link org.sidate.questions_and_answers.model.Answer} interface instead.
 	 */
 	public AnswerImpl() {
+	}
+
+	public String getText() throws PortalException {
+		return AssetEntryLocalServiceUtil.getEntry(Answer.class.getName(), this.getAnswerID()).getDescription();
 	}
 }

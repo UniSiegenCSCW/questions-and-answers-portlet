@@ -16,6 +16,7 @@ package org.sidate.questions_and_answers.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.asset.kernel.service.AssetEntryServiceUtil;
@@ -43,6 +44,8 @@ public class QuestionImpl extends QuestionBaseImpl {
 	 *
 	 * Never reference this class directly. All methods that expect a question model instance should use the {@link org.sidate.questions_and_answers.model.Question} interface instead.
 	 */
+
+
 	public QuestionImpl() {
 	}
 
@@ -101,4 +104,12 @@ public class QuestionImpl extends QuestionBaseImpl {
 	public long[] getCategoryIds() throws PortalException {
 		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategoryIds();
 	}
+
+    public String getTitle() throws PortalException{
+        return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTitle();
+    }
+
+    public String getText() throws PortalException{
+        return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getDescription();
+    }
 }

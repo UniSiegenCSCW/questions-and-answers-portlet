@@ -59,15 +59,15 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         question.setCorrectAnswerId(answerId);
         questionPersistence.update(question);
 
-        assetEntryLocalService.updateEntry(
-                serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
-                Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
-                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null,
-                null, ContentTypes.TEXT_HTML, question.getTitle(), "Question Description appears here", null, null,
-                null, 0, 0, 0D);
+//        assetEntryLocalService.updateEntry(
+//                serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
+//                Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
+//                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null,
+//                null, ContentTypes.TEXT_HTML, question.getTitle(), question.getText(), null, null,
+//                null, 0, 0, 0D);
 
-        Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
-        indexer.reindex(question);
+//        Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
+//        indexer.reindex(question);
     }
     
     public Answer getCorrectAnswer(long questionId) {
@@ -96,8 +96,6 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         question.setUserId(serviceContext.getUserId());
         question.setGroupId(groupId);
         question.setExpandoBridgeAttributes(serviceContext);
-        question.setTitle(title);
-        question.setText(text);
 
         questionPersistence.update(question);
 
@@ -106,7 +104,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
                     serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
                     Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
                     serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null,
-                    null, null, ContentTypes.TEXT_HTML, question.getTitle(), "Question Description appears here", null,
+                    null, null, ContentTypes.TEXT_HTML, title, text, null,
                     null, null, 0, 0, 0D);
 
                     Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
@@ -121,8 +119,6 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
     public void editQuestion(long questionId, String title, String text, ServiceContext serviceContext) throws PortalException {
         Question question = questionPersistence.fetchByPrimaryKey(questionId);
 
-        question.setTitle(title);
-        question.setText(text);
         question.setModifiedBy(serviceContext.getUserId());
 
         questionPersistence.update(question);
@@ -130,8 +126,8 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         assetEntryLocalService.updateEntry(
                 serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
                 Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
-                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null, null, ContentTypes.TEXT_HTML, question.getTitle(),
-                "Question Description appears here", null, null, null, 0, 0, 0D);
+                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null, null, ContentTypes.TEXT_HTML, title,
+                text, null, null, null, 0, 0, 0D);
 
         Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
         indexer.reindex(question);

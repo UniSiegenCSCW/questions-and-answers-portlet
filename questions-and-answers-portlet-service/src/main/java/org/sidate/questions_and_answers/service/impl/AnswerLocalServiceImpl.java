@@ -81,7 +81,7 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         answer.setUserId(serviceContext.getUserId());
         answer.setGroupId(groupId);
         answer.setExpandoBridgeAttributes(serviceContext);
-        answer.setText(text);
+
         answer.setQuestionId(questionId);
 
         answerPersistence.update(answer);
@@ -91,7 +91,7 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
                     serviceContext.getUserId(), answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
                     Question.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
                     serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null,
-                    null, null, ContentTypes.TEXT_HTML, "Title appears here", "Question Description appears here",
+                    null, null, ContentTypes.TEXT_HTML, QuestionLocalServiceUtil.getQuestion(questionId).getTitle(), text,
                     null, null, null, 0, 0, 0D);
 
             // Indexing
@@ -108,15 +108,13 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
     public void editAnswer(long answerId, String text, ServiceContext serviceContext) throws PortalException {
         Answer answer = answerPersistence.fetchByPrimaryKey(answerId);
 
-        answer.setText(text);
-
         answerPersistence.update(answer);
 
         assetEntryLocalService.updateEntry(
                 serviceContext.getUserId(), answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
                 Question.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
                 serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null,
-                null, ContentTypes.TEXT_HTML, "Title appears here", "Question Description appears here", null, null,
+                null, ContentTypes.TEXT_HTML, QuestionLocalServiceUtil.getQuestion(answer.getQuestionId()).getTitle(), text, null, null,
                 null, 0, 0, 0D);
 
         Indexer<Answer> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Answer.class);
@@ -131,6 +129,7 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         indexer.delete(answer);
         Question question = QuestionLocalServiceUtil.getQuestion(answer.getQuestionId());
 
+        //if answer is correct answer, correct answer is set to 0
         if (question.getCorrectAnswerId() == answerId) {
             QuestionLocalServiceUtil.setCorrectAnswer(0, question.getQuestionID(), serviceContext);
         }

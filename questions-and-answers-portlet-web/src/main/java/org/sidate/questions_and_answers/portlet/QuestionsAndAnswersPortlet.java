@@ -211,11 +211,15 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             System.out.println("Erste Frage:");
-            answers.forEach(answer -> System.out.println(answer.getText()));
+            for (Answer answer:answers) {
+                System.out.println(answer.getText());
+            }
 
             List<Answer> answers2 = AnswerLocalServiceUtil.getAnswersForQuestion(question2.getQuestionID());
             System.out.println("Zweite Frage:");
-            answers2.forEach(answer -> System.out.println(answer.getText()));
+            for (Answer answer:answers) {
+                System.out.println(answer.getText());
+            }
 
         } catch (PortalException e) {
             e.printStackTrace();
@@ -254,14 +258,18 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             System.out.println("Vor dem löschen");
-            answers.forEach(a -> System.out.println(a.getText()));
+            for (Answer answer:answers) {
+                System.out.println(answer.getText());
+            }
 
             Answer answer = answers.get(2);
             AnswerLocalServiceUtil.deleteAnswer(answer);
             answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
 
             System.out.println("Nach dem löschen");
-            answers.forEach(a -> System.out.println(a.getText()));
+            for (Answer editedAnswer:answers) {
+                System.out.println(editedAnswer.getText());
+            }
 
         } catch (PortalException e) {
             e.printStackTrace();
