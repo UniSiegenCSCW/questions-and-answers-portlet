@@ -10,9 +10,6 @@
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
-		<field name="text" type="String">
-			<hint-collection name="TEXTAREA" />
-		</field>
 		<field name="questionId" type="long" />
 	</model>
 	<model name="org.sidate.questions_and_answers.model.Question">
@@ -24,10 +21,6 @@
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
-		<field name="title" type="String" />
-		<field name="text" type="String">
-			<hint-collection name="TEXTAREA" />
-		</field>
 		<field name="correctAnswerId" type="long" />
 		<field name="modifiedBy" type="long" />
 	</model>
