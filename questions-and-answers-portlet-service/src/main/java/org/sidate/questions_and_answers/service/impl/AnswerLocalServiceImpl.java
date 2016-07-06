@@ -109,11 +109,14 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
     public void editAnswer(long answerId, String text, ServiceContext serviceContext) throws PortalException {
         Answer answer = answerPersistence.fetchByPrimaryKey(answerId);
 
+        // Validation
+        if (Validator.isNull(text)) throw new EmptyAnswerTextException();
+
         answerPersistence.update(answer);
 
         assetEntryLocalService.updateEntry(
                 serviceContext.getUserId(), answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
-                Question.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
+                Answer.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
                 serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null,
                 null, ContentTypes.TEXT_HTML, QuestionLocalServiceUtil.getQuestion(answer.getQuestionId()).getTitle(), text, null, null,
                 null, 0, 0, 0D);
@@ -122,7 +125,16 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         indexer.reindex(answer);
     }
 
-    @Override
+    @Deprecated
+    public Answer deleteAnswer(Answer answer) {
+        return super.deleteAnswer(answer);
+    }
+
+    @Deprecated
+    public Answer deleteAnswer(long answerId) throws PortalException {
+        return super.deleteAnswer(answerId);
+    }
+
     public Answer deleteAnswer(long answerId, ServiceContext serviceContext) throws PortalException {
 
         // Delete from database

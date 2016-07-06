@@ -85,7 +85,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     public void deleteQuestion(ActionRequest request, ActionResponse response){
         long questionId = ParamUtil.getLong(request, "questionID");
         try {
-            QuestionLocalServiceUtil.deleteQuestion(questionId);
+            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            QuestionLocalServiceUtil.deleteQuestion(questionId, serviceContext);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -198,6 +199,25 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
+    public void testNewQuestion(ActionRequest request, ActionResponse response){
+        String title = "Toller Titel";
+        String text = "Einzigartiger Text";
+
+        try {
+            ServiceContext serviceContext = ServiceContextFactory.getInstance(
+                Question.class.getName(), request);
+            QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
+            SessionMessages.add(request, "questionAdded");
+        }
+        catch (Exception e) {
+            SessionErrors.add(request, e.getClass().getName());
+            PortalUtil.copyRequestParameters(request, response);
+            response.setRenderParameter("mvcPath", "/view.jsp");
+            log.error(e.getClass().getName() + "\n" + e.getMessage());
+        }
+
+    }
+
     public void testAnswer(ActionRequest request, ActionResponse response){
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
@@ -229,7 +249,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     // Sets and gets the correct answer
-    public void testCorrectAnswer(ActionRequest request, ActionResponse response){
+    public void testSetCorrectAnswer(ActionRequest request, ActionResponse response){
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
 
@@ -239,14 +259,34 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             Answer answer = answers.get(0);
 
             acceptAnswer(request,response, question.getQuestionID(), answer.getAnswerID());
-
-            Answer correctAnswer = AnswerLocalServiceUtil.getAnswer(question.getCorrectAnswerId());
-            System.out.println("Correct Answer");
-            System.out.println(correctAnswer.getText());
         } catch (PortalException e) {
             e.printStackTrace();
         }
+    }
 
+    public void testDisplayCorrectAnswer(ActionRequest request, ActionResponse response){
+        try {
+            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+
+            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+            Question question = questions.get(0);
+
+            long correctAnswerId = question.getCorrectAnswerId();
+            if (correctAnswerId == 0) {
+                System.out.println("Not answered yet!");
+            } else {
+                Answer correctAnswer = AnswerLocalServiceUtil.getAnswer(correctAnswerId);
+
+                System.out.println("Correct Answer: "
+                        + correctAnswer.getAnswerID()
+                        + " --- Text "
+                        + correctAnswer.getText()
+                        + " by "
+                        + correctAnswer.getUserName());
+            }
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
     }
 
     public void testDeleteAnswer(ActionRequest request, ActionResponse response){
@@ -260,18 +300,18 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             System.out.println("Vor dem löschen");
             for (Answer answer:answers) {
-                System.out.println(answer.getText());
+                System.out.println(answer.getAnswerID() + ": " + answer.getText());
             }
             System.out.print("Asset Count: ");
             testDisplayAssetCount(request, response);
 
             Answer answer = answers.get(0);
-            AnswerLocalServiceUtil.deleteAnswer(answer);
+            AnswerLocalServiceUtil.deleteAnswer(answer.getAnswerID(), serviceContext);
 
             answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             System.out.println("Nach dem löschen");
             for (Answer editedAnswer:answers) {
-                System.out.println(editedAnswer.getText());
+                System.out.println(editedAnswer.getAnswerID() + ": " + editedAnswer.getText());
             }
             System.out.println("Asset Count");
             testDisplayAssetCount(request, response);
@@ -295,7 +335,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             testDisplayAssetCount(request, response);
 
             Question toDelete = questions.get(0);
-            QuestionLocalServiceUtil.deleteQuestion(toDelete);
+            QuestionLocalServiceUtil.deleteQuestion(toDelete.getQuestionID(), serviceContext);
 
             questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
             System.out.println("Nach dem löschen");
@@ -367,8 +407,33 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     public void testDisplayAssets(ActionRequest request, ActionResponse response) {
         List<AssetEntry> entries = AssetEntryLocalServiceUtil.getAssetEntries(0, AssetEntryLocalServiceUtil.getAssetEntriesCount());
-        for (AssetEntry entry:entries) {
-            System.out.println(entry.getDescription());
+        for (AssetEntry entry : entries) {
+            String assetText = entry.getDescription();
+            if (entry.getClassName().equals(Question.class.getName())) {
+                System.out.println("Class PK: " + entry.getClassPK()
+                        + " --- Class Name ID: " + entry.getClassNameId()
+                        + " --- Title: " + entry.getTitle()
+                        + " --- Text: " + entry.getDescription());
+            }
+            else if (entry.getClassName().equals(Answer.class.getName())) {
+                try {
+                    System.out.println("Class PK: " + entry.getClassPK()
+                            + " --- Class Name ID: " + entry.getClassNameId()
+                            + " --- Text: " + entry.getDescription()
+                            + " to Question " + AnswerLocalServiceUtil.getAnswer(entry.getClassPK()).getQuestionId());
+                } catch (PortalException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void testDeleteAssets(ActionRequest request, ActionResponse response) {
+        List<AssetEntry> entries = AssetEntryLocalServiceUtil.getAssetEntries(0, AssetEntryLocalServiceUtil.getAssetEntriesCount());
+        for (AssetEntry entry : entries) {
+            if (entry.getClassName().equals(Question.class.getName())||entry.getClassName().equals(Answer.class.getName())) {
+                AssetEntryLocalServiceUtil.deleteAssetEntry(entry);
+            }
         }
     }
 

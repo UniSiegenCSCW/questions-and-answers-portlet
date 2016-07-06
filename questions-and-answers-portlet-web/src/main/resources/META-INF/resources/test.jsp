@@ -3,8 +3,14 @@
 <portlet:actionURL name="testAnswer" var="testAnswerURL"/>
 <aui:button onClick="<%= testAnswerURL%>" value="Test new Answer"></aui:button>
 
-<portlet:actionURL name="testCorrectAnswer" var="testAcceptAnswerURL"/>
-<aui:button onClick="<%= testAcceptAnswerURL%>" value="Display correct Answer (in the Terminal)"></aui:button>
+<portlet:actionURL name="testNewQuestion" var="testNewQuestionURL"/>
+<aui:button onClick="<%= testNewQuestionURL%>" value="Test new Question"></aui:button>
+
+<portlet:actionURL name="testSetCorrectAnswer" var="testSetCorrectAnswerURL"/>
+<aui:button onClick="<%= testSetCorrectAnswerURL%>" value="Accept the first answer of first question"></aui:button>
+
+<portlet:actionURL name="testDisplayCorrectAnswer" var="testDisplayCorrectAnswerURL"/>
+<aui:button onClick="<%= testDisplayCorrectAnswerURL%>" value="Display the correct answer of first question"></aui:button>
 
 <portlet:actionURL name="testDeleteAnswer" var="testDeleteAnswerURL"/>
 <aui:button onClick="<%= testDeleteAnswerURL%>" value="Delete answer from first question"></aui:button>
@@ -24,3 +30,5 @@
 <portlet:actionURL name="testDisplayAssets" var="testDisplayAssetsURL"/>
 <aui:button onClick="<%= testDisplayAssetsURL%>" value="Display the assets"></aui:button>
 
+<portlet:actionURL name="testDeleteAssets" var="testDeleteAssetsURL"/>
+<aui:button onClick="<%= testDeleteAssetsURL%>" value="Delete all assets"></aui:button>

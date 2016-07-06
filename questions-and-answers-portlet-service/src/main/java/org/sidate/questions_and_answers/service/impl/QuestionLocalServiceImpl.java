@@ -58,16 +58,6 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         question.setModifiedBy(serviceContext.getUserId());
         question.setCorrectAnswerId(answerId);
         questionPersistence.update(question);
-
-//        assetEntryLocalService.updateEntry(
-//                serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
-//                Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
-//                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null,
-//                null, ContentTypes.TEXT_HTML, question.getTitle(), question.getText(), null, null,
-//                null, 0, 0, 0D);
-
-//        Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
-//        indexer.reindex(question);
     }
     
     public Answer getCorrectAnswer(long questionId) {
@@ -96,6 +86,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         question.setUserId(serviceContext.getUserId());
         question.setGroupId(groupId);
         question.setExpandoBridgeAttributes(serviceContext);
+        question.setCorrectAnswerId(0);
 
         questionPersistence.update(question);
 
@@ -117,6 +108,11 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
     }
 
     public void editQuestion(long questionId, String title, String text, ServiceContext serviceContext) throws PortalException {
+
+        // Validation
+        if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
+        if (Validator.isNull(text)) throw new EmptyQuestionTextException();
+
         Question question = questionPersistence.fetchByPrimaryKey(questionId);
 
         question.setModifiedBy(serviceContext.getUserId());
@@ -133,11 +129,20 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         indexer.reindex(question);
     }
 
-    @Override
+    @Deprecated
+    public Question deleteQuestion(Question question) {
+        return super.deleteQuestion(question);
+    }
+
+    @Deprecated
     public Question deleteQuestion(long questionId) throws PortalException {
+        return super.deleteQuestion(questionId);
+    }
+
+    public Question deleteQuestion(long questionId, ServiceContext serviceContext) throws PortalException {
         List<Answer> answers = answerLocalService.getAnswersForQuestion(questionId);
         for (Answer answer : answers) {
-            answerLocalService.deleteAnswer(answer.getAnswerID());
+            answerLocalService.deleteAnswer(answer.getAnswerID(), serviceContext);
         }
 
 		Question question = super.deleteQuestion(questionId);
