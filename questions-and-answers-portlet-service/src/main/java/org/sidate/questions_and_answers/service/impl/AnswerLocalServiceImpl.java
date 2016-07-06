@@ -17,6 +17,7 @@ package org.sidate.questions_and_answers.service.impl;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.asset.kernel.service.persistence.AssetTagFinderUtil;
 import com.liferay.asset.kernel.service.persistence.AssetTagPersistence;
 import com.liferay.asset.kernel.service.persistence.AssetTagUtil;
@@ -123,13 +124,19 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 
     @Override
     public Answer deleteAnswer(long answerId, ServiceContext serviceContext) throws PortalException {
+
+        // Delete from database
         Answer answer = super.deleteAnswer(answerId);
+
+        // Delete asset
         assetEntryLocalService.deleteEntry(Answer.class.getName(), answerId);
+
+        // Unindex
         Indexer<Answer> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Answer.class);
         indexer.delete(answer);
 
-        Question question = QuestionLocalServiceUtil.getQuestion(answer.getQuestionId());
         //if answer is correct answer, correct answer is set to 0
+        Question question = QuestionLocalServiceUtil.getQuestion(answer.getQuestionId());
         if (question.getCorrectAnswerId() == answerId) {
             QuestionLocalServiceUtil.setCorrectAnswer(0, question.getQuestionID(), serviceContext);
         }

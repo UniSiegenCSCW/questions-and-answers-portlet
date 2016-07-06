@@ -9,6 +9,9 @@
 <portlet:actionURL name="testDeleteAnswer" var="testDeleteAnswerURL"/>
 <aui:button onClick="<%= testDeleteAnswerURL%>" value="Delete answer from first question"></aui:button>
 
+<portlet:actionURL name="testDeleteQuestion" var="testDeleteQuestionURL"/>
+<aui:button onClick="<%= testDeleteQuestionURL%>" value="Delete the first question"></aui:button>
+
 <portlet:actionURL name="testEditQuestion" var="testEditQuestionURL"/>
 <aui:button onClick="<%= testEditQuestionURL%>" value="Edit first question"></aui:button>
 

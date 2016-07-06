@@ -252,7 +252,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     public void testDeleteAnswer(ActionRequest request, ActionResponse response){
         ServiceContext serviceContext = null;
         try {
-            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
 
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
             Question question = questions.get(0);
@@ -262,12 +262,13 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             for (Answer answer:answers) {
                 System.out.println(answer.getText());
             }
-            System.out.println("Asset Count");
+            System.out.print("Asset Count: ");
             testDisplayAssetCount(request, response);
+
             Answer answer = answers.get(0);
             AnswerLocalServiceUtil.deleteAnswer(answer);
-            answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
 
+            answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             System.out.println("Nach dem löschen");
             for (Answer editedAnswer:answers) {
                 System.out.println(editedAnswer.getText());
@@ -278,7 +279,35 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         } catch (PortalException e) {
             e.printStackTrace();
         }
+    }
 
+    public void testDeleteQuestion(ActionRequest request, ActionResponse response){
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+
+            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+            System.out.println("Vor dem löschen");
+            for (Question question : questions) {
+                System.out.println(question.getTitle());
+            }
+            System.out.print("Asset Count: ");
+            testDisplayAssetCount(request, response);
+
+            Question toDelete = questions.get(0);
+            QuestionLocalServiceUtil.deleteQuestion(toDelete);
+
+            questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+            System.out.println("Nach dem löschen");
+            for (Question question : questions) {
+                System.out.println(question.getTitle());
+            }
+            System.out.print("Asset Count: ");
+            testDisplayAssetCount(request, response);
+
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
     }
 
     public void testEditQuestion(ActionRequest request, ActionResponse response) {
