@@ -58,16 +58,6 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         question.setModifiedBy(serviceContext.getUserId());
         question.setCorrectAnswerId(answerId);
         questionPersistence.update(question);
-
-//        assetEntryLocalService.updateEntry(
-//                serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
-//                Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
-//                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null,
-//                null, ContentTypes.TEXT_HTML, question.getTitle(), question.getText(), null, null,
-//                null, 0, 0, 0D);
-
-//        Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
-//        indexer.reindex(question);
     }
     
     public Answer getCorrectAnswer(long questionId) {
