@@ -177,7 +177,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
 
-    // #### Testing ####
+    // ##### Testing #####
 
 
     private void testNewAnswer(ActionRequest request, ActionResponse response, long questionId, String text)
