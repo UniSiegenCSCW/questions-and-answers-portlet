@@ -24,9 +24,14 @@
     <portlet:param name="mvcPath" value="/editQuestion.jsp"/>
     <portlet:param name="backURL" value="<%= mainViewURL%>"/>
 </portlet:renderURL>
+
+<portlet:renderURL var="testURL">
+    <portlet:param name="mvcPath" value="/test.jsp"/>
+</portlet:renderURL>
+
+
 <aui:container cssClass="qaQuestionOverviewWrapper">
     <aui:button-row>
-        <portlet:renderURL var="testURL"><portlet:param name="mvcPath" value="/test.jsp"/></portlet:renderURL>
         <aui:button cssClass="pull-right" onClick="<%= testURL%>" value="Go to testing view"></aui:button>
 
         <aui:button cssClass="pull-right" onClick="<%= newQuestionURL%>" value="Neue Frage stellen"></aui:button>

@@ -46,6 +46,7 @@
     <portlet:param name="backURL" value="<%= showQuestionsURL%>"/>
     <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
 </portlet:renderURL>
+
 <liferay-ui:header
         backURL="<%= backURL %>"
         title='<%=question.getTitle() %>'
