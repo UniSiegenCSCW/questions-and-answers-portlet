@@ -65,7 +65,7 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(21);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -83,10 +83,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
-		sb.append(", title=");
-		sb.append(title);
-		sb.append(", text=");
-		sb.append(text);
 		sb.append(", correctAnswerId=");
 		sb.append(correctAnswerId);
 		sb.append(", modifiedBy=");
@@ -133,20 +129,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 			questionImpl.setModifiedDate(new Date(modifiedDate));
 		}
 
-		if (title == null) {
-			questionImpl.setTitle(StringPool.BLANK);
-		}
-		else {
-			questionImpl.setTitle(title);
-		}
-
-		if (text == null) {
-			questionImpl.setText(StringPool.BLANK);
-		}
-		else {
-			questionImpl.setText(text);
-		}
-
 		questionImpl.setCorrectAnswerId(correctAnswerId);
 		questionImpl.setModifiedBy(modifiedBy);
 
@@ -169,8 +151,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
-		title = objectInput.readUTF();
-		text = objectInput.readUTF();
 
 		correctAnswerId = objectInput.readLong();
 
@@ -205,20 +185,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
 
-		if (title == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
-		}
-		else {
-			objectOutput.writeUTF(title);
-		}
-
-		if (text == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
-		}
-		else {
-			objectOutput.writeUTF(text);
-		}
-
 		objectOutput.writeLong(correctAnswerId);
 
 		objectOutput.writeLong(modifiedBy);
@@ -232,8 +198,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 	public String userName;
 	public long createDate;
 	public long modifiedDate;
-	public String title;
-	public String text;
 	public long correctAnswerId;
 	public long modifiedBy;
 }

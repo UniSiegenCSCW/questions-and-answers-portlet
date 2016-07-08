@@ -76,7 +76,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 			{ "userName", Types.VARCHAR },
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
-			{ "text_", Types.VARCHAR },
 			{ "questionId", Types.BIGINT }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
@@ -90,11 +89,10 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		TABLE_COLUMNS_MAP.put("userName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
-		TABLE_COLUMNS_MAP.put("text_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("questionId", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table SIDATE_Answer (uuid_ VARCHAR(75) null,answerID LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,text_ STRING null,questionId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table SIDATE_Answer (uuid_ VARCHAR(75) null,answerID LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,questionId LONG)";
 	public static final String TABLE_SQL_DROP = "drop table SIDATE_Answer";
 	public static final String ORDER_BY_JPQL = " ORDER BY answer.answerID ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY SIDATE_Answer.answerID ASC";
@@ -163,7 +161,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
-		attributes.put("text", getText());
 		attributes.put("questionId", getQuestionId());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
@@ -220,12 +217,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
-		}
-
-		String text = (String)attributes.get("text");
-
-		if (text != null) {
-			setText(text);
 		}
 
 		Long questionId = (Long)attributes.get("questionId");
@@ -380,21 +371,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	}
 
 	@Override
-	public String getText() {
-		if (_text == null) {
-			return StringPool.BLANK;
-		}
-		else {
-			return _text;
-		}
-	}
-
-	@Override
-	public void setText(String text) {
-		_text = text;
-	}
-
-	@Override
 	public long getQuestionId() {
 		return _questionId;
 	}
@@ -461,7 +437,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		answerImpl.setUserName(getUserName());
 		answerImpl.setCreateDate(getCreateDate());
 		answerImpl.setModifiedDate(getModifiedDate());
-		answerImpl.setText(getText());
 		answerImpl.setQuestionId(getQuestionId());
 
 		answerImpl.resetOriginalValues();
@@ -590,14 +565,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 			answerCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
 
-		answerCacheModel.text = getText();
-
-		String text = answerCacheModel.text;
-
-		if ((text != null) && (text.length() == 0)) {
-			answerCacheModel.text = null;
-		}
-
 		answerCacheModel.questionId = getQuestionId();
 
 		return answerCacheModel;
@@ -605,7 +572,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(19);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -623,8 +590,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		sb.append(getCreateDate());
 		sb.append(", modifiedDate=");
 		sb.append(getModifiedDate());
-		sb.append(", text=");
-		sb.append(getText());
 		sb.append(", questionId=");
 		sb.append(getQuestionId());
 		sb.append("}");
@@ -634,7 +599,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(34);
+		StringBundler sb = new StringBundler(31);
 
 		sb.append("<model><model-name>");
 		sb.append("org.sidate.questions_and_answers.model.Answer");
@@ -673,10 +638,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		sb.append(getModifiedDate());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>text</column-name><column-value><![CDATA[");
-		sb.append(getText());
-		sb.append("]]></column-value></column>");
-		sb.append(
 			"<column><column-name>questionId</column-name><column-value><![CDATA[");
 		sb.append(getQuestionId());
 		sb.append("]]></column-value></column>");
@@ -704,7 +665,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
-	private String _text;
 	private long _questionId;
 	private long _originalQuestionId;
 	private boolean _setOriginalQuestionId;

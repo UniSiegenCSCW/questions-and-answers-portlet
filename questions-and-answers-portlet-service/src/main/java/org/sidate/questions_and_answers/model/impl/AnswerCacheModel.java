@@ -65,7 +65,7 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(19);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -83,8 +83,6 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
-		sb.append(", text=");
-		sb.append(text);
 		sb.append(", questionId=");
 		sb.append(questionId);
 		sb.append("}");
@@ -129,13 +127,6 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 			answerImpl.setModifiedDate(new Date(modifiedDate));
 		}
 
-		if (text == null) {
-			answerImpl.setText(StringPool.BLANK);
-		}
-		else {
-			answerImpl.setText(text);
-		}
-
 		answerImpl.setQuestionId(questionId);
 
 		answerImpl.resetOriginalValues();
@@ -157,7 +148,6 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
-		text = objectInput.readUTF();
 
 		questionId = objectInput.readLong();
 	}
@@ -190,13 +180,6 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
 
-		if (text == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
-		}
-		else {
-			objectOutput.writeUTF(text);
-		}
-
 		objectOutput.writeLong(questionId);
 	}
 
@@ -208,6 +191,5 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 	public String userName;
 	public long createDate;
 	public long modifiedDate;
-	public String text;
 	public long questionId;
 }
