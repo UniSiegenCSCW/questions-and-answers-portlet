@@ -1,7 +1,6 @@
 package org.sidate.questions_and_answers.portlet;
 
 import com.liferay.asset.kernel.model.AssetEntry;
-import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -10,7 +9,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
-import com.liferay.portal.kernel.service.UserServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -25,8 +23,6 @@ import javax.portlet.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.stream.Collectors.joining;
 
 
 @Component(
@@ -74,9 +70,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public void editQuestion(ActionRequest request, ActionResponse response) throws PortalException {
+
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
         long questionId = ParamUtil.getLong(request, "questionID");
+
         ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
 
         QuestionLocalServiceUtil.editQuestion(questionId, title, text, serviceContext);
@@ -91,6 +89,16 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
     }
 
+    /**
+     * Sets the correct answer ID for the given question ID.
+     * This method can also be used to unset a correct answer by passing 0 as the answer ID.
+     * @throws PortalException
+     */
+    public void setCorrectAnswer(ActionRequest request, ActionResponse response, long questionId, long answerId) throws PortalException {
+        ServiceContext serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
+        QuestionLocalServiceUtil.setCorrectAnswer(answerId, questionId, serviceContext);
+        SessionMessages.add(request, "answerAccepted");
+    }
 
     // #### Answers ####
 
@@ -134,13 +142,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             response.setRenderParameter("mvcPath", "/view.jsp");
             log.error(e.getClass().getName() + "\n" + e.getMessage());
         }
-    }
-
-    public void acceptAnswer(ActionRequest request, ActionResponse response, long questionId, long answerId) throws PortalException {
-        ServiceContext serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
-        QuestionLocalServiceUtil.setCorrectAnswer(answerId, questionId, serviceContext);
-        SessionMessages.add(request, "answerAccepted");
-
     }
 
     public void deleteAnswer(ActionRequest request, ActionResponse response) throws PortalException{
@@ -238,7 +239,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             Answer answer = answers.get(0);
 
-            acceptAnswer(request,response, question.getQuestionID(), answer.getAnswerID());
+            setCorrectAnswer(request,response, question.getQuestionID(), answer.getAnswerID());
 
             Answer correctAnswer = AnswerLocalServiceUtil.getAnswer(question.getCorrectAnswerId());
             System.out.println("Correct Answer");
