@@ -14,7 +14,7 @@ import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 
 @Component(
         immediate = true,
-        property = {"javax.portlet.name=org.sidate.questions_and_answers"},
+        property = {"javax.portlet.name=org_sidate_questions_and_answers_QuestionAndAnswersPortlet"},
         service = AssetRendererFactory.class
 )
 

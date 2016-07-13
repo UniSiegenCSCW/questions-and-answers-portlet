@@ -1,8 +1,6 @@
 package org.sidate.questions_and_answers.asset;
 
-import com.liferay.asset.kernel.model.BaseAssetRenderer;
 import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
-import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.WebKeys;
 import org.sidate.questions_and_answers.model.Question;
