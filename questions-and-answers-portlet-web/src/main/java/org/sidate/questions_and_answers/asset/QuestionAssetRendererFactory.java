@@ -20,6 +20,11 @@ import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 
 public class QuestionAssetRendererFactory extends BaseAssetRendererFactory {
 
+    public QuestionAssetRendererFactory() {
+        setSearchable(true);
+        setLinkable(true);
+    }
+
     @Override
     public AssetRenderer getAssetRenderer(long classPK, int type) throws PortalException {
 

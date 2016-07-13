@@ -2,7 +2,6 @@ package org.sidate.questions_and_answers.asset;
 
 import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.util.WebKeys;
 import org.sidate.questions_and_answers.model.Question;
 
 import javax.portlet.PortletRequest;
@@ -17,10 +16,10 @@ import java.util.Locale;
 
 public class QuestionAssetRenderer extends BaseJSPAssetRenderer {
 
-    private Question question;
+    private final Question QUESTION;
 
     public QuestionAssetRenderer(Question question) {
-        this.question = question;
+        QUESTION = question;
     }
 
     // EDIT AND VIEW PERMISSIONS MUST BE INSERTED HERE
@@ -28,27 +27,27 @@ public class QuestionAssetRenderer extends BaseJSPAssetRenderer {
 
     @Override
     public Object getAssetObject() {
-        return question;
+        return QUESTION;
     }
 
     @Override
     public long getGroupId() {
-        return question.getGroupId();
+        return QUESTION.getGroupId();
     }
 
     @Override
     public long getUserId() {
-        return question.getUserId();
+        return QUESTION.getUserId();
     }
 
     @Override
     public String getUserName() {
-        return question.getUserName();
+        return QUESTION.getUserName();
     }
 
     @Override
     public String getUuid() {
-        return question.getUuid();
+        return QUESTION.getUuid();
     }
 
     @Override
@@ -58,7 +57,7 @@ public class QuestionAssetRenderer extends BaseJSPAssetRenderer {
 
     @Override
     public long getClassPK() {
-        return question.getQuestionID();
+        return QUESTION.getQuestionID();
     }
 
     @Override
@@ -69,7 +68,7 @@ public class QuestionAssetRenderer extends BaseJSPAssetRenderer {
     @Override
     public String getTitle(Locale locale) {
         try {
-            return question.getTitle();
+            return QUESTION.getTitle();
         } catch (PortalException e) {
             System.err.println("NO TITLE GIVEN FOR THIS QUESTION");
             e.printStackTrace();
@@ -81,7 +80,7 @@ public class QuestionAssetRenderer extends BaseJSPAssetRenderer {
     public String getJspPath(HttpServletRequest request, String template) {
         if (template.equals(TEMPLATE_ABSTRACT) || template.equals(TEMPLATE_FULL_CONTENT)) {
 
-            return "/message_boards/asset/" + template + ".jsp";
+            return "/questions/asset/" + template + ".jsp";
         }
         else {
             return null;
@@ -92,7 +91,7 @@ public class QuestionAssetRenderer extends BaseJSPAssetRenderer {
     public boolean include(HttpServletRequest request, HttpServletResponse response,
             String template) throws Exception {
 
-        request.setAttribute(WebKeys.MESSAGE_BOARDS_MESSAGE, question);
+        request.setAttribute("question", QUESTION);
 
         return super.include(request, response, template);
     }
