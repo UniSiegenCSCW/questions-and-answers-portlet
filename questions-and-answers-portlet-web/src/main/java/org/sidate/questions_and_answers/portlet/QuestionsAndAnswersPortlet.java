@@ -228,7 +228,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
             Question question = questions.get(0);
             Question question2 = questions.get(1);
-            String text = "Dies ist eine tolle Antwort! auf die erste Frage";
+            String text = "Dies ist eine tolle Antwort auf die erste Frage";
             String text2 = "Dies ist eine tolle Antwort auf die zweite Frage";
             testNewAnswer(request, response, question.getQuestionID(), text);
             testNewAnswer(request, response, question2.getQuestionID(), text2);
@@ -331,7 +331,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
 
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-            System.out.println("Vor dem löschen");
+            System.out.println("Vor dem löschen:");
             for (Question question : questions) {
                 System.out.println(question.getTitle());
             }
@@ -361,8 +361,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
 
             Question question = questions.get(0);
-            System.out.println("Vor dem edit: " + question.getTitle() + ": " + question.getText()+" von " +
-                    question.getModifiedBy());
+            System.out.println("Vor dem Edit: " + question.getTitle() + ": " + question.getText()+" von " +
+                    question.getEditedBy());
 
             QuestionLocalServiceUtil.editQuestion(question.getQuestionID(), "Ganz neuer Titel", "Ganz neuer Text",
                     serviceContext);
@@ -370,8 +370,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
             question = questions.get(0);
 
-            System.out.println("Nach dem edit: " + question.getTitle() + ": " + question.getText()+" von " +
-                    question.getModifiedBy());
+            System.out.println("Nach dem Edit: " + question.getTitle() + ": " + question.getText()+" von " +
+                    question.getEditedBy());
 
         } catch (PortalException e) {
             e.printStackTrace();
