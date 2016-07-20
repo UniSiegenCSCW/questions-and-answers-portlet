@@ -2,6 +2,8 @@ package org.sidate.questions_and_answers.asset;
 
 import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import org.sidate.questions_and_answers.model.Question;
 
 import javax.portlet.PortletRequest;
@@ -14,7 +16,7 @@ import java.util.Locale;
  * Created by jk on 08.07.16.
  */
 
-public class QuestionAssetRenderer extends BaseJSPAssetRenderer {
+public class QuestionAssetRenderer extends BaseJSPAssetRenderer<Question> {
 
     private final Question QUESTION;
 
@@ -26,7 +28,7 @@ public class QuestionAssetRenderer extends BaseJSPAssetRenderer {
 
 
     @Override
-    public Object getAssetObject() {
+    public Question getAssetObject() {
         return QUESTION;
     }
 
@@ -78,9 +80,10 @@ public class QuestionAssetRenderer extends BaseJSPAssetRenderer {
 
     @Override
     public String getJspPath(HttpServletRequest request, String template) {
+        System.out.println("Call getJspPath in QuestionAssetRenderer!");
         if (template.equals(TEMPLATE_ABSTRACT) || template.equals(TEMPLATE_FULL_CONTENT)) {
-
-            return "/questions/asset/" + template + ".jsp";
+            System.out.println("url: "+"/asset/" + template + ".jsp");
+            return "/asset/" + template + ".jsp";
         }
         else {
             return null;
@@ -91,8 +94,7 @@ public class QuestionAssetRenderer extends BaseJSPAssetRenderer {
     public boolean include(HttpServletRequest request, HttpServletResponse response,
             String template) throws Exception {
 
-        request.setAttribute("question", QUESTION);
-
+        request.setAttribute("QUESTION", QUESTION);
         return super.include(request, response, template);
     }
 }

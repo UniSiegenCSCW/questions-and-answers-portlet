@@ -112,6 +112,9 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         // Validation
         if (Validator.isNull(text)) throw new EmptyAnswerTextException();
 
+        answer.setEditedBy(serviceContext.getUserId());
+        answer.setEditedDate(new Date());
+
         answerPersistence.update(answer);
 
         assetEntryLocalService.updateEntry(

@@ -25,6 +25,8 @@
 
         <column name="questionId" type="long"/>
 
+        <column name="editedBy" type="long"/>
+        <column name="editedDate" type="Date" />
 
 		<!-- Finder methods -->
 
@@ -55,8 +57,8 @@
 
         <column name="correctAnswerId" type="long"/>
 
-        <column name="modifiedBy" type="long"/>
-
+        <column name="editedBy" type="long"/>
+        <column name="editedDate" type="Date" />
         <!-- Finder methods -->
 
         <finder name="GroupId" return-type="Collection">

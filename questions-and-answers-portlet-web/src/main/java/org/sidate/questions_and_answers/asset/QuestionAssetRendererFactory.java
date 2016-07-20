@@ -1,5 +1,6 @@
 package org.sidate.questions_and_answers.asset;
 
+import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.kernel.model.BaseAssetRendererFactory;
@@ -15,10 +16,10 @@ import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 @Component(
         immediate = true,
         property = {"javax.portlet.name=org_sidate_questions_and_answers_QuestionAndAnswersPortlet"},
-        service = AssetRendererFactory.class
+        service = QuestionAssetRendererFactory.class
 )
 
-public class QuestionAssetRendererFactory extends BaseAssetRendererFactory {
+public class QuestionAssetRendererFactory extends BaseAssetRendererFactory<Question> {
 
     public QuestionAssetRendererFactory() {
         setSearchable(true);
