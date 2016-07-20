@@ -102,7 +102,7 @@
 
                     <c:if test="<%=question.getModifiedDate() != null && question.getModifiedDate().after(question.getCreateDate())%>">
                         <%
-                            User questionEditor = UserLocalServiceUtil.getUser(question.getModifiedBy());
+                            User questionEditor = UserLocalServiceUtil.getUser(question.getEditedBy());
                             List<Organization> questionEditorOrganizations = questionEditor.getOrganizations();
                         %>
                         <div class="qaAuthorbox">
