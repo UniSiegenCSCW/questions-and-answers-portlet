@@ -138,8 +138,8 @@
                                 latestAnswerAuthor = UserLocalServiceUtil.getUser(latestAnswer.getUserId());
                             }
 
-                            if (question.getModifiedBy() != 0) {
-                                editor = UserLocalServiceUtil.getUser(question.getModifiedBy());
+                            if (question.getEditedBy() != 0) {
+                                editor = UserLocalServiceUtil.getUser(question.getEditedBy());
                             }
                         %>
                         <c:choose>
