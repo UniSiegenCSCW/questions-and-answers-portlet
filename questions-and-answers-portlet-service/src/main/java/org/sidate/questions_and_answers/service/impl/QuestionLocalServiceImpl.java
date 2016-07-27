@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
 import org.sidate.questions_and_answers.exception.EmptyQuestionTextException;
@@ -78,11 +79,13 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         Date modifiedDate = serviceContext.getModifiedDate();
         String uuid = serviceContext.getUuid();
         Question question = questionPersistence.create(questionId);
+        long userId = serviceContext.getUserId();
 
+        question.setUserName(UserLocalServiceUtil.fetchUser(userId).getFullName());
         question.setUuid(uuid);
         question.setCreateDate(createDate);
         question.setModifiedDate(modifiedDate);
-        question.setUserId(serviceContext.getUserId());
+        question.setUserId(userId);
         question.setGroupId(groupId);
         question.setExpandoBridgeAttributes(serviceContext);
         question.setCorrectAnswerId(0);

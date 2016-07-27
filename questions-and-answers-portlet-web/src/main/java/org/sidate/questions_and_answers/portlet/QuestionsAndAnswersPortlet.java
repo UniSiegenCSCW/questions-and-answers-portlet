@@ -74,9 +74,9 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     /**
      * Sets the correct answer ID, may also be used to unset the correct answer ID by
      * passing 0 as the ID parameter.
-     * @throws PortalException
      */
-    public void setCorrectAnswer(ActionRequest request, ActionResponse response, long questionId, long answerId) throws PortalException {
+    public void setCorrectAnswer(ActionRequest request, ActionResponse response, long questionId, long answerId)
+            throws PortalException {
         ServiceContext serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
         QuestionLocalServiceUtil.setCorrectAnswer(answerId, questionId, serviceContext);
         SessionMessages.add(request, "answerAccepted");
