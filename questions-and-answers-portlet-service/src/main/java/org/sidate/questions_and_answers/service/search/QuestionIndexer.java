@@ -1,15 +1,19 @@
 package org.sidate.questions_and_answers.service.search;
 
-import com.liferay.portal.kernel.search.BaseIndexer;
-import com.liferay.portal.kernel.search.Document;
-import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.Summary;
+import com.liferay.portal.kernel.dao.orm.*;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.*;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import org.sidate.questions_and_answers.model.Question;
 import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -18,8 +22,9 @@ import java.util.Locale;
 
 public class QuestionIndexer extends BaseIndexer<Question> {
 
+    private static final Log log = LogFactoryUtil.getLog(QuestionIndexer.class);
+
     private static final String CLASS_NAME = Question.class.getName();
-    private final String COMMENT = "Frage";
 
     @Override
     protected void doDelete(Question question) throws Exception {
@@ -32,6 +37,7 @@ public class QuestionIndexer extends BaseIndexer<Question> {
 
         //document.addText(Field.CAPTION, object.getCoverImageCaption());
         document.addText(Field.CONTENT, HtmlUtil.extractText(question.getText()));
+        String COMMENT = "Frage";
         document.addText(Field.DESCRIPTION, COMMENT);
         document.addDate(Field.MODIFIED_DATE, question.getModifiedDate());
         document.addDate(Field.CREATE_DATE, question.getCreateDate());
@@ -57,18 +63,53 @@ public class QuestionIndexer extends BaseIndexer<Question> {
         doReindex(question);
     }
 
-    @Override
-    protected void doReindex(String[] ids) throws Exception {
+    private void reindexEntries(long companyId) throws PortalException {
+        final IndexableActionableDynamicQuery indexableActionableDynamicQuery =
+                QuestionLocalServiceUtil.getIndexableActionableDynamicQuery();
 
+        indexableActionableDynamicQuery.setAddCriteriaMethod(
+                dynamicQuery -> {
+                    Property displayDateProperty = PropertyFactoryUtil.forName("displayDate");
+                    dynamicQuery.add(displayDateProperty.lt(new Date()));
+                    Property statusProperty = PropertyFactoryUtil.forName("status");
+                    Integer[] statuses = {
+                            WorkflowConstants.STATUS_APPROVED,
+                            WorkflowConstants.STATUS_IN_TRASH
+                    };
+                    dynamicQuery.add(statusProperty.in(statuses));
+                });
+        indexableActionableDynamicQuery.setCompanyId(companyId);
+        indexableActionableDynamicQuery.setPerformActionMethod(
+                question -> {
+                    try {
+                        Document document = getDocument((Question) question);
+                        indexableActionableDynamicQuery.addDocuments(document);
+                    } catch (PortalException pe) {
+                        if (log.isWarnEnabled()) {
+                            log.warn("Unable to index Ratings3DEntry " + ((Question) question).getQuestionID(), pe);
+                        }
+                    }
+                });
+        indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
+        indexableActionableDynamicQuery.performActions();
     }
 
     @Override
-    protected void doReindex(Question object) throws Exception {
+    protected void doReindex(String[] ids) throws Exception {
+        long companyId = GetterUtil.getLong(ids[0]);
+        reindexEntries(companyId);
+    }
 
+    @Override
+    protected void doReindex(Question question) throws Exception {
+        Document document = getDocument(question);
+        IndexWriterHelperUtil.updateDocument(
+                getSearchEngineId(), question.getCompanyId(), document,
+                isCommitImmediately());
     }
 
     @Override
     public String getClassName() {
-        return null;
+        return CLASS_NAME;
     }
 }
