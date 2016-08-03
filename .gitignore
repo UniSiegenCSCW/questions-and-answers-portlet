@@ -7,3 +7,9 @@ questions-and-answers-portlet-service/src/main/java/org/sidate/questions_and_ans
 questions-and-answers-portlet-api/src
 questions-and-answers-portlet-service/src/main/resources
 questions-and-answers-portlet-service/src/main/test
+/questions-and-answers-portlet-service/src/main/java/org/sidate/questions_and_answers/model/impl/QuestionModelImpl.java
+/questions-and-answers-portlet-service/src/main/java/org/sidate/questions_and_answers/model/impl/QuestionCacheModel.java
+/questions-and-answers-portlet-service/src/main/java/org/sidate/questions_and_answers/model/impl/QuestionBaseImpl.java
+/questions-and-answers-portlet-service/src/main/java/org/sidate/questions_and_answers/model/impl/AnswerModelImpl.java
+/questions-and-answers-portlet-service/src/main/java/org/sidate/questions_and_answers/model/impl/AnswerCacheModel.java
+/questions-and-answers-portlet-service/src/main/java/org/sidate/questions_and_answers/model/impl/AnswerBaseImpl.java
