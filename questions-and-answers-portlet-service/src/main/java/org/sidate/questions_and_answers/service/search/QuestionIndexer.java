@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.search.*;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import org.osgi.service.component.annotations.Component;
 import org.sidate.questions_and_answers.model.Question;
 import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 
@@ -20,11 +21,20 @@ import java.util.Locale;
  * Created by adhominem on 27.07.16.
  */
 
+@Component(immediate = true, service = Indexer.class)
 public class QuestionIndexer extends BaseIndexer<Question> {
 
     private static final Log log = LogFactoryUtil.getLog(QuestionIndexer.class);
 
     private static final String CLASS_NAME = Question.class.getName();
+
+    public QuestionIndexer(){
+        setDefaultSelectedFieldNames(
+                Field.TITLE, Field.USER_NAME, Field.CONTENT);
+        setFilterSearch(true);
+        //setPermissionAware(true);
+        setSelectAllLocales(true);
+    }
 
     @Override
     protected void doDelete(Question question) throws Exception {
@@ -37,16 +47,9 @@ public class QuestionIndexer extends BaseIndexer<Question> {
 
         //document.addText(Field.CAPTION, object.getCoverImageCaption());
         document.addText(Field.CONTENT, HtmlUtil.extractText(question.getText()));
-        String COMMENT = "Frage";
-        document.addText(Field.DESCRIPTION, COMMENT);
-        document.addDate(Field.MODIFIED_DATE, question.getModifiedDate());
-        document.addDate(Field.CREATE_DATE, question.getCreateDate());
-        //document.addText(Field.SUBTITLE, HtmlUtil.extractText(object.getComment()));
-        //String title= RatingsUtil.getBriefTitleFromContent(HtmlUtil.extractText(question.getTitle()));
-        document.addText(Field.TITLE, question.getTitle());
-        document.addText(Field.USER_NAME, question.getUserName());
-        document.addText(Field.TYPE, COMMENT);
-
+        document.addText(Field.TITLE, HtmlUtil.extractText(question.getTitle()));
+        document.addText(Field.USER_NAME, HtmlUtil.extractText(question.getUserName()));
+        document.getFields().forEach((string, field) -> System.out.println(string + " " + field.getValue()));
         return document;
     }
 
@@ -59,11 +62,14 @@ public class QuestionIndexer extends BaseIndexer<Question> {
 
     @Override
     protected void doReindex(String className, long classPK) throws Exception {
+        System.out.println("doReindex 1 !!!");
+
         Question question = QuestionLocalServiceUtil.fetchQuestion(classPK);
         doReindex(question);
     }
 
     private void reindexEntries(long companyId) throws PortalException {
+        System.out.println("doReindexEntries !!!");
         final IndexableActionableDynamicQuery indexableActionableDynamicQuery =
                 QuestionLocalServiceUtil.getIndexableActionableDynamicQuery();
 
@@ -96,12 +102,14 @@ public class QuestionIndexer extends BaseIndexer<Question> {
 
     @Override
     protected void doReindex(String[] ids) throws Exception {
+        System.out.println("doReindex 2 !!!");
         long companyId = GetterUtil.getLong(ids[0]);
         reindexEntries(companyId);
     }
 
     @Override
     protected void doReindex(Question question) throws Exception {
+        System.out.println("doReindex 3 !!!");
         Document document = getDocument(question);
         IndexWriterHelperUtil.updateDocument(
                 getSearchEngineId(), question.getCompanyId(), document,

@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
+import com.sun.org.apache.xpath.internal.SourceTree;
 import org.sidate.questions_and_answers.exception.EmptyQuestionTextException;
 import org.sidate.questions_and_answers.exception.EmptyQuestionTitleException;
 import org.sidate.questions_and_answers.model.Answer;
@@ -29,6 +30,7 @@ import org.sidate.questions_and_answers.model.Question;
 import org.sidate.questions_and_answers.service.QuestionLocalService;
 import org.sidate.questions_and_answers.service.base.QuestionLocalServiceBaseImpl;
 import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
+import org.sidate.questions_and_answers.service.search.QuestionIndexer;
 
 import java.util.Date;
 import java.util.List;
@@ -97,11 +99,12 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
                     serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
                     Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
                     serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null,
-                    null, null, ContentTypes.TEXT_HTML, title, text, null,
+                    null, null, ContentTypes.TEXT_HTML, title, text, "",
                     null, null, 0, 0, 0D);
 
-                    Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
-                    indexer.reindex(question);
+            Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
+            System.out.println(indexer);
+            indexer.reindex(question);
         } catch (PortalException e) {
             e.printStackTrace();
         }
