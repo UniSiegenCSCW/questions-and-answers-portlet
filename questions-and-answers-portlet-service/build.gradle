@@ -5,7 +5,7 @@ buildscript {
 	}
 }
 
-apply plugin: "com.liferay.portal.tools.service.builder"
+//apply plugin: "com.liferay.portal.tools.service.builder"
 
 dependencies {
 	compile 'biz.aQute.bnd:biz.aQute.bndlib:3.1.0'
@@ -14,6 +14,8 @@ dependencies {
 	compile  project(':modules:questions-and-answers-portlet:questions-and-answers-portlet-api')
 	testCompile 'com.liferay:com.liferay.arquillian.extension.junit.bridge:1.0.0-SNAPSHOT'
 	testCompile 'junit:junit:4.+'
+	compile 'javax.portlet:portlet-api:2.0'
+	compile 'javax.servlet:javax.servlet-api:3.0.1'
 }
 
 buildService {
