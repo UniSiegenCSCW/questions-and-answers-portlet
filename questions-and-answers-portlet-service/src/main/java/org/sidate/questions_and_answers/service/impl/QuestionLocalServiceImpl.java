@@ -22,15 +22,13 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
-import com.sun.org.apache.xpath.internal.SourceTree;
 import org.sidate.questions_and_answers.exception.EmptyQuestionTextException;
 import org.sidate.questions_and_answers.exception.EmptyQuestionTitleException;
 import org.sidate.questions_and_answers.model.Answer;
 import org.sidate.questions_and_answers.model.Question;
 import org.sidate.questions_and_answers.service.QuestionLocalService;
-import org.sidate.questions_and_answers.service.base.QuestionLocalServiceBaseImpl;
 import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
-import org.sidate.questions_and_answers.service.search.QuestionIndexer;
+import org.sidate.questions_and_answers.service.base.QuestionLocalServiceBaseImpl;
 
 import java.util.Date;
 import java.util.List;
