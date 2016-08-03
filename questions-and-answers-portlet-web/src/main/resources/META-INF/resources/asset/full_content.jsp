@@ -19,20 +19,22 @@
 
 <%@ include file="../init.jsp" %>
 
-<%
-    Question question = (Question)request.getAttribute("QUESTION");
-    int status = ParamUtil.getInteger(request, "status", WorkflowConstants.STATUS_ANY);
-%>
+<%--<%--%>
+    <%--Question question = (Question)request.getAttribute("QUESTION");--%>
+    <%--int status = ParamUtil.getInteger(request, "status", WorkflowConstants.STATUS_ANY);--%>
+<%--%>--%>
 
-<%--<aui:a href='<%= themeDisplay.getPathMain() + "/bookmarks/open_entry?entryId=" + question.getEntryId() + ((status != WorkflowConstants.STATUS_ANY) ? "&status=" + status : StringPool.BLANK) %>' target="_blank"><%= HtmlUtil.escape(question.getName()) %> (<%= HtmlUtil.escape(question.getUrl()) %>)</aui:a>--%>
+<%--&lt;%&ndash;<aui:a href='<%= themeDisplay.getPathMain() + "/bookmarks/open_entry?entryId=" + question.getEntryId() + ((status != WorkflowConstants.STATUS_ANY) ? "&status=" + status : StringPool.BLANK) %>' target="_blank"><%= HtmlUtil.escape(question.getName()) %> (<%= HtmlUtil.escape(question.getUrl()) %>)</aui:a>&ndash;%&gt;--%>
 
-<p class="asset-description"><%= HtmlUtil.escape(question.getTitle()) %></p>
+<%--<p class="asset-description"><%= HtmlUtil.escape(question.getTitle()) %></p>--%>
 
-<liferay-ui:custom-attributes-available className="<%= Question.class.getName() %>">
-    <liferay-ui:custom-attribute-list
-            className="<%= Question.class.getName() %>"
-            classPK="<%= (question != null) ? question.getQuestionID() : 0 %>"
-            editable="<%= false %>"
-            label="<%= true %>"
-    />
-</liferay-ui:custom-attributes-available>
+<%--<liferay-ui:custom-attributes-available className="<%= Question.class.getName() %>">--%>
+    <%--<liferay-ui:custom-attribute-list--%>
+            <%--className="<%= Question.class.getName() %>"--%>
+            <%--classPK="<%= (question != null) ? question.getQuestionID() : 0 %>"--%>
+            <%--editable="<%= false %>"--%>
+            <%--label="<%= true %>"--%>
+    <%--/>--%>
+<%--</liferay-ui:custom-attributes-available>--%>
+
+<p>Toll</p>
