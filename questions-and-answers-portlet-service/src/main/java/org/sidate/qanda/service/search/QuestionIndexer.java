@@ -1,4 +1,4 @@
-package org.sidate.questions_and_answers.service.search;
+package org.sidate.qanda.service.search;
 
 import com.liferay.portal.kernel.dao.orm.*;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -9,8 +9,8 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import org.osgi.service.component.annotations.Component;
-import org.sidate.questions_and_answers.model.Question;
-import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
+import org.sidate.qanda.model.Question;
+import org.sidate.qanda.service.QuestionLocalServiceUtil;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;

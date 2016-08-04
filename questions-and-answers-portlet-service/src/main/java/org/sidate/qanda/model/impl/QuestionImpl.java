@@ -12,18 +12,15 @@
  * details.
  */
 
-package org.sidate.questions_and_answers.model.impl;
+package org.sidate.qanda.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 import com.liferay.asset.kernel.model.AssetCategory;
-import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
-import com.liferay.asset.kernel.service.AssetEntryServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import org.sidate.questions_and_answers.model.Question;
+import org.sidate.qanda.model.Question;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +29,7 @@ import java.util.List;
  * The extended model implementation for the Question service. Represents a row in the &quot;SIDATE_Question&quot; database table, with each column mapped to a property of this class.
  *
  * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link org.sidate.questions_and_answers.model.Question} interface.
+ * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link org.sidate.qanda.model.Question} interface.
  * </p>
  *
  * @author Brian Wing Shun Chan
@@ -42,7 +39,7 @@ public class QuestionImpl extends QuestionBaseImpl {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. All methods that expect a question model instance should use the {@link org.sidate.questions_and_answers.model.Question} interface instead.
+	 * Never reference this class directly. All methods that expect a question model instance should use the {@link org.sidate.qanda.model.Question} interface instead.
 	 */
 
 

@@ -1,11 +1,11 @@
-package org.sidate.questions_and_answers.service.render.question;
+package org.sidate.qanda.service.render.question;
 
 import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import org.sidate.questions_and_answers.model.Question;
-import org.sidate.questions_and_answers.model.impl.QuestionImpl;
+import org.sidate.qanda.model.Question;
+import org.sidate.qanda.model.impl.QuestionImpl;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;

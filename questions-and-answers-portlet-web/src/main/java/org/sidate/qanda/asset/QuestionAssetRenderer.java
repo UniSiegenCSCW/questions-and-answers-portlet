@@ -1,10 +1,8 @@
-package org.sidate.questions_and_answers.asset;
+package org.sidate.qanda.asset;
 
 import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import org.sidate.questions_and_answers.model.Question;
+import org.sidate.qanda.model.Question;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;

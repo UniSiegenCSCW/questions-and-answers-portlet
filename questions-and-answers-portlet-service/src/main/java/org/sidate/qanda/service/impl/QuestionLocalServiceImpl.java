@@ -12,7 +12,7 @@
  * details.
  */
 
-package org.sidate.questions_and_answers.service.impl;
+package org.sidate.qanda.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -22,13 +22,13 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
-import org.sidate.questions_and_answers.exception.EmptyQuestionTextException;
-import org.sidate.questions_and_answers.exception.EmptyQuestionTitleException;
-import org.sidate.questions_and_answers.model.Answer;
-import org.sidate.questions_and_answers.model.Question;
-import org.sidate.questions_and_answers.service.QuestionLocalService;
-import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
-import org.sidate.questions_and_answers.service.base.QuestionLocalServiceBaseImpl;
+import org.sidate.qanda.exception.EmptyQuestionTextException;
+import org.sidate.qanda.exception.EmptyQuestionTitleException;
+import org.sidate.qanda.model.Answer;
+import org.sidate.qanda.model.Question;
+import org.sidate.qanda.service.QuestionLocalService;
+import org.sidate.qanda.service.QuestionLocalServiceUtil;
+import org.sidate.qanda.service.base.QuestionLocalServiceBaseImpl;
 
 import java.util.Date;
 import java.util.List;

@@ -1,6 +1,6 @@
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
-<%@ page import="org.sidate.questions_and_answers.model.Answer" %>
-<%@ page import="org.sidate.questions_and_answers.service.AnswerLocalServiceUtil" %>
+<%@ page import="org.sidate.qanda.model.Answer" %>
+<%@ page import="org.sidate.qanda.service.AnswerLocalServiceUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.UnicodeFormatter" %>
 <%@ include file="init.jsp" %>
 

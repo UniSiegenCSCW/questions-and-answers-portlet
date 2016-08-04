@@ -1,4 +1,4 @@
-package org.sidate.questions_and_answers.util;
+package org.sidate.qanda.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

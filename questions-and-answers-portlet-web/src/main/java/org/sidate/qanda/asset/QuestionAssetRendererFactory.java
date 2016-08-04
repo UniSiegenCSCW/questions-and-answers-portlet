@@ -1,13 +1,11 @@
-package org.sidate.questions_and_answers.asset;
+package org.sidate.qanda.asset;
 
-import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetRenderer;
-import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.kernel.model.BaseAssetRendererFactory;
 import com.liferay.portal.kernel.exception.PortalException;
 import org.osgi.service.component.annotations.Component;
-import org.sidate.questions_and_answers.model.Question;
-import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
+import org.sidate.qanda.model.Question;
+import org.sidate.qanda.service.QuestionLocalServiceUtil;
 
 /**
  * Created by jk on 08.07.16.
@@ -15,7 +13,7 @@ import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
 
 @Component(
         immediate = true,
-        property = {"javax.portlet.name=org_sidate_questions_and_answers_QuestionAndAnswersPortlet"},
+        property = {"javax.portlet.name=org_sidate_qanda_QuestionAndAnswersPortlet"},
         service = QuestionAssetRendererFactory.class
 )
 

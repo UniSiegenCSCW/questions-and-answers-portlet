@@ -12,28 +12,23 @@
  * details.
  */
 
-package org.sidate.questions_and_answers.service.impl;
+package org.sidate.qanda.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.asset.kernel.model.AssetTag;
-import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
-import com.liferay.asset.kernel.service.persistence.AssetTagFinderUtil;
-import com.liferay.asset.kernel.service.persistence.AssetTagPersistence;
-import com.liferay.asset.kernel.service.persistence.AssetTagUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
-import org.sidate.questions_and_answers.exception.EmptyAnswerTextException;
-import org.sidate.questions_and_answers.model.Answer;
-import org.sidate.questions_and_answers.model.Question;
-import org.sidate.questions_and_answers.service.AnswerLocalService;
-import org.sidate.questions_and_answers.service.AnswerLocalServiceUtil;
-import org.sidate.questions_and_answers.service.QuestionLocalServiceUtil;
-import org.sidate.questions_and_answers.service.base.AnswerLocalServiceBaseImpl;
+import org.sidate.qanda.exception.EmptyAnswerTextException;
+import org.sidate.qanda.model.Answer;
+import org.sidate.qanda.model.Question;
+import org.sidate.qanda.service.AnswerLocalService;
+import org.sidate.qanda.service.AnswerLocalServiceUtil;
+import org.sidate.qanda.service.QuestionLocalServiceUtil;
+import org.sidate.qanda.service.base.AnswerLocalServiceBaseImpl;
 
 import java.util.Date;
 import java.util.List;

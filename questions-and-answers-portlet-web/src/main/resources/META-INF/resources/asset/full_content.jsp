@@ -1,4 +1,4 @@
-<%@ page import="org.sidate.questions_and_answers.model.Question" %>
+<%@ page import="org.sidate.qanda.model.Question" %>
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
 <%@ page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %>
 <%@ page import="com.liferay.portal.kernel.util.HtmlUtil" %><%--
