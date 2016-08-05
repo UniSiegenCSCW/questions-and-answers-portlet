@@ -62,14 +62,11 @@ public class QuestionIndexer extends BaseIndexer<Question> {
 
     @Override
     protected void doReindex(String className, long classPK) throws Exception {
-        System.out.println("doReindex 1 !!!");
-
         Question question = QuestionLocalServiceUtil.fetchQuestion(classPK);
         doReindex(question);
     }
 
     private void reindexEntries(long companyId) throws PortalException {
-        System.out.println("doReindexEntries !!!");
         final IndexableActionableDynamicQuery indexableActionableDynamicQuery =
                 QuestionLocalServiceUtil.getIndexableActionableDynamicQuery();
 
@@ -102,14 +99,12 @@ public class QuestionIndexer extends BaseIndexer<Question> {
 
     @Override
     protected void doReindex(String[] ids) throws Exception {
-        System.out.println("doReindex 2 !!!");
         long companyId = GetterUtil.getLong(ids[0]);
         reindexEntries(companyId);
     }
 
     @Override
     protected void doReindex(Question question) throws Exception {
-        System.out.println("doReindex 3 !!!");
         Document document = getDocument(question);
         IndexWriterHelperUtil.updateDocument(
                 getSearchEngineId(), question.getCompanyId(), document,
