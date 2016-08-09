@@ -16,6 +16,8 @@ package org.sidate.qanda.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -24,14 +26,18 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
 import org.sidate.qanda.exception.EmptyQuestionTextException;
 import org.sidate.qanda.exception.EmptyQuestionTitleException;
+import org.sidate.qanda.exception.NoSufficientAccessRightsException;
 import org.sidate.qanda.model.Answer;
 import org.sidate.qanda.model.Question;
 import org.sidate.qanda.service.QuestionLocalService;
 import org.sidate.qanda.service.QuestionLocalServiceUtil;
 import org.sidate.qanda.service.base.QuestionLocalServiceBaseImpl;
 
+
 import java.util.Date;
 import java.util.List;
+
+import static org.sidate.qanda.service.permission.PermissionCheckerHelper.*;
 
 /**
  * The implementation of the question local service.
@@ -50,11 +56,17 @@ import java.util.List;
 @ProviderType
 public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
-    public List<Question> getQuestions(long groupId) {
+    private static Log log = LogFactoryUtil.getLog(QuestionLocalServiceImpl.class);
+
+
+    public List<Question> getQuestions(long groupId) throws NoSufficientAccessRightsException {
+        checkIfUserIsSignedIn();
         return questionPersistence.findByGroupId(groupId);
     }
 
     public void setCorrectAnswer(long answerId, long questionId, ServiceContext serviceContext) throws PortalException {
+        checkPermission(Question.class, questionId, "SET_AS_CORRECT");
+
         Question question = questionPersistence.fetchByPrimaryKey(questionId);
         question.setCorrectAnswerId(answerId);
         questionPersistence.update(question);
@@ -67,7 +79,9 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
     }
 
     public Question addQuestion(String title, String text, ServiceContext serviceContext) throws
-            EmptyQuestionTitleException, EmptyQuestionTextException {
+            EmptyQuestionTitleException, EmptyQuestionTextException, NoSufficientAccessRightsException {
+
+        checkIfUserIsSignedIn();
 
         // Validation
         if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
@@ -106,7 +120,6 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         } catch (PortalException e) {
             e.printStackTrace();
         }
-
         return question;
     }
 
@@ -155,5 +168,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
         return question;
     }
+
+
 
 }
