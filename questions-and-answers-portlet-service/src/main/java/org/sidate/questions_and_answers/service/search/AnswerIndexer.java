@@ -1,6 +1,8 @@
-package org.sidate.qanda.service.search;
+package org.sidate.questions_and_answers.service.search;
 
-import com.liferay.portal.kernel.dao.orm.*;
+import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -9,8 +11,8 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import org.osgi.service.component.annotations.Component;
-import org.sidate.qanda.model.Question;
-import org.sidate.qanda.service.QuestionLocalServiceUtil;
+import org.sidate.questions_and_answers.model.Answer;
+import org.sidate.questions_and_answers.service.AnswerLocalServiceUtil;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -18,38 +20,36 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by adhominem on 27.07.16.
+ * Created by User on 05.08.2016.
  */
 
 @Component(immediate = true, service = Indexer.class)
-public class QuestionIndexer extends BaseIndexer<Question> {
+public class AnswerIndexer  extends BaseIndexer<Answer> {
 
     private static final Log log = LogFactoryUtil.getLog(QuestionIndexer.class);
 
-    private static final String CLASS_NAME = Question.class.getName();
+    private static final String CLASS_NAME = Answer.class.getName();
 
-    public QuestionIndexer(){
+    public AnswerIndexer(){
         setDefaultSelectedFieldNames(
-                Field.TITLE, Field.USER_NAME, Field.CONTENT);
+                Field.USER_NAME, Field.CONTENT);
         setFilterSearch(true);
         //setPermissionAware(true);
         setSelectAllLocales(true);
     }
 
     @Override
-    protected void doDelete(Question question) throws Exception {
-        deleteDocument(question.getCompanyId(), question.getQuestionID());
+    protected void doDelete(Answer answer) throws Exception {
+        deleteDocument(answer.getCompanyId(), answer.getAnswerID());
     }
 
     @Override
-    protected Document doGetDocument(Question question) throws Exception {
-        Document document = getBaseModelDocument(CLASS_NAME, question);
+    protected Document doGetDocument(Answer answer) throws Exception {
+        Document document = getBaseModelDocument(CLASS_NAME, answer);
 
         //document.addText(Field.CAPTION, object.getCoverImageCaption());
-        document.addText(Field.CONTENT, HtmlUtil.extractText(question.getText()));
-        document.addText(Field.TITLE, HtmlUtil.extractText(question.getTitle()));
-        document.addText(Field.USER_NAME, HtmlUtil.extractText(question.getUserName()));
-        document.getFields().forEach((string, field) -> System.out.println(string + " " + field.getValue()));
+        document.addText(Field.CONTENT, HtmlUtil.extractText(answer.getText()));
+        document.addText(Field.USER_NAME, HtmlUtil.extractText(answer.getUserName()));
         return document;
     }
 
@@ -62,13 +62,13 @@ public class QuestionIndexer extends BaseIndexer<Question> {
 
     @Override
     protected void doReindex(String className, long classPK) throws Exception {
-        Question question = QuestionLocalServiceUtil.fetchQuestion(classPK);
-        doReindex(question);
+        Answer answer = AnswerLocalServiceUtil.fetchAnswer(classPK);
+        doReindex(answer);
     }
 
     private void reindexEntries(long companyId) throws PortalException {
         final IndexableActionableDynamicQuery indexableActionableDynamicQuery =
-                QuestionLocalServiceUtil.getIndexableActionableDynamicQuery();
+                AnswerLocalServiceUtil.getIndexableActionableDynamicQuery();
 
         indexableActionableDynamicQuery.setAddCriteriaMethod(
                 dynamicQuery -> {
@@ -83,13 +83,13 @@ public class QuestionIndexer extends BaseIndexer<Question> {
                 });
         indexableActionableDynamicQuery.setCompanyId(companyId);
         indexableActionableDynamicQuery.setPerformActionMethod(
-                question -> {
+                answer -> {
                     try {
-                        Document document = getDocument((Question) question);
+                        Document document = getDocument((Answer) answer);
                         indexableActionableDynamicQuery.addDocuments(document);
                     } catch (PortalException pe) {
                         if (log.isWarnEnabled()) {
-                            log.warn("Unable to index Ratings3DEntry " + ((Question) question).getQuestionID(), pe);
+                            log.warn("Unable to index Ratings3DEntry " + ((Answer) answer).getAnswerID(), pe);
                         }
                     }
                 });
@@ -104,10 +104,10 @@ public class QuestionIndexer extends BaseIndexer<Question> {
     }
 
     @Override
-    protected void doReindex(Question question) throws Exception {
-        Document document = getDocument(question);
+    protected void doReindex(Answer answer) throws Exception {
+        Document document = getDocument(answer);
         IndexWriterHelperUtil.updateDocument(
-                getSearchEngineId(), question.getCompanyId(), document,
+                getSearchEngineId(), answer.getCompanyId(), document,
                 isCommitImmediately());
     }
 
