@@ -7,6 +7,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.search.*;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -20,6 +21,7 @@ import org.sidate.qanda.service.QuestionLocalServiceUtil;
 import org.osgi.service.component.annotations.Component;
 
 import javax.portlet.*;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,6 +102,28 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void getQuestionsFilteredByCategories(ActionRequest request, ActionResponse response){
+        try {
+            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            SearchContext searchContext = SearchContextFactory.getInstance((HttpServletRequest) request);
+
+            searchContext.setCategoryIds(serviceContext.getAssetCategoryIds());
+
+            Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
+            Hits hits = indexer.search(searchContext);
+            List<Document> docs = hits.toList();
+
+            request.setAttribute("questionDocs", docs);
+        } catch (PortalException e) {
+            SessionErrors.add(request, e.getClass().getName());
+            PortalUtil.copyRequestParameters(request, response);
+            response.setRenderParameter("mvcPath", "/view.jsp");
+            log.error(e.getClass().getName() + "\n" + e.getMessage());
+        }
+
+
     }
 
 
