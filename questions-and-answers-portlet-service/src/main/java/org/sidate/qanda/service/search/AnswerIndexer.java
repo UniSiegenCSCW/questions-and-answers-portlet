@@ -1,4 +1,4 @@
-package org.sidate.questions_and_answers.service.search;
+package org.sidate.qanda.service.search;
 
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -11,8 +11,8 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import org.osgi.service.component.annotations.Component;
-import org.sidate.questions_and_answers.model.Answer;
-import org.sidate.questions_and_answers.service.AnswerLocalServiceUtil;
+import org.sidate.qanda.model.Answer;
+import org.sidate.qanda.service.AnswerLocalServiceUtil;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
