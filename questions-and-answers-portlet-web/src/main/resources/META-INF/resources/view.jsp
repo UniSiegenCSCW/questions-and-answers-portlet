@@ -11,6 +11,7 @@
 <%@ page import="org.sidate.qanda.util.QAUtils" %>
 <%@ page import="com.liferay.portal.kernel.model.User" %>
 <%@ page import="com.liferay.portal.kernel.service.UserLocalServiceUtil" %>
+<%@ page import="java.util.Collections" %>
 <%@ include file="init.jsp" %>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
 
@@ -38,10 +39,13 @@
     </aui:button-row>
 
     <% String tabNames = "Neue Fragen,Beste Fragen"; %>
+
     <liferay-ui:tabs
             names="<%= tabNames %>"
     />
 
+    <%-- Questions will be sorted by date by default --%>
+    <% Collections.reverse(questions); %>
 
     <aui:container cssClass="qaQuestionsOverviewContainer">
         <c:forEach var="question" items="${questions}">

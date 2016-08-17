@@ -7,28 +7,25 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.search.*;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import org.osgi.service.component.annotations.Component;
 import org.sidate.qanda.model.Answer;
 import org.sidate.qanda.model.Question;
 import org.sidate.qanda.service.AnswerLocalServiceUtil;
 import org.sidate.qanda.service.QuestionLocalServiceUtil;
-import org.osgi.service.component.annotations.Component;
 
 import javax.portlet.*;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.LongStream;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 
@@ -111,17 +108,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public void getQuestionsFilteredByCategory(ActionRequest request, ActionResponse response){
-
-//            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
-//            SearchContext searchContext = SearchContextFactory.getInstance((HttpServletRequest) request);
-//
-//            searchContext.setCategoryIds(serviceContext.getAssetCategoryIds());
-//
-//            Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
-//            Hits hits = indexer.search(searchContext);
-//            List<Document> docs = hits.toList();
-//
-//            request.setAttribute("questionDocs", docs);
 
         ServiceContext serviceContext = null;
         try {
@@ -418,8 +404,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         } catch (PortalException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public void testEditAnswer(ActionRequest request, ActionResponse response) {
@@ -443,8 +427,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         } catch (PortalException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public void testDisplayAssetCount(ActionRequest request, ActionResponse response) {
@@ -491,14 +473,12 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             Question question = questions.get(0);
             long[] categoryIds = question.getCategoryIds();
-            for(long id:categoryIds){
+            for (long id : categoryIds) {
                 System.out.println(id);
             }
         } catch (PortalException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public void testFilterQuestionsByCategory(ActionRequest request, ActionResponse response) {
@@ -525,7 +505,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         try {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-            String  tagToFilter = "testtag";
+            String tagToFilter = "testtag";
 
             List<Question> filteredQuestions = questions.stream()
                     .filter(question -> filter(question, tagToFilter))
@@ -544,8 +524,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             return question.getTitle();
         } catch (PortalException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     private boolean filter(Question question, long idToFilter) {
@@ -554,8 +534,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                     .anyMatch(categoryId -> categoryId == idToFilter);
         } catch (PortalException e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     private boolean filter(Question question, String tagToFilter) {
@@ -564,8 +544,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                     .anyMatch(tag -> tag.equals(tagToFilter));
         } catch (PortalException e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
 }
