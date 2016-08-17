@@ -7,6 +7,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.service.ResourceLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -24,7 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.stream.Collectors.joining;
 
 
 @Component(
@@ -59,7 +59,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         String text = ParamUtil.getString(request, "text");
 
         try {
-            QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
+            Question q = QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
+            ResourceLocalServiceUtil.addResources(serviceContext.getCompanyId(), serviceContext.getScopeGroupId(),serviceContext.getUserId(),Question.class.getName(),q.getPrimaryKey(),true,true,true);
             SessionMessages.add(request, "questionAdded");
         }
         catch (Exception e) {
@@ -210,7 +211,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(
                 Question.class.getName(), request);
-            QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
+            Question q = QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
+            ResourceLocalServiceUtil.addResources(serviceContext.getCompanyId(), serviceContext.getScopeGroupId(),serviceContext.getUserId(),Question.class.getName(),q.getPrimaryKey(),true,true,true);
             SessionMessages.add(request, "questionAdded");
         }
         catch (Exception e) {
