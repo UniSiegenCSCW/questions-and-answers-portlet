@@ -32,3 +32,12 @@
 
 <portlet:actionURL name="testDeleteAssets" var="testDeleteAssetsURL"/>
 <aui:button onClick="<%= testDeleteAssetsURL%>" value="Delete all assets"></aui:button>
+
+<portlet:actionURL name="testPrintCategoryIdsOfTheFirstQuestion" var="testPrintCategoryIdsURL"/>
+<aui:button onClick="<%= testPrintCategoryIdsURL%>" value="Print Categories of first Question"></aui:button>
+
+<portlet:actionURL name="testFilterQuestionsByCategory" var="testFilterByCategoryURL"/>
+<aui:button onClick="<%= testFilterByCategoryURL%>" value="Filter By Categories"></aui:button>
+
+<portlet:actionURL name="testFilterQuestionsByTag" var="testFilterByTagURL"/>
+<aui:button onClick="<%= testFilterByTagURL%>" value="Filter By Tag"></aui:button>
