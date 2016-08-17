@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.ResourceLocalServiceUtil;
+import com.liferay.portal.kernel.search.*;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -21,10 +22,15 @@ import org.sidate.qanda.service.QuestionLocalServiceUtil;
 import org.osgi.service.component.annotations.Component;
 
 import javax.portlet.*;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.LongStream;
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 
 @Component(
@@ -99,8 +105,45 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
             QuestionLocalServiceUtil.deleteQuestion(questionId, serviceContext);
         } catch (Exception e) {
-            e.printStackTrace();
+            SessionErrors.add(request, e.getClass().getName());
+            PortalUtil.copyRequestParameters(request, response);
+            response.setRenderParameter("mvcPath", "/view.jsp");
+            log.error(e.getClass().getName() + "\n" + e.getMessage());
         }
+    }
+
+    public void getQuestionsFilteredByCategory(ActionRequest request, ActionResponse response){
+
+//            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+//            SearchContext searchContext = SearchContextFactory.getInstance((HttpServletRequest) request);
+//
+//            searchContext.setCategoryIds(serviceContext.getAssetCategoryIds());
+//
+//            Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
+//            Hits hits = indexer.search(searchContext);
+//            List<Document> docs = hits.toList();
+//
+//            request.setAttribute("questionDocs", docs);
+
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+            long idToFilter = 36181L;
+
+            List<Question> filteredQuestions = questions.stream()
+                    .filter(question -> filter(question, idToFilter))
+                    .collect(toList());
+
+            request.setAttribute("questionsFilteredByCategory", filteredQuestions);
+
+        } catch (PortalException e) {
+            SessionErrors.add(request, e.getClass().getName());
+            PortalUtil.copyRequestParameters(request, response);
+            response.setRenderParameter("mvcPath", "/view.jsp");
+            log.error(e.getClass().getName() + "\n" + e.getMessage());
+        }
+
     }
 
 
@@ -441,6 +484,91 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                 AssetEntryLocalServiceUtil.deleteAssetEntry(entry);
             }
         }
+    }
+
+    public void testPrintCategoryIdsOfTheFirstQuestion(ActionRequest request, ActionResponse response) {
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+
+            Question question = questions.get(0);
+            long[] categoryIds = question.getCategoryIds();
+            for(long id:categoryIds){
+                System.out.println(id);
+            }
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void testFilterQuestionsByCategory(ActionRequest request, ActionResponse response) {
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+            long idToFilter = 36181L;
+
+            List<Question> filteredQuestions = questions.stream()
+                    .filter(question -> filter(question, idToFilter))
+                    .collect(toList());
+
+            System.out.println("Gefilterte Fragen: ");
+            filteredQuestions.forEach(question -> System.out.println(safeGetTitle(question)));
+
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void testFilterQuestionsByTag(ActionRequest request, ActionResponse response) {
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+            String  tagToFilter = "testtag";
+
+            List<Question> filteredQuestions = questions.stream()
+                    .filter(question -> filter(question, tagToFilter))
+                    .collect(toList());
+
+            System.out.println("Gefilterte Fragen: ");
+            filteredQuestions.forEach(question -> System.out.println(safeGetTitle(question)));
+
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String safeGetTitle(Question question) {
+        try {
+            return question.getTitle();
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private boolean filter(Question question, long idToFilter) {
+        try {
+            return LongStream.of(question.getCategoryIds())
+                    .anyMatch(categoryId -> categoryId == idToFilter);
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private boolean filter(Question question, String tagToFilter) {
+        try {
+            return Arrays.stream(question.getTagNames())
+                    .anyMatch(tag -> tag.equals(tagToFilter));
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
