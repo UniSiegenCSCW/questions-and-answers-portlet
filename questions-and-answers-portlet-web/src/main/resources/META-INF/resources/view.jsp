@@ -52,11 +52,11 @@
 
             <%
 
-                Question question = (Question)pageContext.getAttribute("question");
-                AssetEntry asset = AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), question.getQuestionID());
-                RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.getStats(Question.class.getName(), question.getQuestionID());
-                List<AssetTag> tags = asset.getTags();
-                List<AssetCategory> categories = asset.getCategories();
+                Question question = (Question) pageContext.getAttribute("question");
+                RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.getStats(Question.class.getName(),
+                        question.getQuestionID());
+                List<AssetTag> tags = question.getTags();
+                List<AssetCategory> categories = question.getCategories();
                 List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
 
             %>
@@ -78,10 +78,10 @@
                     <aui:col span="4">
                         <%
                             String viewCount = "";
-                            if (asset.getViewCount()<1000) {
-                                viewCount = String.valueOf(asset.getViewCount());
+                            if (question.getViewCount()<1000) {
+                                viewCount = String.valueOf(question.getViewCount());
                             } else {
-                                viewCount = String.valueOf(Math.round(asset.getViewCount()/100.0)/10.0)+"k";
+                                viewCount = String.valueOf(Math.round(question.getViewCount()/100.0)/10.0)+"k";
                             }
                         %>
                         <div class="qaStatCounterBox">

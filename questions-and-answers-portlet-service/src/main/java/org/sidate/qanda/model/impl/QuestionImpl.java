@@ -16,6 +16,7 @@ package org.sidate.qanda.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -102,11 +103,15 @@ public class QuestionImpl extends QuestionBaseImpl {
 		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategoryIds();
 	}
 
-    public String getTitle() throws PortalException{
+    public String getTitle() throws PortalException {
         return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTitle();
     }
 
-    public String getText() throws PortalException{
+    public String getText() throws PortalException {
         return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getDescription();
     }
+
+	public int getViewCount() throws PortalException {
+	    return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getViewCount();
+	}
 }

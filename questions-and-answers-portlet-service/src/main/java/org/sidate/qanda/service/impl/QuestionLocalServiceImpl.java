@@ -15,6 +15,7 @@
 package org.sidate.qanda.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
+import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
@@ -155,5 +156,4 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
         return question;
     }
-
 }
