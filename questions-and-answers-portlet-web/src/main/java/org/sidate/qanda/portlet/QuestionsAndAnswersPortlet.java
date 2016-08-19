@@ -172,7 +172,22 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public void getQuestionsSortedByRating(ActionRequest request, ActionResponse response) {
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+            Comparator<Question> byRating = (questionOne, questionTwo) -> Double.compare(questionOne.getRating(),
+                    questionTwo.getRating());
 
+            List<Question> sortedQuestions = questions.stream()
+                    .sorted(byRating)
+                    .collect(toList());
+
+            request.setAttribute("questionsSortedByRating", sortedQuestions);
+
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
     }
 
     private String safeGetTitle(Question question) {
