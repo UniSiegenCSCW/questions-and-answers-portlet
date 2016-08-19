@@ -53,11 +53,10 @@
             <%
 
                 Question question = (Question) pageContext.getAttribute("question");
-                RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.getStats(Question.class.getName(),
-                        question.getQuestionID());
                 List<AssetTag> tags = question.getTags();
                 List<AssetCategory> categories = question.getCategories();
                 List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
+                int views = question.getViewCount();
 
             %>
             <portlet:renderURL var="showQuestionURL">
@@ -78,10 +77,10 @@
                     <aui:col span="4">
                         <%
                             String viewCount = "";
-                            if (question.getViewCount()<1000) {
-                                viewCount = String.valueOf(question.getViewCount());
+                            if (views < 1000) {
+                                viewCount = String.valueOf(views);
                             } else {
-                                viewCount = String.valueOf(Math.round(question.getViewCount()/100.0)/10.0)+"k";
+                                viewCount = String.valueOf(Math.round(views / 100.0) / 10.0) + "k";
                             }
                         %>
                         <div class="qaStatCounterBox">
@@ -101,7 +100,7 @@
                         <div class="qaStatCounterBox">
                             <div class="qaCounterLabel">Wertungen</div>
                             <div class="qaCounterValue">
-                                <%=(int) ratingsStats.getTotalScore()%>
+                                <%=(int) question.getRating()%>
                             </div>
                         </div>
                     </aui:col>
@@ -137,6 +136,7 @@
                             User author = UserLocalServiceUtil.getUser(question.getUserId());
                             User latestAnswerAuthor = null;
                             User editor = null;
+
                             if (answers.size() > 0){
                                 latestAnswer = answers.get(answers.size()-1);
                                 latestAnswerAuthor = UserLocalServiceUtil.getUser(latestAnswer.getUserId());
