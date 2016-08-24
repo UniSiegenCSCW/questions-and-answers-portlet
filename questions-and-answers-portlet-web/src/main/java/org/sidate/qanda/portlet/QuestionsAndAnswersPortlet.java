@@ -111,6 +111,9 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     /**
      * Returns the questions with a specified AssetCategory name passed via ParamUtil. This method first searches for
      * the AssetCategory with the given name and if exists, filters the questions by that ID.
+     *
+     * Annotation: This method allows querying the questions by category name, not ID! It depends on the GUI layout
+     * whether the ID or name will be used.
      */
     public void getQuestionsFilteredByCategory(ActionRequest request, ActionResponse response){
 
@@ -171,23 +174,14 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
     }
 
-    public void getQuestionsSortedByRating(ActionRequest request, ActionResponse response) {
-        ServiceContext serviceContext = null;
-        try {
-            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
-            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-            Comparator<Question> byRating = (questionOne, questionTwo) -> Double.compare(questionOne.getRating(),
-                    questionTwo.getRating());
+    private ArrayList<Question> getQuestionsSortedByRating(ServiceContext serviceContext) {
+        List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+        Comparator<Question> byRating = (questionOne, questionTwo) -> Double.compare(questionOne.getRating(),
+                questionTwo.getRating());
 
-            List<Question> sortedQuestions = questions.stream()
-                    .sorted(byRating)
-                    .collect(toList());
-
-            request.setAttribute("questionsSortedByRating", sortedQuestions);
-
-        } catch (PortalException e) {
-            e.printStackTrace();
-        }
+        return (ArrayList<Question>) questions.stream()
+                                            .sorted(byRating.reversed())
+                                            .collect(toList());
     }
 
     private String safeGetTitle(Question question) {
@@ -284,9 +278,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             long groupID = serviceContext.getScopeGroupId();
 
             ArrayList<Question> questions = new ArrayList<>(QuestionLocalServiceUtil.getQuestions(groupID));
+            ArrayList<Question> questionsSortedByRating = getQuestionsSortedByRating(serviceContext);
 
             if (!questions.isEmpty()) {
                 renderRequest.setAttribute("questions", questions);
+                renderRequest.setAttribute("questionsSortedByRating", questionsSortedByRating);
             }
 
             super.render(renderRequest, renderResponse);
@@ -299,6 +295,20 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     // #### Testing ####
 
+    public void testSortByRating(ActionRequest request, ActionResponse response) {
+        try {
+            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            getQuestionsSortedByRating(serviceContext).forEach(question -> {
+                try {
+                    System.out.println(question.getTitle());
+                } catch (PortalException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void testNewAnswer(ActionRequest request, ActionResponse response, long questionId, String text)
             throws PortalException, SystemException {

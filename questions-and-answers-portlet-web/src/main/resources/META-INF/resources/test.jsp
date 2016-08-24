@@ -41,3 +41,6 @@
 
 <portlet:actionURL name="testFilterQuestionsByTag" var="testFilterByTagURL"/>
 <aui:button onClick="<%= testFilterByTagURL%>" value="Filter By Tag"></aui:button>
+
+<portlet:actionURL name="testSortByRating" var="testSortByRatingURL"/>
+<aui:button onClick="<%= testSortByRatingURL%>" value="Show questions sorted by name"></aui:button>

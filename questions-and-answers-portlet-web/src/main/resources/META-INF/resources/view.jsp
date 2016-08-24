@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
 
 <jsp:useBean id="questions" class="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="questionsSortedByRating" class="java.util.ArrayList" scope="request"/>
 
 <portlet:renderURL var="mainViewURL">
     <portlet:param name="mvcPath" value="/view.jsp"/>
@@ -167,4 +168,6 @@
             </aui:container>
         </c:forEach>
     </aui:container>
+
+
 </aui:container>
