@@ -111,29 +111,11 @@ public class QuestionAssetRenderer extends BaseJSPAssetRenderer<Question> {
                                        LiferayPortletResponse liferayPortletResponse,
                                        String noSuchEntryRedirect) throws Exception {
 
-//        AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(Question.class.getName(),
-//                question.getQuestionID());
-//
-//        String uRLViewInContext = assetEntry.getAssetRenderer().getURLViewInContext(liferayPortletRequest,
-//                liferayPortletResponse, noSuchEntryRedirect);
-//
-//        if (assetEntry != null) {
-//            if (assetEntry.getAssetRenderer() != null) {
-//                uRLViewInContext = assetEntry.getAssetRenderer().getURLViewInContext(liferayPortletRequest,
-//                        liferayPortletResponse, noSuchEntryRedirect);
-//            }
-//        }
-//        return uRLViewInContext;
-
         String mvcPath = "/showQuestion.jsp";
         String backURL = "/view.jsp";
         String questionID = String.valueOf(question.getQuestionID());
-        String portletName = "org_sidate_qanda_portlet_QuestionsAndAnswersPortlet_";
-        String instance = "INSTANCE_xVyB8by2k6sC";
 
-        portletName = PortalUtil.getPortletNamespace(question.getPortletId());
-
-        PortletURL url = liferayPortletResponse.createRenderURL(portletName);
+        PortletURL url = liferayPortletResponse.createRenderURL(question.getPortletId());
         url.setParameter("mvcPath", mvcPath);
         url.setParameter("backURL", backURL);
         url.setParameter("questionID", questionID);
