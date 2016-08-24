@@ -38,10 +38,7 @@ public class QuestionAssetRenderer extends BaseJSPAssetRenderer<Question> {
 
     @Override
     public String getJspPath(HttpServletRequest request, String template) {
-        return (template.equals(TEMPLATE_ABSTRACT) || template.equals(TEMPLATE_FULL_CONTENT))
-                ? "/asset/" + template + ".jsp"
-                : null;
-
+        return null;
     }
 
     @Override
@@ -111,14 +108,14 @@ public class QuestionAssetRenderer extends BaseJSPAssetRenderer<Question> {
                                        LiferayPortletResponse liferayPortletResponse,
                                        String noSuchEntryRedirect) throws Exception {
 
-        String mvcPath = "/showQuestion.jsp";
-        String backURL = "/view.jsp";
-        String questionID = String.valueOf(question.getQuestionID());
+        String portletId = question.getPortletId();
+        PortletURL backURL = liferayPortletResponse.createRenderURL(portletId);
+        backURL.setParameter("mvcPath", "/view.jsp");
 
-        PortletURL url = liferayPortletResponse.createRenderURL(question.getPortletId());
-        url.setParameter("mvcPath", mvcPath);
-        url.setParameter("backURL", backURL);
-        url.setParameter("questionID", questionID);
+        PortletURL url = liferayPortletResponse.createRenderURL(portletId);
+        url.setParameter("mvcPath", "/showQuestion.jsp");
+        url.setParameter("backURL", backURL.toString());
+        url.setParameter("questionID", String.valueOf(question.getQuestionID()));
 
         return url.toString();
     }
