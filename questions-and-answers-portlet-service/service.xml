@@ -22,6 +22,7 @@
 		<column name="userName" type="String" />
 		<column name="createDate" type="Date" />
 		<column name="modifiedDate" type="Date" />
+        <column name="portletId" type="String"/>
 
         <column name="questionId" type="long"/>
 
@@ -54,6 +55,7 @@
         <column name="userName" type="String" />
         <column name="createDate" type="Date" />
         <column name="modifiedDate" type="Date" />
+        <column name="portletId" type="String"/>
 
         <column name="correctAnswerId" type="long"/>
 

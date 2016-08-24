@@ -74,6 +74,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
         if (Validator.isNull(text)) throw new EmptyQuestionTextException();
 
+        String portletId = serviceContext.getPortletId();
         long groupId = serviceContext.getScopeGroupId();
         long questionId = counterLocalService.increment();
         Date createDate = serviceContext.getCreateDate();
@@ -90,6 +91,8 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         question.setGroupId(groupId);
         question.setExpandoBridgeAttributes(serviceContext);
         question.setCorrectAnswerId(0);
+        question.setPortletId(portletId);
+
 
         questionPersistence.update(question);
 
