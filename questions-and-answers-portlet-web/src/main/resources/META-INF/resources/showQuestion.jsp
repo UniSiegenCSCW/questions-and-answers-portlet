@@ -20,9 +20,8 @@
     long questionID = ParamUtil.getLong(renderRequest, "questionID");
     String backURL = ParamUtil.getString(renderRequest, "backURL");
     Question question = QuestionLocalServiceUtil.getQuestion(questionID);
-    AssetEntry asset = AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), questionID);
-    List<AssetTag> tags = asset.getTags();
-    List<AssetCategory> categories = asset.getCategories();
+    List<AssetTag> tags = question.getTags();
+    List<AssetCategory> categories = question.getCategories();
     List<Answer> answerList = AnswerLocalServiceUtil.getAnswersForQuestion(questionID);
     AssetEntryLocalServiceUtil.incrementViewCounter(themeDisplay.getUserId(), Question.class.getName(), question.getQuestionID());
 
