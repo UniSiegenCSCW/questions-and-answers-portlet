@@ -4,12 +4,15 @@ import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import org.sidate.qanda.model.Answer;
 import org.sidate.qanda.model.impl.AnswerImpl;
 import org.sidate.qanda.service.QuestionLocalServiceUtil;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
+import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
@@ -28,9 +31,7 @@ public class AnswerAssetRenderer  extends BaseJSPAssetRenderer<Answer> {
 
     @Override
     public String getJspPath(HttpServletRequest request, String template) {
-        return (template.equals(TEMPLATE_ABSTRACT) || template.equals(TEMPLATE_FULL_CONTENT))
-                ? "/asset/" + template + ".jsp"
-                : null;
+        return null;
     }
 
     @Override
@@ -90,5 +91,21 @@ public class AnswerAssetRenderer  extends BaseJSPAssetRenderer<Answer> {
         }
 
         return summary;
+    }
+
+    public  String getURLViewInContext(LiferayPortletRequest liferayPortletRequest,
+                                       LiferayPortletResponse liferayPortletResponse,
+                                       String noSuchEntryRedirect) throws Exception {
+
+        String portletId = answer.getPortletId();
+        PortletURL backURL = liferayPortletResponse.createRenderURL(portletId);
+        backURL.setParameter("mvcPath", "/view.jsp");
+
+        PortletURL url = liferayPortletResponse.createRenderURL(portletId);
+        url.setParameter("mvcPath", "/showQuestion.jsp");
+        url.setParameter("backURL", backURL.toString());
+        url.setParameter("questionID", String.valueOf(answer.getQuestionId()));
+
+        return url.toString();
     }
 }
