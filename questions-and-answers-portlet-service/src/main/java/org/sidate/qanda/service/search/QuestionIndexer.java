@@ -49,7 +49,6 @@ public class QuestionIndexer extends BaseIndexer<Question> {
         document.addText(Field.CONTENT, HtmlUtil.extractText(question.getText()));
         document.addText(Field.TITLE, HtmlUtil.extractText(question.getTitle()));
         document.addText(Field.USER_NAME, HtmlUtil.extractText(question.getUserName()));
-        document.getFields().forEach((string, field) -> System.out.println(string + " " + field.getValue()));
         return document;
     }
 
@@ -89,7 +88,7 @@ public class QuestionIndexer extends BaseIndexer<Question> {
                         indexableActionableDynamicQuery.addDocuments(document);
                     } catch (PortalException pe) {
                         if (log.isWarnEnabled()) {
-                            log.warn("Unable to index Ratings3DEntry " + ((Question) question).getQuestionID(), pe);
+                            log.warn("Unable to index Question " + ((Question) question).getQuestionID(), pe);
                         }
                     }
                 });

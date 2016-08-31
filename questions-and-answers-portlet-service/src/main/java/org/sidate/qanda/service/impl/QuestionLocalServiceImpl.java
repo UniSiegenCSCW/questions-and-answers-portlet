@@ -105,7 +105,6 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
                     null, null, 0, 0, 0D);
 
             Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
-            System.out.println(indexer);
             indexer.reindex(question);
         } catch (PortalException e) {
             e.printStackTrace();
