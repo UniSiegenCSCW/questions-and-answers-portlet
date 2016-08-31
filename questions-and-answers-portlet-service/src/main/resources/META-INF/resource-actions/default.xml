@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!DOCTYPE resource-action-mapping PUBLIC "-//Liferay//DTD Resource Action Mapping 7.0.0//EN" "http://www.liferay.com/dtd/liferay-resource-action-mapping_7_0_0.dtd">
+
+<resource-action-mapping>
+    <model-resource>
+        <model-name>org.sidate.qanda</model-name>
+        <portlet-ref>
+            <portlet-name>org_sidate_qanda_questions-and-answers-portlet</portlet-name>
+        </portlet-ref>
+        <root>true</root>
+        <weight>1</weight>
+        <permissions>
+            <supports>
+                <action-key>ACCESS</action-key>
+                <action-key>ADD_ENTRY</action-key>
+                <action-key>DELETE</action-key>
+                <action-key>PERMISSIONS</action-key>
+                <action-key>SUBSCRIBE</action-key>
+                <action-key>UPDATE</action-key>
+                <action-key>LIST_QUESTIONS</action-key>
+                <action-key>MARK_ANSWER_AS_CORRECT</action-key>
+            </supports>
+            <site-member-defaults>
+                <action-key>ADD_ENTRY</action-key>
+                <action-key>SUBSCRIBE</action-key>
+                <action-key>VIEW</action-key>
+            </site-member-defaults>
+            <guest-defaults>
+                <action-key>VIEW</action-key>
+            </guest-defaults>
+            <guest-unsupported>
+                <action-key>ADD_ENTRY</action-key>
+                <action-key>ADD_FOLDER</action-key>
+                <action-key>PERMISSIONS</action-key>
+                <action-key>SUBSCRIBE</action-key>
+            </guest-unsupported>
+        </permissions>
+    </model-resource>
+
+    <model-resource>
+        <model-name>org.sidate.qanda.model.Question</model-name>
+        <portlet-ref>
+            <portlet-name>org_sidate_qanda_questions-and-answers-portlet</portlet-name>
+        </portlet-ref>
+        <weight>2</weight>
+        <permissions>
+            <supports>
+                <action-key>ACCESS</action-key>
+                <action-key>ADD_ENTRY</action-key>
+                <action-key>DELETE</action-key>
+                <action-key>PERMISSIONS</action-key>
+                <action-key>SUBSCRIBE</action-key>
+                <action-key>UPDATE</action-key>
+                <action-key>LIST_QUESTIONS</action-key>
+                <action-key>MARK_ANSWER_AS_CORRECT</action-key>
+            </supports>
+            <site-member-defaults>
+                <action-key>ADD_ENTRY</action-key>
+                <action-key>SUBSCRIBE</action-key>
+                <action-key>VIEW</action-key>
+            </site-member-defaults>
+            <guest-defaults>
+                <action-key>VIEW</action-key>
+            </guest-defaults>
+            <guest-unsupported>
+                <action-key>ADD_ENTRY</action-key>
+                <action-key>ADD_FOLDER</action-key>
+                <action-key>PERMISSIONS</action-key>
+                <action-key>SUBSCRIBE</action-key>
+            </guest-unsupported>
+        </permissions>
+    </model-resource>
+
+</resource-action-mapping>

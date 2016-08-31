@@ -5,7 +5,8 @@ questions-and-answers-portlet-service/src/main/java/org/sidate/qanda/service/htt
 questions-and-answers-portlet-service/src/main/java/org/sidate/qanda/service/base
 questions-and-answers-portlet-service/src/main/java/org/sidate/qanda/service/model
 questions-and-answers-portlet-api/src
-questions-and-answers-portlet-service/src/main/resources
+questions-and-answers-portlet-service/src/main/resources/META-INF/spring
+questions-and-answers-portlet-service/src/main/resources/META-INF/sql
 questions-and-answers-portlet-service/src/main/test
 /questions-and-answers-portlet-service/src/main/java/org/sidate/qanda/model/impl/QuestionModelImpl.java
 /questions-and-answers-portlet-service/src/main/java/org/sidate/qanda/model/impl/QuestionCacheModel.java
@@ -13,3 +14,7 @@ questions-and-answers-portlet-service/src/main/test
 /questions-and-answers-portlet-service/src/main/java/org/sidate/qanda/model/impl/AnswerModelImpl.java
 /questions-and-answers-portlet-service/src/main/java/org/sidate/qanda/model/impl/AnswerCacheModel.java
 /questions-and-answers-portlet-service/src/main/java/org/sidate/qanda/model/impl/AnswerBaseImpl.java
+/questions-and-answers-portlet-service/src/main/java/org/sidate/qanda/service/permission
+/questions-and-answers-portlet-api/node_modules
+/questions-and-answers-portlet-service/node_modules
+/questions-and-answers-portlet-web/node_modules
