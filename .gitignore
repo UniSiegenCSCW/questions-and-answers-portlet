@@ -7,6 +7,9 @@ questions-and-answers-portlet-service/src/main/java/org/sidate/qanda/service/mod
 questions-and-answers-portlet-api/src
 questions-and-answers-portlet-service/src/main/resources/META-INF/spring
 questions-and-answers-portlet-service/src/main/resources/META-INF/sql
+questions-and-answers-portlet-service/src/main/resources/service.properties
+questions-and-answers-portlet-service/src/main/resources/META-INF/module-hbm.xml
+
 questions-and-answers-portlet-service/src/main/test
 /questions-and-answers-portlet-service/src/main/java/org/sidate/qanda/model/impl/QuestionModelImpl.java
 /questions-and-answers-portlet-service/src/main/java/org/sidate/qanda/model/impl/QuestionCacheModel.java
