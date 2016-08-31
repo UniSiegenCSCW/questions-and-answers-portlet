@@ -11,10 +11,12 @@
 <%@ page import="org.sidate.qanda.util.QAUtils" %>
 <%@ page import="com.liferay.portal.kernel.model.User" %>
 <%@ page import="com.liferay.portal.kernel.service.UserLocalServiceUtil" %>
+<%@ page import="java.util.Collections" %>
 <%@ include file="init.jsp" %>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
 
 <jsp:useBean id="questions" class="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="questionsSortedByRating" class="java.util.ArrayList" scope="request"/>
 
 <portlet:renderURL var="mainViewURL">
     <portlet:param name="mvcPath" value="/view.jsp"/>
@@ -38,22 +40,24 @@
     </aui:button-row>
 
     <% String tabNames = "Neue Fragen,Beste Fragen"; %>
+
     <liferay-ui:tabs
             names="<%= tabNames %>"
     />
 
+    <%-- Questions will be sorted by date by default --%>
+    <% Collections.reverse(questions); %>
 
     <aui:container cssClass="qaQuestionsOverviewContainer">
         <c:forEach var="question" items="${questions}">
 
             <%
 
-                Question question = (Question)pageContext.getAttribute("question");
-                AssetEntry asset = AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), question.getQuestionID());
-                RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.getStats(Question.class.getName(), question.getQuestionID());
-                List<AssetTag> tags = asset.getTags();
-                List<AssetCategory> categories = asset.getCategories();
+                Question question = (Question) pageContext.getAttribute("question");
+                List<AssetTag> tags = question.getTags();
+                List<AssetCategory> categories = question.getCategories();
                 List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
+                int views = question.getViewCount();
 
             %>
             <portlet:renderURL var="showQuestionURL">
@@ -74,10 +78,10 @@
                     <aui:col span="4">
                         <%
                             String viewCount = "";
-                            if (asset.getViewCount()<1000) {
-                                viewCount = String.valueOf(asset.getViewCount());
+                            if (views < 1000) {
+                                viewCount = String.valueOf(views);
                             } else {
-                                viewCount = String.valueOf(Math.round(asset.getViewCount()/100.0)/10.0)+"k";
+                                viewCount = String.valueOf(Math.round(views / 100.0) / 10.0) + "k";
                             }
                         %>
                         <div class="qaStatCounterBox">
@@ -97,7 +101,7 @@
                         <div class="qaStatCounterBox">
                             <div class="qaCounterLabel">Wertungen</div>
                             <div class="qaCounterValue">
-                                <%=(int) ratingsStats.getTotalScore()%>
+                                <%=(int) question.getRating()%>
                             </div>
                         </div>
                     </aui:col>
@@ -133,6 +137,7 @@
                             User author = UserLocalServiceUtil.getUser(question.getUserId());
                             User latestAnswerAuthor = null;
                             User editor = null;
+
                             if (answers.size() > 0){
                                 latestAnswer = answers.get(answers.size()-1);
                                 latestAnswerAuthor = UserLocalServiceUtil.getUser(latestAnswer.getUserId());
@@ -163,4 +168,6 @@
             </aui:container>
         </c:forEach>
     </aui:container>
+
+
 </aui:container>

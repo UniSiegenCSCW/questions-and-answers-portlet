@@ -12,7 +12,9 @@ import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import org.osgi.service.component.annotations.Component;
 import org.sidate.qanda.model.Answer;
+import org.sidate.qanda.model.Question;
 import org.sidate.qanda.service.AnswerLocalServiceUtil;
+import org.sidate.qanda.service.QuestionLocalServiceUtil;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -48,6 +50,8 @@ public class AnswerIndexer  extends BaseIndexer<Answer> {
         Document document = getBaseModelDocument(CLASS_NAME, answer);
 
         //document.addText(Field.CAPTION, object.getCoverImageCaption());
+        Question question = QuestionLocalServiceUtil.getQuestion(answer.getQuestionId());
+        document.addText(Field.TITLE, HtmlUtil.extractText(question.getTitle()));
         document.addText(Field.CONTENT, HtmlUtil.extractText(answer.getText()));
         document.addText(Field.USER_NAME, HtmlUtil.extractText(answer.getUserName()));
         return document;

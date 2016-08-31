@@ -3,7 +3,7 @@
 <portlet:actionURL name="testAnswer" var="testAnswerURL"/>
 <aui:button onClick="<%= testAnswerURL%>" value="Test new Answer"></aui:button>
 
-<portlet:actionURL name="testNewQuestion" var="testNewQuestionURL"/>
+<portlet:actionURL name="Testing/testNewQuestion" var="testNewQuestionURL"/>
 <aui:button onClick="<%= testNewQuestionURL%>" value="Test new Question"></aui:button>
 
 <portlet:actionURL name="testSetCorrectAnswer" var="testSetCorrectAnswerURL"/>
@@ -41,3 +41,6 @@
 
 <portlet:actionURL name="testFilterQuestionsByTag" var="testFilterByTagURL"/>
 <aui:button onClick="<%= testFilterByTagURL%>" value="Filter By Tag"></aui:button>
+
+<portlet:actionURL name="testSortByRating" var="testSortByRatingURL"/>
+<aui:button onClick="<%= testSortByRatingURL%>" value="Show questions sorted by name"></aui:button>

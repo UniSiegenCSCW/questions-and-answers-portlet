@@ -10,6 +10,7 @@
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
+		<field name="portletId" type="String" />
 		<field name="questionId" type="long" />
 		<field name="editedBy" type="long" />
 		<field name="editedDate" type="Date" />
@@ -23,6 +24,7 @@
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
+		<field name="portletId" type="String" />
 		<field name="correctAnswerId" type="long" />
 		<field name="editedBy" type="long" />
 		<field name="editedDate" type="Date" />

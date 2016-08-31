@@ -15,6 +15,7 @@
 package org.sidate.qanda.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
+import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
@@ -73,6 +74,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
         if (Validator.isNull(text)) throw new EmptyQuestionTextException();
 
+        String portletId = serviceContext.getPortletId();
         long groupId = serviceContext.getScopeGroupId();
         long questionId = counterLocalService.increment();
         Date createDate = serviceContext.getCreateDate();
@@ -89,6 +91,8 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         question.setGroupId(groupId);
         question.setExpandoBridgeAttributes(serviceContext);
         question.setCorrectAnswerId(0);
+        question.setPortletId(portletId);
+
 
         questionPersistence.update(question);
 
@@ -155,5 +159,4 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
         return question;
     }
-
 }

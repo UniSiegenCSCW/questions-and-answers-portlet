@@ -1,35 +1,32 @@
 package org.sidate.qanda.portlet;
 
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetCategoryModel;
 import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetCategoryLocalServiceUtil;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.service.ResourceLocalServiceUtil;
-import com.liferay.portal.kernel.search.*;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import org.osgi.service.component.annotations.Component;
 import org.sidate.qanda.model.Answer;
 import org.sidate.qanda.model.Question;
 import org.sidate.qanda.service.AnswerLocalServiceUtil;
 import org.sidate.qanda.service.QuestionLocalServiceUtil;
-import org.osgi.service.component.annotations.Component;
 
 import javax.portlet.*;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.LongStream;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 
@@ -65,8 +62,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         String text = ParamUtil.getString(request, "text");
 
         try {
-            Question q = QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
-            ResourceLocalServiceUtil.addResources(serviceContext.getCompanyId(), serviceContext.getScopeGroupId(),serviceContext.getUserId(),Question.class.getName(),q.getPrimaryKey(),true,true,true);
+            QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
             SessionMessages.add(request, "questionAdded");
         }
         catch (Exception e) {
@@ -112,27 +108,25 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
     }
 
+    /**
+     * Returns the questions with a specified AssetCategory name passed via ParamUtil. This method first searches for
+     * the AssetCategory with the given name and if exists, filters the questions by that ID.
+     *
+     * Annotation: This method allows querying the questions by category name, not ID! It depends on the GUI layout
+     * whether the ID or name will be used.
+     */
     public void getQuestionsFilteredByCategory(ActionRequest request, ActionResponse response){
 
-//            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
-//            SearchContext searchContext = SearchContextFactory.getInstance((HttpServletRequest) request);
-//
-//            searchContext.setCategoryIds(serviceContext.getAssetCategoryIds());
-//
-//            Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
-//            Hits hits = indexer.search(searchContext);
-//            List<Document> docs = hits.toList();
-//
-//            request.setAttribute("questionDocs", docs);
-
         ServiceContext serviceContext = null;
+
         try {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-            long idToFilter = 36181L;
+            String categoryName = ParamUtil.getString(request, "category");
+            long categoryId = getCategoryIdByName(categoryName);
 
             List<Question> filteredQuestions = questions.stream()
-                    .filter(question -> filter(question, idToFilter))
+                    .filter(question -> filterByCategoryId(question, categoryId))
                     .collect(toList());
 
             request.setAttribute("questionsFilteredByCategory", filteredQuestions);
@@ -142,10 +136,82 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             PortalUtil.copyRequestParameters(request, response);
             response.setRenderParameter("mvcPath", "/view.jsp");
             log.error(e.getClass().getName() + "\n" + e.getMessage());
+        } catch (NoSuchElementException e) {
+            log.error("You supplied a category name which does not seem to have a corresponding category!");
         }
 
     }
 
+    private long getCategoryIdByName(String categoryName) throws NoSuchElementException {
+        List<AssetCategory> categories = AssetCategoryLocalServiceUtil.getCategories();
+
+        return categories.parallelStream()
+                    .filter(category -> category.getName().equals(categoryName))
+                    .mapToLong(AssetCategoryModel::getCategoryId)
+                    .findFirst().getAsLong();
+    }
+
+    /**
+     * Returns the questions with a specified Tag name passed via ParamUtil. This method filters the questions by that
+     * tag, so if a non existing tag is supplied it will return an empty List.
+     */
+    public void getQuestionsFilteredByTag(ActionRequest request, ActionResponse response) {
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+            String tagToFilter = ParamUtil.getString(request, "tag");
+
+            List<Question> filteredQuestions = questions.stream()
+                    .filter(question -> filterByTagName(question, tagToFilter))
+                    .collect(toList());
+
+            request.setAttribute("questionsFilteredByTag", filteredQuestions);
+
+
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private ArrayList<Question> getQuestionsSortedByRating(ServiceContext serviceContext) {
+        List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+        Comparator<Question> byRating = (questionOne, questionTwo) -> Double.compare(questionOne.getRating(),
+                questionTwo.getRating());
+
+        return (ArrayList<Question>) questions.stream()
+                                            .sorted(byRating.reversed())
+                                            .collect(toList());
+    }
+
+    private String safeGetTitle(Question question) {
+        try {
+            return question.getTitle();
+        } catch (PortalException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private boolean filterByCategoryId(Question question, long idToFilter) {
+        try {
+            return LongStream.of(question.getCategoryIds())
+                    .anyMatch(categoryId -> categoryId == idToFilter);
+        } catch (PortalException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean filterByTagName(Question question, String tagToFilter) {
+        try {
+            return Arrays.stream(question.getTagNames())
+                    .anyMatch(tag -> tag.equals(tagToFilter));
+        } catch (PortalException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     // #### Answers ####
 
@@ -212,9 +278,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             long groupID = serviceContext.getScopeGroupId();
 
             ArrayList<Question> questions = new ArrayList<>(QuestionLocalServiceUtil.getQuestions(groupID));
+            ArrayList<Question> questionsSortedByRating = getQuestionsSortedByRating(serviceContext);
 
             if (!questions.isEmpty()) {
                 renderRequest.setAttribute("questions", questions);
+                renderRequest.setAttribute("questionsSortedByRating", questionsSortedByRating);
             }
 
             super.render(renderRequest, renderResponse);
@@ -227,6 +295,20 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     // #### Testing ####
 
+    public void testSortByRating(ActionRequest request, ActionResponse response) {
+        try {
+            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            getQuestionsSortedByRating(serviceContext).forEach(question -> {
+                try {
+                    System.out.println(question.getTitle());
+                } catch (PortalException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void testNewAnswer(ActionRequest request, ActionResponse response, long questionId, String text)
             throws PortalException, SystemException {
@@ -254,8 +336,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(
                 Question.class.getName(), request);
-            Question q = QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
-            ResourceLocalServiceUtil.addResources(serviceContext.getCompanyId(), serviceContext.getScopeGroupId(),serviceContext.getUserId(),Question.class.getName(),q.getPrimaryKey(),true,true,true);
+            QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
             SessionMessages.add(request, "questionAdded");
         }
         catch (Exception e) {
@@ -421,8 +502,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         } catch (PortalException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public void testEditAnswer(ActionRequest request, ActionResponse response) {
@@ -446,8 +525,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         } catch (PortalException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public void testDisplayAssetCount(ActionRequest request, ActionResponse response) {
@@ -494,14 +571,12 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             Question question = questions.get(0);
             long[] categoryIds = question.getCategoryIds();
-            for(long id:categoryIds){
+            for (long id : categoryIds) {
                 System.out.println(id);
             }
         } catch (PortalException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public void testFilterQuestionsByCategory(ActionRequest request, ActionResponse response) {
@@ -512,7 +587,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             long idToFilter = 36181L;
 
             List<Question> filteredQuestions = questions.stream()
-                    .filter(question -> filter(question, idToFilter))
+                    .filter(question -> filterByCategoryId(question, idToFilter))
                     .collect(toList());
 
             System.out.println("Gefilterte Fragen: ");
@@ -528,10 +603,10 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         try {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-            String  tagToFilter = "testtag";
+            String tagToFilter = "testtag";
 
             List<Question> filteredQuestions = questions.stream()
-                    .filter(question -> filter(question, tagToFilter))
+                    .filter(question -> filterByTagName(question, tagToFilter))
                     .collect(toList());
 
             System.out.println("Gefilterte Fragen: ");
@@ -540,35 +615,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         } catch (PortalException e) {
             e.printStackTrace();
         }
-    }
-
-    private String safeGetTitle(Question question) {
-        try {
-            return question.getTitle();
-        } catch (PortalException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private boolean filter(Question question, long idToFilter) {
-        try {
-            return LongStream.of(question.getCategoryIds())
-                    .anyMatch(categoryId -> categoryId == idToFilter);
-        } catch (PortalException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private boolean filter(Question question, String tagToFilter) {
-        try {
-            return Arrays.stream(question.getTagNames())
-                    .anyMatch(tag -> tag.equals(tagToFilter));
-        } catch (PortalException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
 }

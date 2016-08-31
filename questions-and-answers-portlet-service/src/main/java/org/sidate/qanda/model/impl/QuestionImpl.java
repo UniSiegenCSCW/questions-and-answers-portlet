@@ -19,6 +19,8 @@ import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.ratings.kernel.model.RatingsStats;
+import com.liferay.ratings.kernel.service.RatingsStatsLocalServiceUtil;
 import org.sidate.qanda.model.Question;
 
 import java.text.SimpleDateFormat;
@@ -102,11 +104,21 @@ public class QuestionImpl extends QuestionBaseImpl {
 		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategoryIds();
 	}
 
-    public String getTitle() throws PortalException{
+    public String getTitle() throws PortalException {
         return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTitle();
     }
 
-    public String getText() throws PortalException{
+    public String getText() throws PortalException {
         return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getDescription();
+    }
+
+	public int getViewCount() throws PortalException {
+	    return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getViewCount();
+	}
+
+	public double getRating() {
+        RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.getStats(Question.class.getName(),
+                this.getQuestionID());
+	    return ratingsStats.getTotalScore();
     }
 }
