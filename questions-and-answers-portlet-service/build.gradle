@@ -23,4 +23,5 @@ buildService {
 	osgiModule = true
 	propsUtil = "org.sidate.qanda.service.util.PropsUtil"
 	testDir = "src/main/test"
+	resourceActionsConfigs = "src/main/resources/META-INF/resource-actions/default.xml"
 }
