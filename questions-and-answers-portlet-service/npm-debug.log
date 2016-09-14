@@ -1,0 +1,67 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/brodo/Development/liferay/modules/questions-and-answers-portlet/questions-and-answers-portlet-service/build/node/bin/node',
+1 verbose cli   '/Users/brodo/Development/liferay/modules/questions-and-answers-portlet/questions-and-answers-portlet-service/build/node/lib/node_modules/npm/bin/npm-cli.js',
+1 verbose cli   '--cache',
+1 verbose cli   '/Users/brodo/Development/liferay/modules/questions-and-answers-portlet/questions-and-answers-portlet-service/build/node/.cache',
+1 verbose cli   '--loglevel',
+1 verbose cli   'warn',
+1 verbose cli   '--progress',
+1 verbose cli   'true',
+1 verbose cli   'install',
+1 verbose cli   'lfr-amd-loader@1.3.5' ]
+2 info using npm@3.3.12
+3 info using node@v5.5.0
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readLocalPackageData
+7 silly fetchPackageMetaData lfr-amd-loader@1.3.5
+8 silly fetchNamedPackageData lfr-amd-loader
+9 silly mapToRegistry name lfr-amd-loader
+10 silly mapToRegistry using default registry
+11 silly mapToRegistry registry https://registry.npmjs.org/
+12 silly mapToRegistry uri https://registry.npmjs.org/lfr-amd-loader
+13 verbose request uri https://registry.npmjs.org/lfr-amd-loader
+14 verbose request no auth needed
+15 info attempt registry request try #1 at 9:19:29 AM
+16 verbose request id 11a3cdd9590ade59
+17 http request GET https://registry.npmjs.org/lfr-amd-loader
+18 info retry will retry, error on last attempt: Error: getaddrinfo ENOTFOUND registry.npmjs.org registry.npmjs.org:443
+19 info attempt registry request try #2 at 9:19:52 AM
+20 http request GET https://registry.npmjs.org/lfr-amd-loader
+21 info retry will retry, error on last attempt: Error: getaddrinfo ENOTFOUND registry.npmjs.org registry.npmjs.org:443
+22 info attempt registry request try #3 at 9:20:52 AM
+23 http request GET https://registry.npmjs.org/lfr-amd-loader
+24 silly fetchPackageMetaData Error: getaddrinfo ENOTFOUND registry.npmjs.org registry.npmjs.org:443
+24 silly fetchPackageMetaData     at errnoException (dns.js:26:10)
+24 silly fetchPackageMetaData     at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:77:26)
+24 silly fetchPackageMetaData  error for lfr-amd-loader@1.3.5 { [Error: getaddrinfo ENOTFOUND registry.npmjs.org registry.npmjs.org:443]
+24 silly fetchPackageMetaData   code: 'ENOTFOUND',
+24 silly fetchPackageMetaData   errno: 'ENOTFOUND',
+24 silly fetchPackageMetaData   syscall: 'getaddrinfo',
+24 silly fetchPackageMetaData   hostname: 'registry.npmjs.org',
+24 silly fetchPackageMetaData   host: 'registry.npmjs.org',
+24 silly fetchPackageMetaData   port: 443 }
+25 silly rollbackFailedOptional Starting
+26 silly rollbackFailedOptional Finishing
+27 silly runTopLevelLifecycles Starting
+28 silly runTopLevelLifecycles Finishing
+29 silly install printInstalled
+30 verbose stack Error: getaddrinfo ENOTFOUND registry.npmjs.org registry.npmjs.org:443
+30 verbose stack     at errnoException (dns.js:26:10)
+30 verbose stack     at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:77:26)
+31 verbose cwd /Users/brodo/Development/liferay/modules/questions-and-answers-portlet/questions-and-answers-portlet-service
+32 error Darwin 15.6.0
+33 error argv "/Users/brodo/Development/liferay/modules/questions-and-answers-portlet/questions-and-answers-portlet-service/build/node/bin/node" "/Users/brodo/Development/liferay/modules/questions-and-answers-portlet/questions-and-answers-portlet-service/build/node/lib/node_modules/npm/bin/npm-cli.js" "--cache" "/Users/brodo/Development/liferay/modules/questions-and-answers-portlet/questions-and-answers-portlet-service/build/node/.cache" "--loglevel" "warn" "--progress" "true" "install" "lfr-amd-loader@1.3.5"
+34 error node v5.5.0
+35 error npm  v3.3.12
+36 error code ENOTFOUND
+37 error errno ENOTFOUND
+38 error syscall getaddrinfo
+39 error network getaddrinfo ENOTFOUND registry.npmjs.org registry.npmjs.org:443
+39 error network This is most likely not a problem with npm itself
+39 error network and is related to network connectivity.
+39 error network In most cases you are behind a proxy or have bad network settings.
+39 error network
+39 error network If you are behind a proxy, please make sure that the
+39 error network 'proxy' config is set properly.  See: 'npm help config'
+40 verbose exit [ 1, true ]

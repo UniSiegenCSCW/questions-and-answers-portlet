@@ -61,6 +61,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
 
+        log.error(request.getpa);
+
         try {
             QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
             SessionMessages.add(request, "questionAdded");
@@ -69,7 +71,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             SessionErrors.add(request, e.getClass().getName());
             PortalUtil.copyRequestParameters(request, response);
             response.setRenderParameter("mvcPath", "/view.jsp");
-            log.error(e.getClass().getName() + "\n" + e.getMessage());
+            log.error(e);
         }
 
     }

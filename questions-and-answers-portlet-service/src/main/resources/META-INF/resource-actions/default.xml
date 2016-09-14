@@ -5,7 +5,7 @@
     <model-resource>
         <model-name>org.sidate.qanda</model-name>
         <portlet-ref>
-            <portlet-name>org_sidate_qanda_questions-and-answers-portlet</portlet-name>
+            <portlet-name>org_sidate_qanda_portlet_QuestionsAndAnswersPortlet</portlet-name>
         </portlet-ref>
         <root>true</root>
         <weight>1</weight>
@@ -17,8 +17,7 @@
                 <action-key>PERMISSIONS</action-key>
                 <action-key>SUBSCRIBE</action-key>
                 <action-key>UPDATE</action-key>
-                <action-key>LIST_QUESTIONS</action-key>
-                <action-key>MARK_ANSWER_AS_CORRECT</action-key>
+                <action-key>VIEW</action-key>
             </supports>
             <site-member-defaults>
                 <action-key>ADD_ENTRY</action-key>
@@ -40,7 +39,7 @@
     <model-resource>
         <model-name>org.sidate.qanda.model.Question</model-name>
         <portlet-ref>
-            <portlet-name>org_sidate_qanda_questions-and-answers-portlet</portlet-name>
+            <portlet-name>org_sidate_qanda_portlet_QuestionsAndAnswersPortlet</portlet-name>
         </portlet-ref>
         <weight>2</weight>
         <permissions>

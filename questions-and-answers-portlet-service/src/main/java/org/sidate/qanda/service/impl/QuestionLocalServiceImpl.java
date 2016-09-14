@@ -68,7 +68,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
     }
 
     public Question addQuestion(String title, String text, ServiceContext serviceContext) throws
-            EmptyQuestionTitleException, EmptyQuestionTextException {
+            PortalException {
 
         // Validation
         if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
@@ -96,19 +96,19 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
         questionPersistence.update(question);
 
-        try {
-            assetEntryLocalService.updateEntry(
-                    serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
-                    Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
-                    serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null,
-                    null, null, ContentTypes.TEXT_HTML, title, text, "",
-                    null, null, 0, 0, 0D);
 
-            Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
-            indexer.reindex(question);
-        } catch (PortalException e) {
-            e.printStackTrace();
-        }
+//        resourceLocalService.addModelResources(question, serviceContext);
+
+        assetEntryLocalService.updateEntry(
+                serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
+                Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
+                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null,
+                null, null, ContentTypes.TEXT_HTML, title, text, "",
+                null, null, 0, 0, 0D);
+
+        Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
+        indexer.reindex(question);
+
 
         return question;
     }
