@@ -99,13 +99,13 @@
                         </div>
                     </div>
 
-                    <c:if test="<%=question.getModifiedDate() != null && question.getModifiedDate().after(question.getCreateDate())%>">
+                    <c:if test="<%=question.getEditedDate() != null && question.getEditedDate().after(question.getCreateDate())%>">
                         <%
                             User questionEditor = UserLocalServiceUtil.getUser(question.getEditedBy());
                             List<Organization> questionEditorOrganizations = questionEditor.getOrganizations();
                         %>
                         <div class="qaAuthorbox">
-                            <div>editiert am <%=sdf.format(question.getModifiedDate())%></div>
+                            <div>editiert am <%=sdf.format(question.getEditedDate())%></div>
                             <div class="qaAuthorImage">
                                 <img src="<%=questionEditor.getPortraitURL(themeDisplay)%>"/>
                             </div>
@@ -177,8 +177,8 @@
     <aui:container cssClass="qaAnswersWrapper">
         <c:forEach var="answer" items="<%=answerList%>">
             <%
-                Answer answer = (Answer)pageContext.getAttribute("answer");
-                User answerAuthor = UserLocalServiceUtil.getUser(question.getUserId());
+                Answer answer = (Answer) pageContext.getAttribute("answer");
+                User answerAuthor = UserLocalServiceUtil.getUser(answer.getUserId());
                 List<Organization> answerAuthorOrganizations = answerAuthor.getOrganizations();
 
             %>
@@ -210,13 +210,13 @@
                                 </c:if>
                             </div>
                         </div>
-                        <c:if test="<%=answer.getModifiedDate() != null && answer.getModifiedDate().after(answer.getCreateDate())%>">
+                        <c:if test="<%=answer.getEditedDate() != null && answer.getEditedDate().after(answer.getCreateDate())%>">
                             <%
                                 User answerEditor = UserLocalServiceUtil.getUser(question.getUserId());
                                 List<Organization> answerEditorOrganizations = answerEditor.getOrganizations();
                             %>
                             <div class="qaAuthorbox">
-                                <div>editiert am <%=sdf.format(answer.getModifiedDate())%></div>
+                                <div>editiert am <%=sdf.format(answer.getEditedDate())%></div>
                                 <div class="qaAuthorImage">
                                     <img src="<%=answerEditor.getPortraitURL(themeDisplay)%>"/>
                                 </div>
