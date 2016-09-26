@@ -8,7 +8,6 @@
 <%@ page import="org.sidate.qanda.service.AnswerLocalServiceUtil" %>
 <%@ page import="com.liferay.ratings.kernel.service.RatingsStatsLocalServiceUtil" %>
 <%@ page import="com.liferay.ratings.kernel.model.RatingsStats" %>
-<%@ page import="org.sidate.qanda.util.QAUtils" %>
 <%@ page import="com.liferay.portal.kernel.model.User" %>
 <%@ page import="com.liferay.portal.kernel.service.UserLocalServiceUtil" %>
 <%@ page import="java.util.Collections" %>
@@ -146,21 +145,20 @@
                             if (question.getEditedBy() != 0) {
                                 editor = UserLocalServiceUtil.getUser(question.getEditedBy());
                             }
+
+
+                            boolean questionEdited = question.getEditedDate() != null;
+                            boolean questionAnswered = latestAnswer != null;
                         %>
                         <c:choose>
-                            <c:when test="<%=latestAnswer != null &&
-                                             latestAnswer.getCreateDate().after(question.getCreateDate()) &&
-                                             (question.getModifiedDate() == null ||
-                                             latestAnswer.getCreateDate().after(question.getModifiedDate()))%>">
-                                <span class="qaDateTime">beantwortet <%=QAUtils.getTimeDifferenceString(latestAnswer.getCreateDate())%> von <%=latestAnswerAuthor.getFullName()%></span>
-
+                            <c:when test="<%= questionAnswered && ( !questionEdited || latestAnswer.getCreateDate().after(question.getEditedDate()) ) %>">
+                                <span class="qaDateTime">beantwortet <%=latestAnswer.getTimeSinceCreated()%> von <%=latestAnswerAuthor.getFullName()%></span>
                             </c:when>
-                            <c:when test="<%=question.getModifiedDate() != null &&
-                                             question.getModifiedDate().after(question.getCreateDate())%>">
-                                <span class="qaDateTime">editiert <%=QAUtils.getTimeDifferenceString(question.getModifiedDate())%> von <%=editor.getFullName()%></span>
+                            <c:when test="<%= questionEdited %>">
+                                <span class="qaDateTime">editiert <%=question.getTimeSinceEdited()%> von <%=editor.getFullName()%></span>
                             </c:when>
                             <c:otherwise>
-                                <span class="qaDateTime">gefragt <%=QAUtils.getTimeDifferenceString(question.getCreateDate())%> von <%=author.getFullName()%></span>
+                                <span class="qaDateTime">gefragt <%=question.getTimeSinceCreated()%> von <%=author.getFullName()%></span>
                             </c:otherwise>
                         </c:choose>
                     </aui:col>

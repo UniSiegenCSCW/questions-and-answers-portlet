@@ -60,7 +60,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
-        
+
         try {
             QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
             SessionMessages.add(request, "questionAdded");
@@ -282,12 +282,17 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             if (!questions.isEmpty()) {
                 renderRequest.setAttribute("questions", questions);
+                log.info(questions.size() + " questions have been passed to renderRequest");
                 renderRequest.setAttribute("questionsSortedByRating", questionsSortedByRating);
             }
 
             super.render(renderRequest, renderResponse);
-        } catch (PortalException | PortletException e) {
-            log.error(e.getClass().getName() + "\n" + e.getMessage());
+        } catch (PortletException e) {
+            log.error("A Portlet Error has been thrown by render()");
+            e.printStackTrace();
+        } catch (PortalException e) {
+            log.error("A Portal Error has been thrown by render()");
+            e.printStackTrace();
         }
 
     }

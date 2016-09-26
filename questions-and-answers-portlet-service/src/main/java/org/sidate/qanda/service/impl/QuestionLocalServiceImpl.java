@@ -103,8 +103,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
                 serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
                 Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
                 serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null,
-                null, null, ContentTypes.TEXT_HTML, title, text, "",
-                null, null, 0, 0, 0D);
+                null, null, ContentTypes.TEXT_HTML, title, text, "", null, null, 0, 0, 0D);
 
         Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
         indexer.reindex(question);
@@ -113,7 +112,8 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         return question;
     }
 
-    public void editQuestion(long questionId, String title, String text, ServiceContext serviceContext) throws PortalException {
+    public void editQuestion(long questionId, String title, String text, ServiceContext serviceContext)
+            throws PortalException {
 
         // Validation
         if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
@@ -128,8 +128,8 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         assetEntryLocalService.updateEntry(
                 serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
                 Question.class.getName(), question.getPrimaryKey(), question.getUuid(), 0,
-                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null, null, ContentTypes.TEXT_HTML, title,
-                text, null, null, null, 0, 0, 0D);
+                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null,
+                null, ContentTypes.TEXT_HTML, title, text, null, null, null, 0, 0, 0D);
 
         Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
         indexer.reindex(question);
