@@ -29,7 +29,6 @@
 
     User author = UserLocalServiceUtil.getUser(question.getUserId());
     List<Organization> authorOrganisations = author.getOrganizations();
-
 %>
 
 <portlet:renderURL var="viewURL">
@@ -50,6 +49,7 @@
         backURL="<%= backURL %>"
         title='<%=question.getTitle() %>'
 />
+
 <aui:container cssClass="qaQuestionWrapper">
     <aui:container>
         <aui:row>
@@ -237,13 +237,20 @@
                             <portlet:param name="backURL" value="<%= showQuestionsURL%>"/>
                             <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
                         </portlet:renderURL>
-
                         <aui:button onClick="<%=editAnswerURL%>" value="Antwort bearbeiten"/>
+
                         <portlet:actionURL name="deleteAnswer" var="deleteAnswerURL">
                             <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
                             <portlet:param name="redirectURL" value="<%=showQuestionsURL%>"/>
                         </portlet:actionURL>
                         <aui:button onClick="<%=deleteAnswerURL%>" value="Antwort l&ouml;schen"/>
+
+                        <portlet:actionURL name="setCorrectAnswer" var="setCorrectAnswerURL">
+                            <portlet:param name="redirectURL" value="<%= showQuestionsURL%>"/>
+                            <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
+                        </portlet:actionURL>
+                        <aui:button onClick="<%=setCorrectAnswerURL%>" value="Antwort akzeptieren"/>
+
                     </aui:button-row>
                     <aui:row cssClass='<%="qaDiscussionWrapper answerDiscussion_"+answer.getAnswerID()%>'>
                         <a id="toggleAnswerComment_<%=answer.getAnswerID()%>">neuen Kommentar hinzuf&uuml;gen</a>

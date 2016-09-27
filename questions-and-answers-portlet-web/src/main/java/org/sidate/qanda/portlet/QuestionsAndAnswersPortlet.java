@@ -78,12 +78,15 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
      * Sets the correct answer ID, may also be used to unset the correct answer ID by
      * passing 0 as the ID parameter.
      */
-    public void setCorrectAnswer(ActionRequest request, ActionResponse response, long questionId, long answerId)
+    public void setCorrectAnswer(ActionRequest request, ActionResponse response)
             throws PortalException {
+        long answerId = ParamUtil.getLong(request, "answerID");
+        Answer answer = AnswerLocalServiceUtil.getAnswer(answerId);
+        long questionId = answer.getQuestionId();
         ServiceContext serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
         QuestionLocalServiceUtil.setCorrectAnswer(answerId, questionId, serviceContext);
         SessionMessages.add(request, "answerAccepted");
-
+        log.info("Answer " + answer.getText() + " has been accepted");
     }
 
     public void editQuestion(ActionRequest request, ActionResponse response) throws PortalException {
@@ -384,6 +387,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     // Sets and gets the correct answer
+    // DOES NOT WORK ATM
     public void testSetCorrectAnswer(ActionRequest request, ActionResponse response){
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
@@ -393,7 +397,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             Answer answer = answers.get(0);
 
-            setCorrectAnswer(request,response, question.getQuestionID(), answer.getAnswerID());
+            setCorrectAnswer(request,response);
         } catch (PortalException e) {
             e.printStackTrace();
         }
