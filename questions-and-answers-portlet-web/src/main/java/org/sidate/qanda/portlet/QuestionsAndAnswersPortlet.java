@@ -88,6 +88,15 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         log.info("Answer " + answerId + " has been accepted");
     }
 
+    public void unsetCorrectAnswer(ActionRequest request, ActionResponse response) throws PortalException {
+        long questionId = ParamUtil.getLong(request, "questionID");
+        Question question = QuestionLocalServiceUtil.getQuestion(questionId);
+        question.unsetCorrectAnswer();
+
+        SessionMessages.add(request, "answerUnset");
+        log.info("Answer for question " + questionId + " has been unset.");
+    }
+
     public void editQuestion(ActionRequest request, ActionResponse response) throws PortalException {
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");

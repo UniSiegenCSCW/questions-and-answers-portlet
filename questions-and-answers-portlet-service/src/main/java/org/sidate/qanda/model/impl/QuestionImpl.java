@@ -186,6 +186,10 @@ public class QuestionImpl extends QuestionBaseImpl {
         QuestionLocalServiceUtil.setCorrectAnswer(answerId, this.getQuestionID());
     }
 
+    public void unsetCorrectAnswer() {
+        QuestionLocalServiceUtil.unsetCorrectAnswer(this.getQuestionID());
+    }
+
     public Answer getCorrectAnswer() throws PortalException {
         if (this.getIsAnswered()) {
             return AnswerLocalServiceUtil.getAnswer(this.getCorrectAnswerId());

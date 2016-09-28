@@ -186,7 +186,7 @@
                 <aui:col cssClass="qaAnswerRatingCol" span="1">
                     <liferay-ui:ratings className="<%=Answer.class.getName()%>"
                                         classPK="<%=answer.getAnswerID()%>" type="like" />
-                    <c:if test="<%=question.getCorrectAnswerId() == answer.getAnswerID()%>">
+                    <c:if test="<%= question.getIsAnswered() && question.getCorrectAnswerId() == answer.getAnswerID()%>">
                         <div>
                             <span class="qaCorreckAnswerCheckmark glyphicon glyphicon-ok"/>
                         </div>
@@ -245,13 +245,26 @@
                         </portlet:actionURL>
                         <aui:button onClick="<%=deleteAnswerURL%>" value="Antwort l&ouml;schen"/>
 
-                        <portlet:actionURL name="setCorrectAnswer" var="setCorrectAnswerURL">
-                            <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
-                            <portlet:param name="backURL" value="<%= showQuestionsURL%>"/>
-                            <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
-                            <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
-                        </portlet:actionURL>
-                        <aui:button onClick="<%=setCorrectAnswerURL%>" value="Antwort akzeptieren"/>
+                        <c:choose>
+                            <c:when test="<%= question.getIsAnswered() && question.getCorrectAnswerId() == answer.getAnswerID() %>">
+                                <portlet:actionURL name="unsetCorrectAnswer" var="unsetCorrectAnswerURL">
+                                    <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
+                                    <portlet:param name="backURL" value="<%= backURL%>"/>
+                                    <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
+                                </portlet:actionURL>
+                                <aui:button onClick="<%=unsetCorrectAnswerURL%>" value="Akzeptierte Antwort zur&#252;ckziehen"/>
+                            </c:when>
+
+                            <c:otherwise>
+                                <portlet:actionURL name="setCorrectAnswer" var="setCorrectAnswerURL">
+                                    <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
+                                    <portlet:param name="backURL" value="<%= backURL%>"/>
+                                    <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
+                                    <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
+                                </portlet:actionURL>
+                                <aui:button onClick="<%=setCorrectAnswerURL%>" value="Antwort akzeptieren"/>
+                            </c:otherwise>
+                        </c:choose>
 
                     </aui:button-row>
                     <aui:row cssClass='<%="qaDiscussionWrapper answerDiscussion_"+answer.getAnswerID()%>'>
