@@ -46,7 +46,7 @@ import static java.util.stream.Collectors.toList;
 
 public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
-    private static Log log = LogFactoryUtil.getLog(QuestionsAndAnswersPortlet.class);
+    private static final Log log = LogFactoryUtil.getLog(QuestionsAndAnswersPortlet.class);
 
 
     // #### Question ####
@@ -78,8 +78,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
      * Sets the correct answer ID, may also be used to unset the correct answer ID by
      * passing 0 as the ID parameter.
      */
-    public void setCorrectAnswer(ActionRequest request, ActionResponse response)
-            throws PortalException {
+    public void setCorrectAnswer(ActionRequest request, ActionResponse response) throws PortalException {
         long answerId = ParamUtil.getLong(request, "answerID");
         Answer answer = AnswerLocalServiceUtil.getAnswer(answerId);
         long questionId = answer.getQuestionId();
@@ -120,7 +119,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
      */
     public void getQuestionsFilteredByCategory(ActionRequest request, ActionResponse response){
 
-        ServiceContext serviceContext = null;
+        ServiceContext serviceContext;
 
         try {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
@@ -145,6 +144,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private long getCategoryIdByName(String categoryName) throws NoSuchElementException {
         List<AssetCategory> categories = AssetCategoryLocalServiceUtil.getCategories();
 
@@ -159,7 +159,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
      * tag, so if a non existing tag is supplied it will return an empty List.
      */
     public void getQuestionsFilteredByTag(ActionRequest request, ActionResponse response) {
-        ServiceContext serviceContext = null;
+        ServiceContext serviceContext;
         try {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
@@ -197,23 +197,13 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     private boolean filterByCategoryId(Question question, long idToFilter) {
-        try {
-            return LongStream.of(question.getCategoryIds())
-                    .anyMatch(categoryId -> categoryId == idToFilter);
-        } catch (PortalException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return LongStream.of(question.getCategoryIds())
+                .anyMatch(categoryId -> categoryId == idToFilter);
     }
 
     private boolean filterByTagName(Question question, String tagToFilter) {
-        try {
-            return Arrays.stream(question.getTagNames())
-                    .anyMatch(tag -> tag.equals(tagToFilter));
-        } catch (PortalException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return Arrays.stream(question.getTagNames())
+                .anyMatch(tag -> tag.equals(tagToFilter));
     }
 
     // #### Answers ####
@@ -386,23 +376,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
-    // Sets and gets the correct answer
-    // DOES NOT WORK ATM
-    public void testSetCorrectAnswer(ActionRequest request, ActionResponse response){
-        try {
-            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
-
-            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-            Question question = questions.get(0);
-            List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
-            Answer answer = answers.get(0);
-
-            setCorrectAnswer(request,response);
-        } catch (PortalException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void testDisplayCorrectAnswer(ActionRequest request, ActionResponse response){
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
@@ -429,7 +402,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public void testDeleteAnswer(ActionRequest request, ActionResponse response){
-        ServiceContext serviceContext = null;
+        ServiceContext serviceContext;
         try {
             serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
 
@@ -461,7 +434,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public void testDeleteQuestion(ActionRequest request, ActionResponse response){
-        ServiceContext serviceContext = null;
+        ServiceContext serviceContext;
         try {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
 
@@ -490,7 +463,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public void testEditQuestion(ActionRequest request, ActionResponse response) {
-        ServiceContext serviceContext = null;
+        ServiceContext serviceContext;
         try {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
@@ -514,7 +487,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public void testEditAnswer(ActionRequest request, ActionResponse response) {
-        ServiceContext serviceContext = null;
+        ServiceContext serviceContext;
         try {
             serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
@@ -543,7 +516,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     public void testDisplayAssets(ActionRequest request, ActionResponse response) {
         List<AssetEntry> entries = AssetEntryLocalServiceUtil.getAssetEntries(0, AssetEntryLocalServiceUtil.getAssetEntriesCount());
         for (AssetEntry entry : entries) {
-            String assetText = entry.getDescription();
+
             if (entry.getClassName().equals(Question.class.getName())) {
                 System.out.println("Class PK: " + entry.getClassPK()
                         + " --- Class Name ID: " + entry.getClassNameId()
@@ -564,16 +537,16 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public void testDeleteAssets(ActionRequest request, ActionResponse response) {
-        List<AssetEntry> entries = AssetEntryLocalServiceUtil.getAssetEntries(0, AssetEntryLocalServiceUtil.getAssetEntriesCount());
-        for (AssetEntry entry : entries) {
-            if (entry.getClassName().equals(Question.class.getName())||entry.getClassName().equals(Answer.class.getName())) {
-                AssetEntryLocalServiceUtil.deleteAssetEntry(entry);
-            }
-        }
+        List<AssetEntry> entries = AssetEntryLocalServiceUtil.getAssetEntries(0,
+                AssetEntryLocalServiceUtil.getAssetEntriesCount());
+        entries.stream()
+                .filter(entry -> entry.getClassName().equals(Question.class.getName())
+                        || entry.getClassName().equals(Answer.class.getName()))
+                .forEach(AssetEntryLocalServiceUtil::deleteAssetEntry);
     }
 
     public void testPrintCategoryIdsOfTheFirstQuestion(ActionRequest request, ActionResponse response) {
-        ServiceContext serviceContext = null;
+        ServiceContext serviceContext;
         try {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
@@ -589,7 +562,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public void testFilterQuestionsByCategory(ActionRequest request, ActionResponse response) {
-        ServiceContext serviceContext = null;
+        ServiceContext serviceContext;
         try {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
@@ -608,11 +581,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public void testFilterQuestionsByTag(ActionRequest request, ActionResponse response) {
-        ServiceContext serviceContext = null;
+        ServiceContext serviceContext;
         try {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-            String tagToFilter = "testtag";
+            String tagToFilter = "new";
 
             List<Question> filteredQuestions = questions.stream()
                     .filter(question -> filterByTagName(question, tagToFilter))

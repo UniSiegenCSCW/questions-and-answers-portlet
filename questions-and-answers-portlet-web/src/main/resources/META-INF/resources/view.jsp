@@ -148,10 +148,10 @@
 
 
                             boolean questionEdited = question.getEditedDate() != null;
-                            boolean questionAnswered = latestAnswer != null;
+                            boolean questionHasAnswer = latestAnswer != null;
                         %>
                         <c:choose>
-                            <c:when test="<%= questionAnswered && ( !questionEdited || latestAnswer.getCreateDate().after(question.getEditedDate()) ) %>">
+                            <c:when test="<%= questionHasAnswer && ( !questionEdited || latestAnswer.getCreateDate().after(question.getEditedDate()) ) %>">
                                 <span class="qaDateTime">beantwortet <%=latestAnswer.getTimeSinceCreated()%> von <%=latestAnswerAuthor.getFullName()%></span>
                             </c:when>
                             <c:when test="<%= questionEdited %>">

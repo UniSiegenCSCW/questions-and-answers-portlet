@@ -19,6 +19,8 @@ import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.ratings.kernel.model.RatingsStats;
 import com.liferay.ratings.kernel.service.RatingsStatsLocalServiceUtil;
 import org.sidate.qanda.model.Question;
@@ -44,6 +46,7 @@ public class QuestionImpl extends QuestionBaseImpl {
 	 * Never reference this class directly. All methods that expect a question model instance should use the {@link org.sidate.qanda.model.Question} interface instead.
 	 */
 
+    private static Log log = LogFactoryUtil.getLog(QuestionImpl.class);
 
 	public QuestionImpl() {
 	}
@@ -136,13 +139,25 @@ public class QuestionImpl extends QuestionBaseImpl {
 		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategories();
 	}
 
-	public String[] getTagNames() throws PortalException {
-		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTagNames();
-	}
+	public String[] getTagNames() {
+        try {
+            return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTagNames();
+        } catch (PortalException e) {
+            log.error("Could not get asset entry for the specified question.");
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-	public long[] getCategoryIds() throws PortalException {
-		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategoryIds();
-	}
+	public long[] getCategoryIds() {
+        try {
+            return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategoryIds();
+        } catch (PortalException e) {
+            log.error("Could not get asset entry for the specified question.");
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public String getTitle() throws PortalException {
         return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTitle();
