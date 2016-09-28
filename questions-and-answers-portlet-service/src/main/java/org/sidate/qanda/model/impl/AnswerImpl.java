@@ -17,7 +17,10 @@ package org.sidate.qanda.model.impl;
 import aQute.bnd.annotation.ProviderType;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.ratings.kernel.model.RatingsStats;
+import com.liferay.ratings.kernel.service.RatingsStatsLocalServiceUtil;
 import org.sidate.qanda.model.Answer;
+import org.sidate.qanda.model.Question;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,6 +42,12 @@ public class AnswerImpl extends AnswerBaseImpl {
 	 * Never reference this class directly. All methods that expect a answer model instance should use the {@link org.sidate.qanda.model.Answer} interface instead.
 	 */
 	public AnswerImpl() {
+	}
+
+	public double getRating() {
+		RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.getStats(Answer.class.getName(),
+				this.getAnswerID());
+		return ratingsStats.getTotalScore();
 	}
 
 	public String getTimeSinceCreated() {

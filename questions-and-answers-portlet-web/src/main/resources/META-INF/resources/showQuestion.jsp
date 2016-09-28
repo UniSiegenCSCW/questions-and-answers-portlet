@@ -22,7 +22,8 @@
     Question question = QuestionLocalServiceUtil.getQuestion(questionID);
     List<AssetTag> tags = question.getTags();
     List<AssetCategory> categories = question.getCategories();
-    List<Answer> answerList = AnswerLocalServiceUtil.getAnswersForQuestion(questionID);
+    List<Answer> answersSortedByDate = AnswerLocalServiceUtil.getAnswersForQuestion(questionID);
+    List<Answer> answersSortedByRating = question.getAnswersSortedByRating();
     AssetEntryLocalServiceUtil.incrementViewCounter(themeDisplay.getUserId(), Question.class.getName(), question.getQuestionID());
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy 'um' hh:mm");
@@ -166,16 +167,16 @@
                 names="<%= tabNames %>"
         />
         <div class="qaAnswerTabBarTitle">
-        <c:if test="<%=answerList.size() != 1%>">
-                <h5><%=answerList.size()%> Antworten</h5>
+        <c:if test="<%=answersSortedByDate.size() != 1%>">
+                <h5><%=answersSortedByDate.size()%> Antworten</h5>
         </c:if>
-        <c:if test="<%=answerList.size() == 1%>">
-            <h5><%=answerList.size()%> Antwort</h5>
+        <c:if test="<%=answersSortedByDate.size() == 1%>">
+            <h5><%=answersSortedByDate.size()%> Antwort</h5>
         </c:if>
         </div>
     </aui:container>
     <aui:container cssClass="qaAnswersWrapper">
-        <c:forEach var="answer" items="<%=answerList%>">
+        <c:forEach var="answer" items="<%=answersSortedByDate%>">
             <%
                 Answer answer = (Answer) pageContext.getAttribute("answer");
                 User answerAuthor = UserLocalServiceUtil.getUser(answer.getUserId());

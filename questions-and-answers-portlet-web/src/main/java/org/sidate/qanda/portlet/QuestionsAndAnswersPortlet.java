@@ -198,6 +198,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                                             .collect(toList());
     }
 
+
     private String safeGetTitle(Question question) {
         try {
             return question.getTitle();

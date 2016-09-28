@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClause;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.ratings.kernel.model.RatingsStats;
 import com.liferay.ratings.kernel.service.RatingsStatsLocalServiceUtil;
 import org.sidate.qanda.exception.CorrectAnswerNotSetException;
@@ -31,8 +32,9 @@ import org.sidate.qanda.service.AnswerLocalServiceUtil;
 import org.sidate.qanda.service.QuestionLocalServiceUtil;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * The extended model implementation for the Question service. Represents a row in the &quot;SIDATE_Question&quot; database table, with each column mapped to a property of this class.
@@ -197,5 +199,17 @@ public class QuestionImpl extends QuestionBaseImpl {
             log.error("Correct answer has not been set for question " + this.getQuestionID());
             throw new CorrectAnswerNotSetException();
         }
+    }
+
+    public List<Answer> getAnswersSortedByRating() {
+
+        List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(this.getQuestionID());
+
+        Comparator<Answer> byRating = (answerOne, answerTwo) -> Double.compare(answerOne.getRating(),
+                answerTwo.getRating());
+
+        return answers.stream()
+                .sorted(byRating)
+                .collect(toList());
     }
 }
