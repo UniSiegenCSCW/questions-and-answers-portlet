@@ -85,7 +85,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         question.setCorrectAnswer(answerId);
 
         SessionMessages.add(request, "answerAccepted");
-        log.info("Answer " + answer.getText() + " has been accepted");
+        log.info("Answer " + answerId + " has been accepted");
     }
 
     public void editQuestion(ActionRequest request, ActionResponse response) throws PortalException {

@@ -246,8 +246,10 @@
                         <aui:button onClick="<%=deleteAnswerURL%>" value="Antwort l&ouml;schen"/>
 
                         <portlet:actionURL name="setCorrectAnswer" var="setCorrectAnswerURL">
-                            <portlet:param name="redirectURL" value="<%= showQuestionsURL%>"/>
+                            <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
+                            <portlet:param name="backURL" value="<%= showQuestionsURL%>"/>
                             <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
+                            <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
                         </portlet:actionURL>
                         <aui:button onClick="<%=setCorrectAnswerURL%>" value="Antwort akzeptieren"/>
 
