@@ -150,7 +150,7 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         //if answer is correct answer, correct answer is set to 0
         Question question = QuestionLocalServiceUtil.getQuestion(answer.getQuestionId());
         if (question.getCorrectAnswerId() == answerId) {
-            QuestionLocalServiceUtil.setCorrectAnswer(0, question.getQuestionID(), serviceContext);
+            question.setIsAnswered(false);
         }
 
         return answer;

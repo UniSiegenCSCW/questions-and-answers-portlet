@@ -21,9 +21,14 @@ import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.BooleanClause;
 import com.liferay.ratings.kernel.model.RatingsStats;
 import com.liferay.ratings.kernel.service.RatingsStatsLocalServiceUtil;
+import org.sidate.qanda.exception.CorrectAnswerNotSetException;
+import org.sidate.qanda.model.Answer;
 import org.sidate.qanda.model.Question;
+import org.sidate.qanda.service.AnswerLocalServiceUtil;
+import org.sidate.qanda.service.QuestionLocalServiceUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -175,5 +180,18 @@ public class QuestionImpl extends QuestionBaseImpl {
         RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.getStats(Question.class.getName(),
                 this.getQuestionID());
 	    return ratingsStats.getTotalScore();
+    }
+
+    public void setCorrectAnswer(long answerId) {
+        QuestionLocalServiceUtil.setCorrectAnswer(answerId, this.getQuestionID());
+    }
+
+    public Answer getCorrectAnswer() throws PortalException {
+        if (this.getIsAnswered()) {
+            return AnswerLocalServiceUtil.getAnswer(this.getCorrectAnswerId());
+        } else {
+            log.error("Correct answer has not been set for question " + this.getQuestionID());
+            throw new CorrectAnswerNotSetException();
+        }
     }
 }

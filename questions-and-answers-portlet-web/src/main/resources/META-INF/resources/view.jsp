@@ -34,7 +34,6 @@
 <aui:container cssClass="qaQuestionOverviewWrapper">
     <aui:button-row>
         <aui:button cssClass="pull-right" onClick="<%= testURL%>" value="Go to testing view"></aui:button>
-
         <aui:button cssClass="pull-right" onClick="<%= newQuestionURL%>" value="Neue Frage stellen"></aui:button>
     </aui:button-row>
 
@@ -89,14 +88,16 @@
                                 <%=viewCount%>
                             </div>
                         </div>
+
                         <div class="qaStatCounterBox
-                            <c:if test="${question.correctAnswerId != 0}">
+                            <c:if test="${question.getIsAnswered()}">
                                 answered
                             </c:if>
                         ">
                             <div class="qaCounterLabel">Antworten</div>
                             <div class="qaCounterValue"><%=answers.size()%></div>
                         </div>
+
                         <div class="qaStatCounterBox">
                             <div class="qaCounterLabel">Wertungen</div>
                             <div class="qaCounterValue">

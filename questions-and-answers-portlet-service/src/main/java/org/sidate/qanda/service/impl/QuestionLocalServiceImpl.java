@@ -17,8 +17,11 @@ package org.sidate.qanda.service.impl;
 import aQute.bnd.annotation.ProviderType;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
@@ -51,21 +54,24 @@ import java.util.List;
 @ProviderType
 public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
+    private static final Log log = LogFactoryUtil.getLog(QuestionLocalServiceImpl.class);
+
     public List<Question> getQuestions(long groupId) {
         return questionPersistence.findByGroupId(groupId);
     }
 
-    public void setCorrectAnswer(long answerId, long questionId, ServiceContext serviceContext) throws PortalException {
+    public void setCorrectAnswer(long answerId, long questionId) {
         Question question = questionPersistence.fetchByPrimaryKey(questionId);
         question.setCorrectAnswerId(answerId);
+        question.setIsAnswered(true);
         questionPersistence.update(question);
     }
-    
-    public Answer getCorrectAnswer(long questionId) {
-        Question question = questionPersistence.fetchByPrimaryKey(questionId);
-        long answerId = question.getCorrectAnswerId();
-        return answerPersistence.fetchByPrimaryKey(answerId);
-    }
+//
+//    public Answer getCorrectAnswer(long questionId) {
+//        Question question = questionPersistence.fetchByPrimaryKey(questionId);
+//        long answerId = question.getCorrectAnswerId();
+//        return answerPersistence.fetchByPrimaryKey(answerId);
+//    }
 
     public Question addQuestion(String title, String text, ServiceContext serviceContext) throws
             PortalException {
@@ -90,12 +96,11 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         question.setUserId(userId);
         question.setGroupId(groupId);
         question.setExpandoBridgeAttributes(serviceContext);
-        question.setCorrectAnswerId(0);
+        question.setIsAnswered(false);
         question.setPortletId(portletId);
 
 
         questionPersistence.update(question);
-
 
 //        resourceLocalService.addModelResources(question, serviceContext);
 
@@ -108,6 +113,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
         indexer.reindex(question);
 
+        log.info("Question " + questionId + " has been added and indexed.");
 
         return question;
     }
@@ -145,17 +151,28 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         return super.deleteQuestion(questionId);
     }
 
-    public Question deleteQuestion(long questionId, ServiceContext serviceContext) throws PortalException {
-        List<Answer> answers = answerLocalService.getAnswersForQuestion(questionId);
-        for (Answer answer : answers) {
-            answerLocalService.deleteAnswer(answer.getAnswerID(), serviceContext);
+    public Question deleteQuestion(long questionId, ServiceContext serviceContext) {
+
+        Question question = null;
+
+        try {
+            List<Answer> answers = answerLocalService.getAnswersForQuestion(questionId);
+            for (Answer answer : answers) {
+                answerLocalService.deleteAnswer(answer.getAnswerID(), serviceContext);
+            }
+            question = super.deleteQuestion(questionId);
+
+            assetEntryLocalService.deleteEntry(Question.class.getName(), questionId);
+            Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
+            indexer.delete(question);
+
+        } catch (SearchException e) {
+            log.error("Could not delete question from indexer!");
+            e.printStackTrace();
+        } catch (PortalException e) {
+            log.error("deleteQuestion failed!");
+            e.printStackTrace();
         }
-
-		Question question = super.deleteQuestion(questionId);
-        assetEntryLocalService.deleteEntry(Question.class.getName(), questionId);
-        Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
-        indexer.delete(question);
-
         return question;
     }
 }

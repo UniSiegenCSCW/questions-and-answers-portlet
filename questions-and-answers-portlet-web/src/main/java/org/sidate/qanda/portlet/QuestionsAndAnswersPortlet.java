@@ -55,8 +55,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     public void newQuestion(ActionRequest request, ActionResponse response)
             throws PortalException, SystemException {
 
-        ServiceContext serviceContext = ServiceContextFactory.getInstance(
-                Question.class.getName(), request);
+        ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
 
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
@@ -82,8 +81,9 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         long answerId = ParamUtil.getLong(request, "answerID");
         Answer answer = AnswerLocalServiceUtil.getAnswer(answerId);
         long questionId = answer.getQuestionId();
-        ServiceContext serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
-        QuestionLocalServiceUtil.setCorrectAnswer(answerId, questionId, serviceContext);
+        Question question = QuestionLocalServiceUtil.getQuestion(questionId);
+        question.setCorrectAnswer(answerId);
+
         SessionMessages.add(request, "answerAccepted");
         log.info("Answer " + answer.getText() + " has been accepted");
     }
@@ -99,15 +99,17 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     public void deleteQuestion(ActionRequest request, ActionResponse response){
         long questionId = ParamUtil.getLong(request, "questionID");
+
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
             QuestionLocalServiceUtil.deleteQuestion(questionId, serviceContext);
         } catch (Exception e) {
             SessionErrors.add(request, e.getClass().getName());
-            PortalUtil.copyRequestParameters(request, response);
+            //PortalUtil.copyRequestParameters(request, response); ???
             response.setRenderParameter("mvcPath", "/view.jsp");
-            log.error(e.getClass().getName() + "\n" + e.getMessage());
+            log.error("Error on getInstance from ServiceContextFactory!");
         }
+
     }
 
     /**
@@ -275,9 +277,9 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             if (!questions.isEmpty()) {
                 renderRequest.setAttribute("questions", questions);
-                log.info(questions.size() + " questions have been passed to renderRequest");
                 renderRequest.setAttribute("questionsSortedByRating", questionsSortedByRating);
             }
+            log.info(questions.size() + " questions have been passed to renderRequest");
 
             super.render(renderRequest, renderResponse);
         } catch (PortletException e) {
@@ -383,11 +385,10 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
             Question question = questions.get(0);
 
-            long correctAnswerId = question.getCorrectAnswerId();
-            if (correctAnswerId == 0) {
+            if (!question.getIsAnswered()) {
                 System.out.println("Not answered yet!");
             } else {
-                Answer correctAnswer = AnswerLocalServiceUtil.getAnswer(correctAnswerId);
+                Answer correctAnswer = question.getCorrectAnswer();
 
                 System.out.println("Correct Answer: "
                         + correctAnswer.getAnswerID()
@@ -513,15 +514,18 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         System.out.println(AssetEntryLocalServiceUtil.getAssetEntriesCount());
     }
 
-    public void testDisplayAssets(ActionRequest request, ActionResponse response) {
+    public void testDisplayAssets(ActionRequest request, ActionResponse response) throws PortalException {
         List<AssetEntry> entries = AssetEntryLocalServiceUtil.getAssetEntries(0, AssetEntryLocalServiceUtil.getAssetEntriesCount());
         for (AssetEntry entry : entries) {
 
             if (entry.getClassName().equals(Question.class.getName())) {
+                Question question = QuestionLocalServiceUtil.getQuestion(entry.getClassPK());
                 System.out.println("Class PK: " + entry.getClassPK()
                         + " --- Class Name ID: " + entry.getClassNameId()
                         + " --- Title: " + entry.getTitle()
-                        + " --- Text: " + entry.getDescription());
+                        + " --- Text: " + entry.getDescription()
+                        + " --- isAnswered: " + question.getIsAnswered()
+                        + " --- correct answer ID: " + question.getCorrectAnswerId());
             }
             else if (entry.getClassName().equals(Answer.class.getName())) {
                 try {
@@ -536,13 +540,14 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
     }
 
-    public void testDeleteAssets(ActionRequest request, ActionResponse response) {
-        List<AssetEntry> entries = AssetEntryLocalServiceUtil.getAssetEntries(0,
-                AssetEntryLocalServiceUtil.getAssetEntriesCount());
-        entries.stream()
-                .filter(entry -> entry.getClassName().equals(Question.class.getName())
-                        || entry.getClassName().equals(Answer.class.getName()))
-                .forEach(AssetEntryLocalServiceUtil::deleteAssetEntry);
+    public void testDeleteAssets(ActionRequest request, ActionResponse response) throws PortalException {
+
+        ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+        long groupID = serviceContext.getScopeGroupId();
+        List<Question> questions = QuestionLocalServiceUtil.getQuestions(groupID);
+
+        questions.forEach(question -> QuestionLocalServiceUtil.deleteQuestion(question.getQuestionID(),
+                serviceContext));
     }
 
     public void testPrintCategoryIdsOfTheFirstQuestion(ActionRequest request, ActionResponse response) {

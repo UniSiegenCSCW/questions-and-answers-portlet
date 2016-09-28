@@ -56,7 +56,7 @@
         <column name="createDate" type="Date" />
         <column name="modifiedDate" type="Date" />
         <column name="portletId" type="String"/>
-
+        <column name="isAnswered" type="Boolean" />
         <column name="correctAnswerId" type="long"/>
 
         <column name="editedBy" type="long"/>
@@ -79,6 +79,7 @@
         <exception>QuestionTextValidation</exception>
         <exception>EmptyAnswerText</exception>
         <exception>AnswerTextValidation</exception>
+        <exception>CorrectAnswerNotSet</exception>
     </exceptions>
 
 </service-builder>
