@@ -176,6 +176,128 @@
         </div>
     </aui:container>
     <aui:container cssClass="qaAnswersWrapper">
+        <c:if test="<%= question.getIsAnswered() %">
+            <%
+                Answer answer = AnswerLocalServiceUtil.getAnswer(question.getCorrectAnswerId);
+                User answerAuthor = UserLocalServiceUtil.getUser(answer.getUserId());
+                List<Organization> answerAuthorOrganizations = answerAuthor.getOrganizations();
+
+            %>
+
+            <aui:row cssClass="qaContentContainer">
+                <aui:col cssClass="qaAnswerRatingCol" span="1">
+                    <liferay-ui:ratings className="<%=Answer.class.getName()%>"
+                                        classPK="<%=answer.getAnswerID()%>" type="like" />
+                    <c:if test="<%= question.getIsAnswered() && question.getCorrectAnswerId() == answer.getAnswerID()%>">
+                        <div>
+                            <span class="qaCorreckAnswerCheckmark glyphicon glyphicon-ok"/>
+                        </div>
+                    </c:if>
+                </aui:col>
+                <aui:col span="11">
+                    <aui:row>
+                        ${answer.text}
+                    </aui:row>
+                    <aui:row>
+
+                        <div class="qaAuthorbox">
+                            <div>beantwortet am <%=sdf.format(answer.getCreateDate())%></div>
+                            <div class="qaAuthorImage">
+                                <img src="<%=answerAuthor.getPortraitURL(themeDisplay)%>"/>
+                            </div>
+                            <div class="qaAuthorInfo">
+                                <%=answerAuthor.getFullName()%>
+                                <c:if test="<%=answerAuthorOrganizations.size() > 0 %>">
+                                    <br/> <%=answerAuthorOrganizations.get(0).getName()%>
+                                </c:if>
+                            </div>
+                        </div>
+                        <c:if test="<%=answer.getEditedDate() != null && answer.getEditedDate().after(answer.getCreateDate())%>">
+                            <%
+                                User answerEditor = UserLocalServiceUtil.getUser(question.getUserId());
+                                List<Organization> answerEditorOrganizations = answerEditor.getOrganizations();
+                            %>
+                            <div class="qaAuthorbox">
+                                <div>editiert am <%=sdf.format(answer.getEditedDate())%></div>
+                                <div class="qaAuthorImage">
+                                    <img src="<%=answerEditor.getPortraitURL(themeDisplay)%>"/>
+                                </div>
+                                <div class="qaAuthorInfo">
+                                    <%=answerEditor.getFullName()%>
+                                    <c:if test="<%=answerEditorOrganizations.size() > 0 %>">
+                                        <br/> <%=answerEditorOrganizations.get(0).getName()%>
+                                    </c:if>
+
+                                </div>
+                            </div>
+                        </c:if>
+                    </aui:row>
+                    <aui:button-row cssClass="qaButtonRow">
+
+                        <portlet:renderURL var="editAnswerURL">
+                            <portlet:param name="mvcPath" value="/editAnswer.jsp"/>
+                            <portlet:param name="backURL" value="<%= showQuestionsURL%>"/>
+                            <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
+                        </portlet:renderURL>
+                        <aui:button onClick="<%=editAnswerURL%>" value="Antwort bearbeiten"/>
+
+                        <portlet:actionURL name="deleteAnswer" var="deleteAnswerURL">
+                            <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
+                            <portlet:param name="redirectURL" value="<%=showQuestionsURL%>"/>
+                        </portlet:actionURL>
+                        <aui:button onClick="<%=deleteAnswerURL%>" value="Antwort l&ouml;schen"/>
+
+                        <c:choose>
+                            <c:when test="<%= question.getIsAnswered() && question.getCorrectAnswerId() == answer.getAnswerID() %>">
+                                <portlet:actionURL name="unsetCorrectAnswer" var="unsetCorrectAnswerURL">
+                                    <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
+                                    <portlet:param name="backURL" value="<%= backURL%>"/>
+                                    <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
+                                </portlet:actionURL>
+                                <aui:button onClick="<%=unsetCorrectAnswerURL%>" value="Akzeptierte Antwort zur&#252;ckziehen"/>
+                            </c:when>
+
+                            <c:otherwise>
+                                <portlet:actionURL name="setCorrectAnswer" var="setCorrectAnswerURL">
+                                    <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
+                                    <portlet:param name="backURL" value="<%= backURL%>"/>
+                                    <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
+                                    <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
+                                </portlet:actionURL>
+                                <aui:button onClick="<%=setCorrectAnswerURL%>" value="Antwort akzeptieren"/>
+                            </c:otherwise>
+                        </c:choose>
+
+                    </aui:button-row>
+                    <aui:row cssClass='<%="qaDiscussionWrapper answerDiscussion_"+answer.getAnswerID()%>'>
+                        <a id="toggleAnswerComment_<%=answer.getAnswerID()%>">neuen Kommentar hinzuf&uuml;gen</a>
+
+                        <aui:script>
+                            $("#toggleAnswerComment_<%=answer.getAnswerID()%>").click(function () {
+                                $(".answerDiscussion_<%=answer.getAnswerID()%> .fieldset.add-comment").toggleClass("unhidden");
+                            });
+                        </aui:script>
+                        <portlet:actionURL name="invokeTaglibDiscussion" var="discussionURL" />
+
+                        <%
+                            String currentUrl = PortalUtil.getCurrentURL(request);
+                        %>
+
+                        <liferay-ui:discussion className="<%=Answer.class.getName()%>"
+                                               classPK="<%=answer.getAnswerID()%>"
+                                               formAction="<%=discussionURL%>"
+                                               formName='<%="answerForm_"+answer.getAnswerID()%>'
+                                               ratingsEnabled="<%=false%>"
+                                               redirect="<%=currentUrl%>"
+                                               userId="<%=themeDisplay.getUserId()%>" />
+
+                    </aui:row>
+                </aui:col>
+            </aui:row>
+        </c:if>
+
+
+
         <c:forEach var="answer" items="<%=answersSortedByDate%>">
             <%
                 Answer answer = (Answer) pageContext.getAttribute("answer");
