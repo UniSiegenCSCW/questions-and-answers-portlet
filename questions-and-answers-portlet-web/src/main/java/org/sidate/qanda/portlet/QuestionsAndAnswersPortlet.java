@@ -24,7 +24,11 @@ import org.sidate.qanda.service.QuestionLocalServiceUtil;
 
 import javax.portlet.*;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.LongStream;
 
 import static java.util.stream.Collectors.toList;
@@ -194,8 +198,18 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                 questionTwo.getRating());
 
         return (ArrayList<Question>) questions.stream()
+                                            .filter(isRecent())
                                             .sorted(byRating.reversed())
                                             .collect(toList());
+    }
+
+    private Predicate<Question> isRecent() {
+        LocalDate currentDate = LocalDate.now();
+        return question -> Instant.ofEpochMilli(question.getCreateDate()
+                .getTime())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                        .isBefore(currentDate.minusMonths(1));
     }
 
 
