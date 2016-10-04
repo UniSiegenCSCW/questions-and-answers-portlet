@@ -181,7 +181,6 @@
                 Answer answer = AnswerLocalServiceUtil.getAnswer(question.getCorrectAnswerId);
                 User answerAuthor = UserLocalServiceUtil.getUser(answer.getUserId());
                 List<Organization> answerAuthorOrganizations = answerAuthor.getOrganizations();
-
             %>
 
             <aui:row cssClass="qaContentContainer">
