@@ -4,6 +4,7 @@
 <%@ page import="org.sidate.qanda.model.Answer" %>
 <%@ page import="org.sidate.qanda.service.AnswerLocalServiceUtil" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil" %>
 <%@ page import="com.liferay.asset.kernel.model.AssetEntry" %>
 <%@ page import="com.liferay.asset.kernel.model.AssetTag" %>
@@ -22,8 +23,8 @@
     Question question = QuestionLocalServiceUtil.getQuestion(questionID);
     List<AssetTag> tags = question.getTags();
     List<AssetCategory> categories = question.getCategories();
-    List<Answer> answersSortedByDate = AnswerLocalServiceUtil.getAnswersForQuestion(questionID);
-    List<Answer> answersSortedByRating = question.getAnswersSortedByRating();
+    ArrayList<Answer> answersSortedByDate = new ArrayList<>(AnswerLocalServiceUtil.getAnswersForQuestion(questionID));
+    ArrayList<Answer> answersSortedByRating = new ArrayList<>(question.getAnswersSortedByRating());
     AssetEntryLocalServiceUtil.incrementViewCounter(themeDisplay.getUserId(), Question.class.getName(), question.getQuestionID());
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy 'um' hh:mm");
@@ -176,26 +177,25 @@
         </div>
     </aui:container>
     <aui:container cssClass="qaAnswersWrapper">
-        <c:if test="<%= question.getIsAnswered() %">
+        <c:if test="<%= question.getIsAnswered() %>">
             <%
-                Answer answer = AnswerLocalServiceUtil.getAnswer(question.getCorrectAnswerId);
+                Answer answer = AnswerLocalServiceUtil.getAnswer(question.getCorrectAnswerId());
                 User answerAuthor = UserLocalServiceUtil.getUser(answer.getUserId());
                 List<Organization> answerAuthorOrganizations = answerAuthor.getOrganizations();
+                answersSortedByDate.remove(answer);
+                answersSortedByRating.remove(answer);
+
             %>
 
             <aui:row cssClass="qaContentContainer">
                 <aui:col cssClass="qaAnswerRatingCol" span="1">
                     <liferay-ui:ratings className="<%=Answer.class.getName()%>"
                                         classPK="<%=answer.getAnswerID()%>" type="like" />
-                    <c:if test="<%= question.getIsAnswered() && question.getCorrectAnswerId() == answer.getAnswerID()%>">
-                        <div>
-                            <span class="qaCorreckAnswerCheckmark glyphicon glyphicon-ok"/>
-                        </div>
-                    </c:if>
+                    <span class="qaCorreckAnswerCheckmark glyphicon glyphicon-ok"/>
                 </aui:col>
                 <aui:col span="11">
                     <aui:row>
-                        ${answer.text}
+                        <%= answer.getText() %>
                     </aui:row>
                     <aui:row>
 
@@ -246,26 +246,13 @@
                         </portlet:actionURL>
                         <aui:button onClick="<%=deleteAnswerURL%>" value="Antwort l&ouml;schen"/>
 
-                        <c:choose>
-                            <c:when test="<%= question.getIsAnswered() && question.getCorrectAnswerId() == answer.getAnswerID() %>">
-                                <portlet:actionURL name="unsetCorrectAnswer" var="unsetCorrectAnswerURL">
-                                    <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
-                                    <portlet:param name="backURL" value="<%= backURL%>"/>
-                                    <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
-                                </portlet:actionURL>
-                                <aui:button onClick="<%=unsetCorrectAnswerURL%>" value="Akzeptierte Antwort zur&#252;ckziehen"/>
-                            </c:when>
+                        <portlet:actionURL name="unsetCorrectAnswer" var="unsetCorrectAnswerURL">
+                            <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
+                            <portlet:param name="backURL" value="<%= backURL%>"/>
+                            <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
+                        </portlet:actionURL>
+                        <aui:button onClick="<%=unsetCorrectAnswerURL%>" value="Akzeptierte Antwort zur&#252;ckziehen"/>
 
-                            <c:otherwise>
-                                <portlet:actionURL name="setCorrectAnswer" var="setCorrectAnswerURL">
-                                    <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
-                                    <portlet:param name="backURL" value="<%= backURL%>"/>
-                                    <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
-                                    <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
-                                </portlet:actionURL>
-                                <aui:button onClick="<%=setCorrectAnswerURL%>" value="Antwort akzeptieren"/>
-                            </c:otherwise>
-                        </c:choose>
 
                     </aui:button-row>
                     <aui:row cssClass='<%="qaDiscussionWrapper answerDiscussion_"+answer.getAnswerID()%>'>
@@ -308,11 +295,6 @@
                 <aui:col cssClass="qaAnswerRatingCol" span="1">
                     <liferay-ui:ratings className="<%=Answer.class.getName()%>"
                                         classPK="<%=answer.getAnswerID()%>" type="like" />
-                    <c:if test="<%= question.getIsAnswered() && question.getCorrectAnswerId() == answer.getAnswerID()%>">
-                        <div>
-                            <span class="qaCorreckAnswerCheckmark glyphicon glyphicon-ok"/>
-                        </div>
-                    </c:if>
                 </aui:col>
                 <aui:col span="11">
                     <aui:row>
@@ -367,26 +349,13 @@
                         </portlet:actionURL>
                         <aui:button onClick="<%=deleteAnswerURL%>" value="Antwort l&ouml;schen"/>
 
-                        <c:choose>
-                            <c:when test="<%= question.getIsAnswered() && question.getCorrectAnswerId() == answer.getAnswerID() %>">
-                                <portlet:actionURL name="unsetCorrectAnswer" var="unsetCorrectAnswerURL">
-                                    <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
-                                    <portlet:param name="backURL" value="<%= backURL%>"/>
-                                    <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
-                                </portlet:actionURL>
-                                <aui:button onClick="<%=unsetCorrectAnswerURL%>" value="Akzeptierte Antwort zur&#252;ckziehen"/>
-                            </c:when>
-
-                            <c:otherwise>
-                                <portlet:actionURL name="setCorrectAnswer" var="setCorrectAnswerURL">
-                                    <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
-                                    <portlet:param name="backURL" value="<%= backURL%>"/>
-                                    <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
-                                    <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
-                                </portlet:actionURL>
-                                <aui:button onClick="<%=setCorrectAnswerURL%>" value="Antwort akzeptieren"/>
-                            </c:otherwise>
-                        </c:choose>
+                        <portlet:actionURL name="setCorrectAnswer" var="setCorrectAnswerURL">
+                            <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
+                            <portlet:param name="backURL" value="<%= backURL%>"/>
+                            <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
+                            <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
+                        </portlet:actionURL>
+                        <aui:button onClick="<%=setCorrectAnswerURL%>" value="Antwort akzeptieren"/>
 
                     </aui:button-row>
                     <aui:row cssClass='<%="qaDiscussionWrapper answerDiscussion_"+answer.getAnswerID()%>'>
