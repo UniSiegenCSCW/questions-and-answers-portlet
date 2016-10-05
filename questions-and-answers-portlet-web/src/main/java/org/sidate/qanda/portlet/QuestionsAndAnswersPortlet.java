@@ -133,7 +133,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
      * Annotation: This method allows querying the questions by category name, not ID! It depends on the GUI layout
      * whether the ID or name will be used.
      */
-    public void getQuestionsFilteredByCategory(ActionRequest request, ActionResponse response){
+    public void getQuestionsFilteredByCategory(RenderRequest request, RenderResponse response){
 
         ServiceContext serviceContext;
 
@@ -149,10 +149,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             request.setAttribute("questionsFilteredByCategory", filteredQuestions);
 
+            log.info(filteredQuestions.size() + " questions filtered by category " + categoryId
+                    + " have been passed to renderRequest");
+
         } catch (PortalException e) {
             SessionErrors.add(request, e.getClass().getName());
-            PortalUtil.copyRequestParameters(request, response);
-            response.setRenderParameter("mvcPath", "/view.jsp");
             log.error(e.getClass().getName() + "\n" + e.getMessage());
         } catch (NoSuchElementException e) {
             log.error("You supplied a category name which does not seem to have a corresponding category!");
@@ -170,22 +171,41 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                     .findFirst().getAsLong();
     }
 
+    public ArrayList<Question> getQuestionsFilteredByTag(String tag, RenderRequest renderRequest) {
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), renderRequest);
+        } catch (PortalException e) {
+            log.error("Error while trying to fetch questions filtered by tag " + tag);
+        }
+
+        assert serviceContext != null;
+        List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+
+        return (ArrayList<Question>) questions.stream()
+                                                .filter(question -> filterByTagName(question, tag))
+                                                .collect(toList());
+    }
+
     /**
      * Returns the questions with a specified Tag name passed via ParamUtil. This method filters the questions by that
      * tag, so if a non existing tag is supplied it will return an empty List.
      */
-    public void getQuestionsFilteredByTag(ActionRequest request, ActionResponse response) {
+    public void getQuestionsFilteredByTag(RenderRequest renderRequest) {
         ServiceContext serviceContext;
         try {
-            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), renderRequest);
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-            String tagToFilter = ParamUtil.getString(request, "tag");
+            String tagToFilter = ParamUtil.getString(renderRequest, "tag");
 
             List<Question> filteredQuestions = questions.stream()
                     .filter(question -> filterByTagName(question, tagToFilter))
                     .collect(toList());
 
-            request.setAttribute("questionsFilteredByTag", filteredQuestions);
+            renderRequest.setAttribute("questionsFilteredByTag", filteredQuestions);
+
+            log.info(filteredQuestions.size() + " questions filtered by tag " + tagToFilter
+                    + " have been passed to renderRequest");
 
 
         } catch (PortalException e) {
@@ -305,6 +325,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             ArrayList<Question> questions = new ArrayList<>(QuestionLocalServiceUtil.getQuestions(groupID));
             ArrayList<Question> questionsSortedByRating = getQuestionsSortedByRating(serviceContext);
+            getQuestionsFilteredByTag(renderRequest);
+            getQuestionsFilteredByCategory(renderRequest, renderResponse);
 
             if (!questions.isEmpty()) {
                 renderRequest.setAttribute("questions", questions);

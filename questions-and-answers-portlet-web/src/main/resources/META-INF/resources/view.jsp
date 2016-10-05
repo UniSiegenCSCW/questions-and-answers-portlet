@@ -30,7 +30,6 @@
     <portlet:param name="mvcPath" value="/test.jsp"/>
 </portlet:renderURL>
 
-
 <aui:container cssClass="qaQuestionOverviewWrapper">
     <aui:button-row>
         <aui:button cssClass="pull-right" onClick="<%= testURL%>" value="Go to testing view"></aui:button>
@@ -107,7 +106,13 @@
                                         <strong>Tags:</strong>
                                         <ul class="qaTags">
                                             <c:forEach items="<%= tags%>" var="tag">
-                                                <li>${tag.name}</li>
+                                                <portlet:renderURL var="tagsURL">
+                                                    <portlet:param name="mvcPath" value="/tags.jsp"/>
+                                                    <portlet:param name="tag" value="${tag.name}"/>
+                                                    <portlet:param name="backURL" value="<%= mainViewURL%>"/>
+                                                </portlet:renderURL>
+
+                                                <li><a href="<%= tagsURL %>">${tag.name}</a></li>
                                             </c:forEach>
                                         </ul>
                                     </div>
@@ -230,7 +235,13 @@
                                         <strong>Tags:</strong>
                                         <ul class="qaTags">
                                             <c:forEach items="<%= tags%>" var="tag">
-                                                <li>${tag.name}</li>
+                                                <portlet:renderURL var="tagsURL">
+                                                    <portlet:param name="mvcPath" value="/tags.jsp"/>
+                                                    <portlet:param name="tag" value="${tag.name}"/>
+                                                    <portlet:param name="backURL" value="<%= mainViewURL%>"/>
+                                                </portlet:renderURL>
+
+                                                <li><a href="<%= tagsURL %>">${tag.name}</a></li>
                                             </c:forEach>
                                         </ul>
                                     </div>
@@ -240,7 +251,13 @@
                                         <strong>Kategorien:</strong>
                                         <ul class="qaCategories">
                                             <c:forEach items="<%= categories%>" var="category">
-                                                <li>${category.name}</li>
+                                                <portlet:renderURL var="categoryURL">
+                                                    <portlet:param name="mvcPath" value="/categories.jsp"/>
+                                                    <portlet:param name="category" value="${category.}"/>
+                                                    <portlet:param name="backURL" value="<%= mainViewURL%>"/>
+                                                </portlet:renderURL>
+
+                                                <li><a href="<%= categoryURL %>">${category.name}</a></li>
                                             </c:forEach>
                                         </ul>
                                     </div>
