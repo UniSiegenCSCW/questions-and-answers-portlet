@@ -30,7 +30,6 @@
     <portlet:param name="mvcPath" value="/test.jsp"/>
 </portlet:renderURL>
 
-
 <aui:container cssClass="qaQuestionOverviewWrapper">
     <aui:button-row>
         <aui:button cssClass="pull-right" onClick="<%= testURL%>" value="Go to testing view"></aui:button>
@@ -46,13 +45,11 @@
                 <c:forEach var="question" items="${questions}">
 
                     <%
-
                         Question question = (Question) pageContext.getAttribute("question");
                         List<AssetTag> tags = question.getTags();
                         List<AssetCategory> categories = question.getCategories();
                         List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
                         int views = question.getViewCount();
-
                     %>
                     <portlet:renderURL var="showQuestionURL">
                         <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
@@ -170,14 +167,13 @@
                 <c:forEach var="question" items="${questionsSortedByRating}">
 
                     <%
-
                         Question question = (Question) pageContext.getAttribute("question");
                         List<AssetTag> tags = question.getTags();
                         List<AssetCategory> categories = question.getCategories();
                         List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
                         int views = question.getViewCount();
-
                     %>
+
                     <portlet:renderURL var="showQuestionURL">
                         <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
                         <portlet:param name="backURL" value="<%= mainViewURL%>"/>

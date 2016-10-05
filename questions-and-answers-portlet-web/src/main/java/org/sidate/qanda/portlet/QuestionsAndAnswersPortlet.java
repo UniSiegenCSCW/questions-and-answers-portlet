@@ -12,6 +12,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.service.SystemEventLocalService;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.LongStream;
@@ -74,7 +76,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             response.setRenderParameter("mvcPath", "/view.jsp");
             log.error(e);
         }
-
     }
 
     /**
@@ -192,6 +193,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
     }
 
+    /**
+     * This method returns an ArrayList of questions sorted by their rating. Questions that are older than one month
+     * are dismissed.
+     * @return An ArrayList of sorted questions.
+     */
     private ArrayList<Question> getQuestionsSortedByRating(ServiceContext serviceContext) {
         List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
         Comparator<Question> byRating = (questionOne, questionTwo) -> Double.compare(questionOne.getRating(),
@@ -205,11 +211,12 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     private Predicate<Question> isRecent() {
         LocalDate currentDate = LocalDate.now();
+
         return question -> Instant.ofEpochMilli(question.getCreateDate()
                 .getTime())
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate()
-                        .isBefore(currentDate.minusMonths(1));
+                        .isAfter(currentDate.minusMonths(1));
     }
 
 
@@ -303,7 +310,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                 renderRequest.setAttribute("questions", questions);
                 renderRequest.setAttribute("questionsSortedByRating", questionsSortedByRating);
             }
-            log.info(questions.size() + " questions have been passed to renderRequest");
+            log.info(questions.size() + " questions and  " + questionsSortedByRating.size()
+                    + " sorted questions have been passed to renderRequest");
 
             super.render(renderRequest, renderResponse);
         } catch (PortletException e) {
@@ -313,7 +321,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             log.error("A Portal Error has been thrown by render()");
             e.printStackTrace();
         }
-
     }
 
 
