@@ -205,8 +205,8 @@ public class QuestionImpl extends QuestionBaseImpl {
 
         List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(this.getQuestionID());
 
-        Comparator<Answer> byRating = (answerOne, answerTwo) -> Double.compare(answerOne.getRating(),
-                answerTwo.getRating());
+        Comparator<Answer> byRating = (answerOne, answerTwo) -> Double.compare(answerTwo.getRating(),
+                answerOne.getRating());
 
         return answers.stream()
                 .sorted(byRating)

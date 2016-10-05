@@ -30,6 +30,7 @@
     <portlet:param name="mvcPath" value="/test.jsp"/>
 </portlet:renderURL>
 
+
 <aui:container cssClass="qaQuestionOverviewWrapper">
     <aui:button-row>
         <aui:button cssClass="pull-right" onClick="<%= testURL%>" value="Go to testing view"></aui:button>
