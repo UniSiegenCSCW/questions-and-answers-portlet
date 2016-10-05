@@ -25,7 +25,7 @@
     List<AssetCategory> categories = question.getCategories();
     ArrayList<Answer> answersSortedByDate = new ArrayList<>(AnswerLocalServiceUtil.getAnswersForQuestion(questionID));
     ArrayList<Answer> answersSortedByRating = new ArrayList<>(question.getAnswersSortedByRating());
-    AssetEntryLocalServiceUtil.incrementViewCounter(themeDisplay.getUserId(), Question.class.getName(), question.getQuestionID());
+    question.increaseViewCounter(themeDisplay.getUserId());
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy 'um' hh:mm");
 

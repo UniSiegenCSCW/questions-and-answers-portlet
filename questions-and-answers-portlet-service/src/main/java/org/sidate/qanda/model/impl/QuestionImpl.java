@@ -212,4 +212,13 @@ public class QuestionImpl extends QuestionBaseImpl {
                 .sorted(byRating)
                 .collect(toList());
     }
+
+    public void increaseViewCounter(long watcherId) {
+        try {
+            AssetEntryLocalServiceUtil.incrementViewCounter(watcherId, Question.class.getName(), this.getQuestionID());
+        } catch (PortalException e) {
+            log.error("Could not increment viewCount for question " + this.getQuestionID() + " with watching user "
+                    + watcherId);
+        }
+    }
 }
