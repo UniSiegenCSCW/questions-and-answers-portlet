@@ -122,7 +122,13 @@
                                         <strong>Kategorien:</strong>
                                         <ul class="qaCategories">
                                             <c:forEach items="<%= categories%>" var="category">
-                                                <li>${category.name}</li>
+                                                <portlet:renderURL var="categoryURL">
+                                                    <portlet:param name="mvcPath" value="/categories.jsp"/>
+                                                    <portlet:param name="category" value="${category.name}"/>
+                                                    <portlet:param name="backURL" value="<%= mainViewURL%>"/>
+                                                </portlet:renderURL>
+
+                                                <li><a href="<%= categoryURL %>">${category.name}</a></li>
                                             </c:forEach>
                                         </ul>
                                     </div>
@@ -253,7 +259,7 @@
                                             <c:forEach items="<%= categories%>" var="category">
                                                 <portlet:renderURL var="categoryURL">
                                                     <portlet:param name="mvcPath" value="/categories.jsp"/>
-                                                    <portlet:param name="category" value="${category.}"/>
+                                                    <portlet:param name="category" value="${category.name}"/>
                                                     <portlet:param name="backURL" value="<%= mainViewURL%>"/>
                                                 </portlet:renderURL>
 

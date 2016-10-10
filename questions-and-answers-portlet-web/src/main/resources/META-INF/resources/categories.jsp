@@ -48,7 +48,7 @@
 <aui:container cssClass="qaQuestionOverviewWrapper">
 
     <%-- Questions will be sorted by date by default --%>
-    <% Collections.reverse(questionsFilteredByTag); %>
+    <% Collections.reverse(questionsFilteredByCategory); %>
 
     <aui:container cssClass="qaQuestionsOverviewContainer">
         <c:forEach var="question" items="${questionsFilteredByCategory}">
