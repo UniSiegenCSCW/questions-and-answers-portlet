@@ -14,6 +14,7 @@
 <%@ page import="com.liferay.portal.kernel.model.User" %>
 <%@ page import="com.liferay.portal.kernel.util.PortalUtil" %>
 <%@ page import="com.liferay.portal.kernel.model.Organization" %>
+<%@ page import="java.util.Locale" %>
 <%@ include file="init.jsp" %>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
 
@@ -27,7 +28,7 @@
     ArrayList<Answer> answersSortedByRating = new ArrayList<>(question.getAnswersSortedByRating());
     question.increaseViewCounter(themeDisplay.getUserId());
 
-    SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy 'um' hh:mm");
+    SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy 'um' hh:mm", Locale.GERMAN);
 
     User author = UserLocalServiceUtil.getUser(question.getUserId());
     List<Organization> authorOrganisations = author.getOrganizations();

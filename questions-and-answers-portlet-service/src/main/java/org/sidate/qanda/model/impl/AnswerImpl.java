@@ -24,6 +24,7 @@ import org.sidate.qanda.model.Question;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * The extended model implementation for the Answer service. Represents a row in the &quot;SIDATE_Answer&quot; database table, with each column mapped to a property of this class.
@@ -56,7 +57,7 @@ public class AnswerImpl extends AnswerBaseImpl {
 		diffSeconds = (new Date().getTime() - created.getTime()) / 1000;
 
 		if (diffSeconds > 864000) {
-			SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy");
+			SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy", Locale.GERMAN);
 			return "am " + sdf.format(created);
 
 		} else if (diffSeconds >= 86400) {
@@ -96,7 +97,7 @@ public class AnswerImpl extends AnswerBaseImpl {
 		diffSeconds = (new Date().getTime() - edited.getTime()) / 1000;
 
 		if (diffSeconds > 864000) {
-			SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy");
+			SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy", Locale.GERMAN);
 			return "am " + sdf.format(edited);
 
 		} else if (diffSeconds >= 86400) {

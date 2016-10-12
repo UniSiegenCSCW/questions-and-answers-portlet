@@ -64,7 +64,7 @@ public class QuestionImpl extends QuestionBaseImpl {
         diffSeconds = (new Date().getTime() - created.getTime()) / 1000;
 
         if (diffSeconds > 864000) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy", Locale.GERMAN);
             return "am " + sdf.format(created);
 
         } else if (diffSeconds >= 86400) {
@@ -104,7 +104,7 @@ public class QuestionImpl extends QuestionBaseImpl {
         diffSeconds = (new Date().getTime() - edited.getTime()) / 1000;
 
         if (diffSeconds > 864000) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy", Locale.GERMAN);
             return "am " + sdf.format(edited);
 
         } else if (diffSeconds >= 86400) {
