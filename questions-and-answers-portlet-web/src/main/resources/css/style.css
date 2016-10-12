@@ -190,3 +190,11 @@
 .qaQuestionOverviewWrapper .nav.nav-tabs {
     margin-bottom: 0;
 }
+
+.qaTags a {
+    color: white;
+}
+
+.qaCategories a {
+    color: white;
+}
