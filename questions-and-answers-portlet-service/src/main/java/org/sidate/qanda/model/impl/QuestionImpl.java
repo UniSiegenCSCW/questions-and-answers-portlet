@@ -30,6 +30,7 @@ import org.sidate.qanda.model.Answer;
 import org.sidate.qanda.model.Question;
 import org.sidate.qanda.service.AnswerLocalServiceUtil;
 import org.sidate.qanda.service.QuestionLocalServiceUtil;
+import org.sidate.qanda.model.util.TimeDiffFormatter;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -59,83 +60,13 @@ public class QuestionImpl extends QuestionBaseImpl {
 	}
 
     public String getTimeSinceCreated() {
-        long diffSeconds = 0;
         Date created = this.getCreateDate();
-        diffSeconds = (new Date().getTime() - created.getTime()) / 1000;
-
-        if (diffSeconds > 864000) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy", Locale.GERMAN);
-            return "am " + sdf.format(created);
-
-        } else if (diffSeconds >= 86400) {
-            int value = (int) diffSeconds / 60 / 60 / 24;
-            if(value == 1) {
-                return "vor " + value + " Tag";
-            } else {
-                return "vor " + value + " Tagen";
-            }
-        } else if (diffSeconds >= 3600) {
-            int value = (int) diffSeconds / 60 / 60;
-            if(value == 1) {
-                return "vor " + value + " Stunde";
-            } else {
-                return "vor " + value + " Stunden";
-            }
-        } else if (diffSeconds >= 60) {
-            int value = (int) diffSeconds / 60;
-            if(value == 1) {
-                return "vor " + value + " Minute";
-            } else {
-                return "vor " + value + " Minuten";
-            }
-        } else {
-            int value = (int) diffSeconds;
-            if(value == 1) {
-                return "vor " + value + " Sekunde";
-            } else {
-                return "vor " + value + " Sekunden";
-            }
-        }
+		return TimeDiffFormatter.format(created);
     }
 
     public String getTimeSinceEdited() {
-        long diffSeconds = 0;
         Date edited = this.getEditedDate();
-        diffSeconds = (new Date().getTime() - edited.getTime()) / 1000;
-
-        if (diffSeconds > 864000) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd. MMM yyyy", Locale.GERMAN);
-            return "am " + sdf.format(edited);
-
-        } else if (diffSeconds >= 86400) {
-            int value = (int) diffSeconds / 60 / 60 / 24;
-            if(value == 1) {
-                return "vor " + value + " Tag";
-            } else {
-                return "vor " + value + " Tagen";
-            }
-        } else if (diffSeconds >= 3600) {
-            int value = (int) diffSeconds / 60 / 60;
-            if(value == 1) {
-                return "vor " + value + " Stunde";
-            } else {
-                return "vor " + value + " Stunden";
-            }
-        } else if (diffSeconds >= 60) {
-            int value = (int) diffSeconds / 60;
-            if(value == 1) {
-                return "vor " + value + " Minute";
-            } else {
-                return "vor " + value + " Minuten";
-            }
-        } else {
-            int value = (int) diffSeconds;
-            if(value == 1) {
-                return "vor " + value + " Sekunde";
-            } else {
-                return "vor " + value + " Sekunden";
-            }
-        }
+        return TimeDiffFormatter.format(edited);
     }
 
 	public List<AssetTag> getTags() throws PortalException {
