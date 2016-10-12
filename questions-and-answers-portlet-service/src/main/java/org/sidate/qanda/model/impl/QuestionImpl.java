@@ -54,20 +54,20 @@ public class QuestionImpl extends QuestionBaseImpl {
 	 * Never reference this class directly. All methods that expect a question model instance should use the {@link org.sidate.qanda.model.Question} interface instead.
 	 */
 
-    private static Log log = LogFactoryUtil.getLog(QuestionImpl.class);
+	private static Log log = LogFactoryUtil.getLog(QuestionImpl.class);
 
 	public QuestionImpl() {
 	}
 
-    public String getTimeSinceCreated() {
-        Date created = this.getCreateDate();
+	public String getTimeSinceCreated() {
+		Date created = this.getCreateDate();
 		return TimeDiffFormatter.format(created);
-    }
+	}
 
-    public String getTimeSinceEdited() {
-        Date edited = this.getEditedDate();
-        return TimeDiffFormatter.format(edited);
-    }
+	public String getTimeSinceEdited() {
+		Date edited = this.getEditedDate();
+		return TimeDiffFormatter.format(edited);
+	}
 
 	public List<AssetTag> getTags() throws PortalException {
 		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTags();
@@ -78,78 +78,78 @@ public class QuestionImpl extends QuestionBaseImpl {
 	}
 
 	public String[] getTagNames() {
-        try {
-            return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTagNames();
-        } catch (PortalException e) {
-            log.error("Could not get asset entry for the specified question.");
-            e.printStackTrace();
-            return null;
-        }
-    }
+		try {
+			return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTagNames();
+		} catch (PortalException e) {
+			log.error("Could not get asset entry for the specified question.");
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public long[] getCategoryIds() {
-        try {
-            return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategoryIds();
-        } catch (PortalException e) {
-            log.error("Could not get asset entry for the specified question.");
-            e.printStackTrace();
-            return null;
-        }
-    }
+		try {
+			return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategoryIds();
+		} catch (PortalException e) {
+			log.error("Could not get asset entry for the specified question.");
+			e.printStackTrace();
+			return null;
+		}
+	}
 
-    public String getTitle() throws PortalException {
-        return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTitle();
-    }
+	public String getTitle() throws PortalException {
+		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTitle();
+	}
 
-    public String getText() throws PortalException {
-        return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getDescription();
-    }
+	public String getText() throws PortalException {
+		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getDescription();
+	}
 
 	public int getViewCount() throws PortalException {
-	    return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getViewCount();
+		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getViewCount();
 	}
 
 	public double getRating() {
-        RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.getStats(Question.class.getName(),
-                this.getQuestionID());
-	    return ratingsStats.getTotalScore();
-    }
+		RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.getStats(Question.class.getName(),
+				this.getQuestionID());
+		return ratingsStats.getTotalScore();
+	}
 
-    public void setCorrectAnswer(long answerId) {
-        QuestionLocalServiceUtil.setCorrectAnswer(answerId, this.getQuestionID());
-    }
+	public void setCorrectAnswer(long answerId) {
+		QuestionLocalServiceUtil.setCorrectAnswer(answerId, this.getQuestionID());
+	}
 
-    public void unsetCorrectAnswer() {
-        QuestionLocalServiceUtil.unsetCorrectAnswer(this.getQuestionID());
-    }
+	public void unsetCorrectAnswer() {
+		QuestionLocalServiceUtil.unsetCorrectAnswer(this.getQuestionID());
+	}
 
-    public Answer getCorrectAnswer() throws PortalException {
-        if (this.getIsAnswered()) {
-            return AnswerLocalServiceUtil.getAnswer(this.getCorrectAnswerId());
-        } else {
-            log.error("Correct answer has not been set for question " + this.getQuestionID());
-            throw new CorrectAnswerNotSetException();
-        }
-    }
+	public Answer getCorrectAnswer() throws PortalException {
+		if (this.getIsAnswered()) {
+			return AnswerLocalServiceUtil.getAnswer(this.getCorrectAnswerId());
+		} else {
+			log.error("Correct answer has not been set for question " + this.getQuestionID());
+			throw new CorrectAnswerNotSetException();
+		}
+	}
 
-    public List<Answer> getAnswersSortedByRating() {
+	public List<Answer> getAnswersSortedByRating() {
 
-        List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(this.getQuestionID());
+		List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(this.getQuestionID());
 
-        Comparator<Answer> byRating = (answerOne, answerTwo) -> Double.compare(answerTwo.getRating(),
-                answerOne.getRating());
+		Comparator<Answer> byRating = (answerOne, answerTwo) -> Double.compare(answerTwo.getRating(),
+				answerOne.getRating());
 
-        return answers.stream()
-                .sorted(byRating)
-                .collect(toList());
-    }
+		return answers.stream()
+				.sorted(byRating)
+				.collect(toList());
+	}
 
-    public void increaseViewCounter(long watcherId) {
-        try {
-            AssetEntryLocalServiceUtil.incrementViewCounter(watcherId, Question.class.getName(), this.getQuestionID());
-        } catch (PortalException e) {
-            log.error("Could not increment viewCount for question " + this.getQuestionID() + " with watching user "
-                    + watcherId);
-        }
-    }
+	public void increaseViewCounter(long watcherId) {
+		try {
+			AssetEntryLocalServiceUtil.incrementViewCounter(watcherId, Question.class.getName(), this.getQuestionID());
+		} catch (PortalException e) {
+			log.error("Could not increment viewCount for question " + this.getQuestionID() + " with watching user "
+					+ watcherId);
+		}
+	}
 }
