@@ -7,10 +7,18 @@
     margin-left: -11px;
 }
 
+.qaStatCounterBoxWrapper {
+    float: right;
+    overflow: auto;
+}
+
 .qaStatCounterBox {
-    float:right;
-    padding: 0.5rem 1rem;
-    width: 7rem;
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+}
+
+.qaStatCounterBox:last-child {
+    margin-right: 0;
 }
 
 .qaCounterValue{

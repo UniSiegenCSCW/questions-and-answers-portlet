@@ -75,26 +75,28 @@
                                         viewCount = String.valueOf(Math.round(views / 100.0) / 10.0) + "k";
                                     }
                                 %>
-                                <div class="qaStatCounterBox">
-                                    <div class="qaCounterLabel">Ansichten</div>
-                                    <div class="qaCounterValue">
-                                        <%=viewCount%>
+                                <div class="qaStatCounterBoxWrapper">
+                                    <div class="qaStatCounterBox">
+                                        <div class="qaCounterLabel">Ansichten</div>
+                                        <div class="qaCounterValue">
+                                            <%=viewCount%>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="qaStatCounterBox
-                                    <c:if test="${question.getIsAnswered()}">
-                                        answered
-                                    </c:if>
-                                ">
-                                    <div class="qaCounterLabel">Antworten</div>
-                                    <div class="qaCounterValue"><%=answers.size()%></div>
-                                </div>
+                                    <div class="qaStatCounterBox
+                                        <c:if test="${question.getIsAnswered()}">
+                                            answered
+                                        </c:if>
+                                    ">
+                                        <div class="qaCounterLabel">Antworten</div>
+                                        <div class="qaCounterValue"><%=answers.size()%></div>
+                                    </div>
 
-                                <div class="qaStatCounterBox">
-                                    <div class="qaCounterLabel">Wertungen</div>
-                                    <div class="qaCounterValue">
-                                        <%=(int) question.getRating()%>
+                                    <div class="qaStatCounterBox">
+                                        <div class="qaCounterLabel">Wertungen</div>
+                                        <div class="qaCounterValue">
+                                            <%=(int) question.getRating()%>
+                                        </div>
                                     </div>
                                 </div>
                             </aui:col>
