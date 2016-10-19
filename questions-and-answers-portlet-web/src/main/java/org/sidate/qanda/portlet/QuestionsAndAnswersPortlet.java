@@ -12,7 +12,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
-import com.liferay.portal.kernel.service.SystemEventLocalService;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -28,7 +27,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.LongStream;
@@ -123,7 +121,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             response.setRenderParameter("mvcPath", "/view.jsp");
             log.error("Error on getInstance from ServiceContextFactory!");
         }
-
     }
 
     /**
@@ -156,7 +153,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             SessionErrors.add(request, e.getClass().getName());
             log.error(e.getClass().getName() + "\n" + e.getMessage());
         } catch (NoSuchElementException e) {
-            log.error("You supplied a category name which does not seem to have a corresponding category!");
+            log.info("You supplied a category name which does not seem to have a corresponding category!");
         }
 
     }
@@ -656,5 +653,4 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             e.printStackTrace();
         }
     }
-
 }
