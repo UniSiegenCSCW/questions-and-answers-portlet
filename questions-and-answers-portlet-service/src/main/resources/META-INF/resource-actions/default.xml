@@ -12,20 +12,20 @@
         <weight>1</weight>
         <permissions>
             <supports>
-                <action-key>ADD_ENTRY</action-key>
+                <action-key>ADD</action-key>
                 <action-key>DELETE</action-key>
                 <action-key>UPDATE</action-key>
                 <action-key>VIEW</action-key>
             </supports>
             <site-member-defaults>
-                <action-key>ADD_ENTRY</action-key>
+                <action-key>ADD</action-key>
                 <action-key>VIEW</action-key>
             </site-member-defaults>
             <guest-defaults>
                 <action-key>VIEW</action-key>
             </guest-defaults>
             <guest-unsupported>
-                <action-key>ADD_ENTRY</action-key>
+                <action-key>ADD</action-key>
             </guest-unsupported>
         </permissions>
     </model-resource>
@@ -38,21 +38,21 @@
         <weight>2</weight>
         <permissions>
             <supports>
-                <action-key>ADD_ENTRY</action-key>
+                <action-key>ADD</action-key>
                 <action-key>VIEW</action-key>
                 <action-key>DELETE</action-key>
                 <action-key>UPDATE</action-key>
-                <action-key>MARK_ANSWER_AS_CORRECT</action-key>
+                <action-key>MARK_AS_CORRECT</action-key>
             </supports>
             <site-member-defaults>
-                <action-key>ADD_ENTRY</action-key>
+                <action-key>ADD</action-key>
                 <action-key>VIEW</action-key>
             </site-member-defaults>
             <guest-defaults>
                 <action-key>VIEW</action-key>
             </guest-defaults>
             <guest-unsupported>
-                <action-key>ADD_ENTRY</action-key>
+                <action-key>ADD</action-key>
             </guest-unsupported>
         </permissions>
     </model-resource>
