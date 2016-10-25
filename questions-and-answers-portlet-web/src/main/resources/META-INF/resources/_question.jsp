@@ -12,7 +12,7 @@
 </portlet:renderURL>
 <aui:container cssClass="qaQuestionEntryContainer">
     <aui:row>
-        <aui:col span="10">
+        <aui:col span="8">
             <aui:row>
                 <aui:col>
                     <h5><a href="<%= showQuestionURL%>">${question.title}</a></h5>
@@ -89,7 +89,7 @@
                 </aui:col>
             </aui:row>
         </aui:col>
-        <aui:col span="2">
+        <aui:col span="4">
             <%
                 String viewCount;
                 if (views < 1000) {
