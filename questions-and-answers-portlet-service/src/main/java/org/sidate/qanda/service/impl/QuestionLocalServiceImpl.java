@@ -19,6 +19,7 @@ import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchException;
@@ -73,8 +74,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         questionPersistence.update(question);
     }
 
-    public Question addQuestion(String title, String text, ServiceContext serviceContext) throws
-            PortalException {
+    public Question addQuestion(String title, String text, ServiceContext serviceContext) throws PortalException {
         String portletId = serviceContext.getPortletId();
         long groupId = serviceContext.getScopeGroupId();
         long questionId = counterLocalService.increment();
@@ -94,10 +94,9 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         question.setIsAnswered(false);
         question.setPortletId(portletId);
 
-
         questionPersistence.update(question);
 
-//        resourceLocalService.addModelResources(question, serviceContext);
+        resourceLocalService.addModelResources(question, serviceContext);
 
         assetEntryLocalService.updateEntry(
                 serviceContext.getUserId(), question.getGroupId(), question.getCreateDate(), question.getModifiedDate(),
@@ -161,11 +160,15 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
             Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
             indexer.delete(question);
 
+            resourceLocalService.deleteResource(serviceContext.getCompanyId(), Question.class.getName(),
+                    ResourceConstants.SCOPE_INDIVIDUAL, questionId);
+
+
         } catch (SearchException e) {
             log.error("Could not delete question from indexer!");
             e.printStackTrace();
         } catch (PortalException e) {
-            log.error("deleteQuestion failed!");
+            log.error("Generic error during: deleteAnswer, deleteQuestion, deleteEntry or deleteResource");
             e.printStackTrace();
         }
         return question;

@@ -15,6 +15,7 @@
 <%@ page import="com.liferay.portal.kernel.util.PortalUtil" %>
 <%@ page import="com.liferay.portal.kernel.model.Organization" %>
 <%@ page import="java.util.Locale" %>
+<%@ page import="org.sidate.qanda.portlet.QuestionsAndAnswersPortlet" %>
 <%@ include file="init.jsp" %>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
 
@@ -124,7 +125,9 @@
                     </c:if>
                 </aui:row>
                 <aui:button-row cssClass="qaButtonRow">
-                    <aui:button onClick="<%=editQuestionURL%>" value="Frage bearbeiten"/>
+                    <c:if test="<%= QuestionsAndAnswersPortlet.questionPermissionContains(permissionChecker, question, "org.sidate.quanda.model.Question", "EDIT") %>">
+                        <aui:button onClick="<%=editQuestionURL%>" value="Frage bearbeiten"/>
+                    </c:if>
                     <portlet:actionURL name="deleteQuestion" var="deleteQuestionURL">
                         <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
                     </portlet:actionURL>
