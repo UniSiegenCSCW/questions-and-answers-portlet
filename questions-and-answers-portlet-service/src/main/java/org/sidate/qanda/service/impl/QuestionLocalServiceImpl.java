@@ -75,11 +75,6 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
     public Question addQuestion(String title, String text, ServiceContext serviceContext) throws
             PortalException {
-
-        // Validation
-        if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
-        if (Validator.isNull(text)) throw new EmptyQuestionTextException();
-
         String portletId = serviceContext.getPortletId();
         long groupId = serviceContext.getScopeGroupId();
         long questionId = counterLocalService.increment();

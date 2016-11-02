@@ -30,6 +30,10 @@
     <portlet:param name="mvcPath" value="/test.jsp"/>
 </portlet:renderURL>
 
+<liferay-ui:error key="EmptyQuestionTitleException" message="Der Titel einer Frage darf nicht leer sein" />
+<liferay-ui:error key="EmptyQuestionTextException" message="Der Text einer Frage darf nicht leer sein" />
+<liferay-ui:success key="questionAdded" message="Die Frage wurde erfolgreich hinzugef&uuml;gt" />
+
 <aui:container cssClass="qaQuestionOverviewWrapper">
     <aui:button-row>
         <aui:button cssClass="pull-right" onClick="<%= testURL%>" value="Go to testing view"></aui:button>

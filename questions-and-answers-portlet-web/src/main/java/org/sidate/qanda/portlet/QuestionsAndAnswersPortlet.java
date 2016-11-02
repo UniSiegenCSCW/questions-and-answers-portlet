@@ -71,16 +71,15 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
-
-        if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
-        if (Validator.isNull(text)) throw new EmptyQuestionTextException();
-
         try {
+            if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
+            if (Validator.isNull(text)) throw new EmptyQuestionTextException();
+
             QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
             SessionMessages.add(request, "questionAdded");
         }
         catch (PortalException e) {
-            SessionErrors.add(request, e.getClass().getName());
+            SessionErrors.add(request, e.getClass().getSimpleName());
             PortalUtil.copyRequestParameters(request, response);
             response.setRenderParameter("mvcPath", "/view.jsp");
             log.error(e);
