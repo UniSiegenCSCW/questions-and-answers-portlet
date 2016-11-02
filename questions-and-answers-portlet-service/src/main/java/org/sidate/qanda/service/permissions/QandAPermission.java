@@ -2,7 +2,6 @@ package org.sidate.qanda.service.permissions;
 
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import org.sidate.qanda.model.Question;
 
 public class QandAPermission {
 

@@ -18,6 +18,7 @@
         pageTitle = "Frage bearbeiten";
         questionText = UnicodeFormatter.toString(question.getText());
     }
+
 %>
 
 <liferay-ui:header
