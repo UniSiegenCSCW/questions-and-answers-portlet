@@ -16,7 +16,10 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 import org.osgi.service.component.annotations.Component;
+import org.sidate.qanda.exception.EmptyQuestionTextException;
+import org.sidate.qanda.exception.EmptyQuestionTitleException;
 import org.sidate.qanda.model.Answer;
 import org.sidate.qanda.model.Question;
 import org.sidate.qanda.service.AnswerLocalServiceUtil;
@@ -52,23 +55,31 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     private static final Log log = LogFactoryUtil.getLog(QuestionsAndAnswersPortlet.class);
 
-
     // #### Question ####
 
 
-    public void newQuestion(ActionRequest request, ActionResponse response)
-            throws PortalException, SystemException {
+    public void newQuestion(ActionRequest request, ActionResponse response) throws EmptyQuestionTextException,
+            EmptyQuestionTitleException {
 
-        ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
 
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
+
+        if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
+        if (Validator.isNull(text)) throw new EmptyQuestionTextException();
 
         try {
             QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
             SessionMessages.add(request, "questionAdded");
         }
-        catch (Exception e) {
+        catch (PortalException e) {
             SessionErrors.add(request, e.getClass().getName());
             PortalUtil.copyRequestParameters(request, response);
             response.setRenderParameter("mvcPath", "/view.jsp");
