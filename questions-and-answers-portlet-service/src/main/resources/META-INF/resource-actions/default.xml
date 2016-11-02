@@ -36,22 +36,69 @@
         </portlet-ref>
         <weight>2</weight>
         <permissions>
+
             <supports>
                 <action-key>VIEW</action-key>
-                <action-key>DELETE</action-key>
                 <action-key>EDIT</action-key>
                 <action-key>MARK_AS_CORRECT</action-key>
+                <action-key>DELETE</action-key>
             </supports>
+
             <site-member-defaults>
-                <action-key>ADD</action-key>
                 <action-key>VIEW</action-key>
             </site-member-defaults>
+
             <guest-defaults>
-                <action-key>VIEW</action-key>
             </guest-defaults>
+
             <guest-unsupported>
-                <action-key>ADD</action-key>
+                <action-key>VIEW</action-key>
+                <action-key>EDIT</action-key>
+                <action-key>MARK_AS_CORRECT</action-key>
+                <action-key>DELETE</action-key>
             </guest-unsupported>
+
+            <owner-defaults>
+                <action-key>VIEW</action-key>
+                <action-key>EDIT</action-key>
+                <action-key>MARK_AS_CORRECT</action-key>
+            </owner-defaults>
+
+        </permissions>
+    </model-resource>
+
+    <model-resource>
+        <model-name>org.sidate.qanda.model.Answer</model-name>
+        <portlet-ref>
+            <portlet-name>org_sidate_qanda_portlet_QuestionsAndAnswersPortlet</portlet-name>
+        </portlet-ref>
+        <weight>2</weight>
+        <permissions>
+
+            <supports>
+                <action-key>VIEW</action-key>
+                <action-key>EDIT</action-key>
+                <action-key>DELETE</action-key>
+            </supports>
+
+            <site-member-defaults>
+                <action-key>VIEW</action-key>
+            </site-member-defaults>
+
+            <guest-defaults>
+            </guest-defaults>
+
+            <guest-unsupported>
+                <action-key>VIEW</action-key>
+                <action-key>EDIT</action-key>
+                <action-key>DELETE</action-key>
+            </guest-unsupported>
+
+            <owner-defaults>
+                <action-key>VIEW</action-key>
+                <action-key>EDIT</action-key>
+            </owner-defaults>
+
         </permissions>
     </model-resource>
 

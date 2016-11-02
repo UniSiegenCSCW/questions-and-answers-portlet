@@ -17,6 +17,7 @@ package org.sidate.qanda.service.impl;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -83,6 +84,8 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         answer.setQuestionId(questionId);
 
         answerPersistence.update(answer);
+
+        resourceLocalService.addModelResources(answer, serviceContext);
 
         try {
             assetEntryLocalService.updateEntry(
@@ -152,6 +155,9 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         if (question.getCorrectAnswerId() == answerId) {
             question.unsetCorrectAnswer();
         }
+
+        resourceLocalService.deleteResource(serviceContext.getCompanyId(), Answer.class.getName(),
+                ResourceConstants.SCOPE_INDIVIDUAL, answerId);
 
         return answer;
     }

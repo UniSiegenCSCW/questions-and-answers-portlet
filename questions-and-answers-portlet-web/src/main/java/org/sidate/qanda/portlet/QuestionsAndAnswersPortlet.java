@@ -672,7 +672,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         return permissionChecker.hasPermission(groupId, resourceName, groupId, actionId);
     }
 
-    public static boolean questionPermissionContains(PermissionChecker permissionChecker, Question question, String resourceName, String actionId){
+    public static boolean questionPermissionContains(PermissionChecker permissionChecker, Question question, String actionId){
 
         String QUESTION_CLASS_NAME = Question.class.getName();
 
@@ -689,5 +689,24 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         return permissionChecker.hasOwnerPermission(question.getCompanyId(), QUESTION_CLASS_NAME, QUESTION_ID,
                 question.getUserId(), actionId)
                 || permissionChecker.hasPermission(GROUP_ID, QUESTION_CLASS_NAME, QUESTION_ID, actionId);
+    }
+
+    public static boolean answerPermissionContains(PermissionChecker permissionChecker, Answer answer, String actionId){
+
+        String ANSWER_CLASS_NAME = Answer.class.getName();
+
+        final long ANSWER_ID = answer.getAnswerID();
+        final long GROUP_ID = answer.getGroupId();
+
+        Boolean hasPermission = StagingPermissionUtil.hasPermission(permissionChecker, GROUP_ID, ANSWER_CLASS_NAME,
+                ANSWER_ID, answer.getPortletId(), actionId);
+
+        if (hasPermission != null) {
+            return hasPermission;
+        }
+
+        return permissionChecker.hasOwnerPermission(answer.getCompanyId(), ANSWER_CLASS_NAME, ANSWER_ID,
+                answer.getUserId(), actionId)
+                || permissionChecker.hasPermission(GROUP_ID, ANSWER_CLASS_NAME, ANSWER_ID, actionId);
     }
 }

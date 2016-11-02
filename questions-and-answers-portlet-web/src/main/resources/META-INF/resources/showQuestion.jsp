@@ -43,11 +43,7 @@
     <portlet:param name="backURL" value="<%= backURL%>"/>
     <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
 </portlet:renderURL>
-<portlet:renderURL var="editQuestionURL">
-    <portlet:param name="mvcPath" value="/editQuestion.jsp"/>
-    <portlet:param name="backURL" value="<%= showQuestionsURL%>"/>
-    <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
-</portlet:renderURL>
+
 
 
 <liferay-ui:header
@@ -125,13 +121,20 @@
                     </c:if>
                 </aui:row>
                 <aui:button-row cssClass="qaButtonRow">
-                    <c:if test="<%= QuestionsAndAnswersPortlet.questionPermissionContains(permissionChecker, question, "org.sidate.quanda.model.Question", "EDIT") %>">
+                    <c:if test="<%= QuestionsAndAnswersPortlet.questionPermissionContains(permissionChecker, question, "EDIT") %>">
+                        <portlet:renderURL var="editQuestionURL">
+                            <portlet:param name="mvcPath" value="/editQuestion.jsp"/>
+                            <portlet:param name="backURL" value="<%= showQuestionsURL%>"/>
+                            <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
+                        </portlet:renderURL>
                         <aui:button onClick="<%=editQuestionURL%>" value="Frage bearbeiten"/>
                     </c:if>
-                    <portlet:actionURL name="deleteQuestion" var="deleteQuestionURL">
-                        <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
-                    </portlet:actionURL>
-                    <aui:button onClick="<%=deleteQuestionURL%>" value="Frage l&ouml;schen"/>
+                    <c:if test="<%= QuestionsAndAnswersPortlet.questionPermissionContains(permissionChecker, question, "DELETE") %>">
+                        <portlet:actionURL name="deleteQuestion" var="deleteQuestionURL">
+                            <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
+                        </portlet:actionURL>
+                        <aui:button onClick="<%=deleteQuestionURL%>" value="Frage l&ouml;schen"/>
+                    </c:if>
                     <aui:button id="addNewAnswerButton" value="Frage beantworten"/>
                     <aui:script>
                         $("#<portlet:namespace/>addNewAnswerButton").click(function () {
@@ -236,25 +239,31 @@
                         </aui:row>
                         <aui:button-row cssClass="qaButtonRow">
 
-                            <portlet:renderURL var="editAnswerURL">
-                                <portlet:param name="mvcPath" value="/editAnswer.jsp"/>
-                                <portlet:param name="backURL" value="<%= showQuestionsURL%>"/>
-                                <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
-                            </portlet:renderURL>
-                            <aui:button onClick="<%=editAnswerURL%>" value="Antwort bearbeiten"/>
+                            <c:if test="<%= QuestionsAndAnswersPortlet.answerPermissionContains(permissionChecker, answer, "EDIT") %>">
+                                <portlet:renderURL var="editAnswerURL">
+                                    <portlet:param name="mvcPath" value="/editAnswer.jsp"/>
+                                    <portlet:param name="backURL" value="<%= showQuestionsURL%>"/>
+                                    <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
+                                </portlet:renderURL>
+                                <aui:button onClick="<%=editAnswerURL%>" value="Antwort bearbeiten"/>
+                            </c:if>
 
-                            <portlet:actionURL name="deleteAnswer" var="deleteAnswerURL">
-                                <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
-                                <portlet:param name="redirectURL" value="<%=showQuestionsURL%>"/>
-                            </portlet:actionURL>
-                            <aui:button onClick="<%=deleteAnswerURL%>" value="Antwort l&ouml;schen"/>
+                            <c:if test="<%= QuestionsAndAnswersPortlet.answerPermissionContains(permissionChecker, answer, "DELETE") %>">
+                                <portlet:actionURL name="deleteAnswer" var="deleteAnswerURL">
+                                    <portlet:param name="answerID" value="<%=String.valueOf(answer.getAnswerID())%>"/>
+                                    <portlet:param name="redirectURL" value="<%=showQuestionsURL%>"/>
+                                </portlet:actionURL>
+                                <aui:button onClick="<%=deleteAnswerURL%>" value="Antwort l&ouml;schen"/>
+                            </c:if>
 
-                            <portlet:actionURL name="unsetCorrectAnswer" var="unsetCorrectAnswerURL">
-                                <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
-                                <portlet:param name="backURL" value="<%= backURL%>"/>
-                                <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
-                            </portlet:actionURL>
-                            <aui:button onClick="<%=unsetCorrectAnswerURL%>" value="Akzeptierte Antwort zur&#252;ckziehen"/>
+                            <c:if test="<%= QuestionsAndAnswersPortlet.questionPermissionContains(permissionChecker, question, "MARK_AS_CORRECT") %>">
+                                <portlet:actionURL name="unsetCorrectAnswer" var="unsetCorrectAnswerURL">
+                                    <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
+                                    <portlet:param name="backURL" value="<%= backURL%>"/>
+                                    <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
+                                </portlet:actionURL>
+                                <aui:button onClick="<%=unsetCorrectAnswerURL%>" value="Akzeptierte Antwort zur&#252;ckziehen"/>
+                            </c:if>
 
 
                         </aui:button-row>
