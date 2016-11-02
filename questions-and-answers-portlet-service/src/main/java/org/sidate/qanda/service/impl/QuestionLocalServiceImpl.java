@@ -75,7 +75,6 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
     }
 
     public Question addQuestion(String title, String text, ServiceContext serviceContext) throws PortalException {
-
         String portletId = serviceContext.getPortletId();
         long groupId = serviceContext.getScopeGroupId();
         long questionId = counterLocalService.increment();
