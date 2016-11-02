@@ -5,11 +5,13 @@ import com.liferay.asset.kernel.model.AssetCategoryModel;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetCategoryLocalServiceUtil;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
+import com.liferay.exportimport.kernel.staging.permission.StagingPermissionUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -663,5 +665,29 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         } catch (PortalException e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean qandaPermissionContains(PermissionChecker permissionChecker, long groupId, String resourceName, String actionId){
+        System.out.println("GroupId = "+groupId+" Resource Name = "+resourceName+" Action Id = "+actionId);
+        return permissionChecker.hasPermission(groupId, resourceName, groupId, actionId);
+    }
+
+    public static boolean questionPermissionContains(PermissionChecker permissionChecker, Question question, String resourceName, String actionId){
+
+        String QUESTION_CLASS_NAME = Question.class.getName();
+
+        final long QUESTION_ID = question.getQuestionID();
+        final long GROUP_ID = question.getGroupId();
+
+        Boolean hasPermission = StagingPermissionUtil.hasPermission(permissionChecker, GROUP_ID, QUESTION_CLASS_NAME,
+                QUESTION_ID, question.getPortletId(), actionId);
+
+        if (hasPermission != null) {
+            return hasPermission;
+        }
+
+        return permissionChecker.hasOwnerPermission(question.getCompanyId(), QUESTION_CLASS_NAME, QUESTION_ID,
+                question.getUserId(), actionId)
+                || permissionChecker.hasPermission(GROUP_ID, QUESTION_CLASS_NAME, QUESTION_ID, actionId);
     }
 }
