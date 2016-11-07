@@ -34,6 +34,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 import static java.util.stream.Collectors.toList;
@@ -223,19 +224,21 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     /**
-     * This method returns an ArrayList of questions sorted by their rating. Questions that are older than one month
+     * This method returns an ArrayList of questions sorted by their rating.
+     * If two questions have the same rating, they are sorted by their date (older > newer)
+     * Questions that are older than one month
      * are dismissed.
      * @return An ArrayList of sorted questions.
      */
     private ArrayList<Question> getQuestionsSortedByRating(ServiceContext serviceContext) {
         List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-        Comparator<Question> byRating = (questionOne, questionTwo) -> Double.compare(questionOne.getRating(),
-                questionTwo.getRating());
+        Comparator<Question> byRatingAndDate = Comparator.comparing((Question q) -> q.getRating())
+                .thenComparing((Question q) -> q.getCreateDate());
 
         return (ArrayList<Question>) questions.stream()
-                                            .filter(isRecent())
-                                            .sorted(byRating.reversed())
-                                            .collect(toList());
+                .filter(isRecent())
+                .sorted(byRatingAndDate.reversed())
+                .collect(toList());
     }
 
     private Predicate<Question> isRecent() {
