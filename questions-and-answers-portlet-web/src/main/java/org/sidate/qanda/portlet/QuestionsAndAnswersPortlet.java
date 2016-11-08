@@ -1,5 +1,7 @@
 package org.sidate.qanda.portlet;
 
+import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.asset.kernel.service.AssetTagLocalServiceUtil;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetCategoryModel;
 import com.liferay.asset.kernel.model.AssetEntry;
@@ -83,6 +85,9 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
         catch (PortalException e) {
             SessionErrors.add(request, e.getClass().getSimpleName());
+
+            // Prevent default error messages
+            SessionMessages.add(request, PortalUtil.getPortletId(request) + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
             PortalUtil.copyRequestParameters(request, response);
             response.setRenderParameter("mvcPath", "/view.jsp");
             log.error(e);
@@ -340,10 +345,21 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             getQuestionsFilteredByTag(renderRequest);
             getQuestionsFilteredByCategory(renderRequest, renderResponse);
 
+            ArrayList<AssetCategory> categories = new ArrayList<>(AssetCategoryLocalServiceUtil.getCategories());
+            ArrayList<AssetTag> tags = new ArrayList<>(AssetTagLocalServiceUtil.getTags());
+
             if (!questions.isEmpty()) {
                 renderRequest.setAttribute("questions", questions);
                 renderRequest.setAttribute("questionsSortedByRating", questionsSortedByRating);
             }
+            if (!categories.isEmpty()) {
+				renderRequest.setAttribute("categories", categories);
+            }
+            if (!tags.isEmpty()) {
+                renderRequest.setAttribute("tags", tags);
+            }
+
+            log.info(categories.size() + " categories and " + tags.size() + " tags");
             log.info(questions.size() + " questions and  " + questionsSortedByRating.size()
                     + " sorted questions have been passed to renderRequest");
 
