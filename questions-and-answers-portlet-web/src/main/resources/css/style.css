@@ -211,3 +211,28 @@
 .qaCategories a {
     color: white;
 }
+
+.qaTagOverview {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: -0.5em 0 0 -0.5em;
+}
+
+.qaTagOverview span {
+    /*
+    change this to
+    "flex: 0 0 auto"
+    to prevent tags from growing to fit the container
+    */
+    flex: 1 0 auto;
+    text-align: center;
+    list-style: none;
+    border-radius: 0.5rem;
+    padding: 0.5em;
+    margin: 0.5em 0 0 0.5em !important;
+}
+
+.qaTagOverview span a {
+    color: white;
+}

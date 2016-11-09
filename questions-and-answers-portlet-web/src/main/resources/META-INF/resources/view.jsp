@@ -30,6 +30,24 @@
     <portlet:param name="mvcPath" value="/test.jsp"/>
 </portlet:renderURL>
 
+<%
+    String tagColors[] = {
+            "#1abc9c",
+            "#2ecc71",
+            "#3498db",
+            "#9b59b6",
+            "#16a085",
+            "#27ae60",
+            "#2980b9",
+            "#8e44ad",
+            "#f1c40f",
+            "#e67e22",
+            "#e74c3c",
+            "#f39c12",
+            "#d35400",
+            "#c0392b"
+    };
+%>
 
 
 
@@ -65,33 +83,49 @@
             <c:if test="${tags.size() > 0}">
                 <aui:row>
                     <h5>Tags</h5>
-                    <ul class="qaTags">
+                    <div class="qaTagOverview">
                         <c:forEach var="tag" items="${tags}">
                             <portlet:renderURL var="tagsURL">
                                 <portlet:param name="mvcPath" value="/tags.jsp"/>
                                 <portlet:param name="tag" value="${tag.name}"/>
                                 <portlet:param name="backURL" value="<%= mainViewURL%>"/>
                             </portlet:renderURL>
-
-                            <li><a href="<%= tagsURL %>">${tag.name}</a></li>
+                            <%
+                                AssetTag tag = (AssetTag) pageContext.getAttribute("tag");
+                                int code = tag.getName().hashCode();
+                                // Modulo fix so that it works for negative integers
+                                int index = (code % tagColors.length + tagColors.length) % tagColors.length;
+                                String color = tagColors[index];
+                            %>
+                            <span style="background: <%= color %>">
+                                <a href="<%= tagsURL %>">${tag.name}</a>
+                            </span>
                         </c:forEach>
-                    </ul>
+                    </div>
                 </aui:row>
             </c:if>
             <c:if test="${categories.size() > 0}">
                 <aui:row>
                     <h5>Kategorien</h5>
-                    <ul class="qaCategories">
+                    <div class="qaTagOverview">
                         <c:forEach var="category" items="${categories}">
                             <portlet:renderURL var="categoryURL">
                                 <portlet:param name="mvcPath" value="/categories.jsp"/>
                                 <portlet:param name="category" value="${category.name}"/>
                                 <portlet:param name="backURL" value="<%= mainViewURL%>"/>
                             </portlet:renderURL>
-
-                            <li><a href="<%= categoryURL %>">${category.name}</a></li>
+                            <%
+                                AssetCategory category = (AssetCategory) pageContext.getAttribute("category");
+                                int code = category.getName().hashCode();
+                                // Modulo fix so that it works for negative integers
+                                int index = (code % tagColors.length + tagColors.length) % tagColors.length;
+                                String color = tagColors[index];
+                            %>
+                            <span style="background: <%= color %>">
+                                <a href="<%= categoryURL %>">${category.name}</a>
+                            </span>
                         </c:forEach>
-                    </ul>
+                    </div>
                 </aui:row>
             </c:if>
         </aui:col>
