@@ -38,6 +38,7 @@
 <portlet:renderURL var="viewURL">
     <portlet:param name="mvcPath" value="/view.jsp"/>
 </portlet:renderURL>
+
 <portlet:renderURL var="showQuestionsURL">
     <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
     <portlet:param name="backURL" value="<%= backURL%>"/>
@@ -321,6 +322,7 @@
         <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
         <portlet:param name="redirectURL" value="<%=showQuestionsURL%>"/>
     </portlet:actionURL>
+
     <aui:container>
         <aui:form action="<%= newAnswerURL %>" name="AnswerForm">
             <h5 id="newAnswerFormContainer">Ihre Antwort</h5>
@@ -335,4 +337,5 @@
             </aui:button-row>
         </aui:form>
     </aui:container>
+
 </aui:container>

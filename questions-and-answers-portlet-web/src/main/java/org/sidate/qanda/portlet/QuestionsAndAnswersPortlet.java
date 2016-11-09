@@ -77,6 +77,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
+
         try {
             if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
             if (Validator.isNull(text)) throw new EmptyQuestionTextException();
@@ -119,13 +120,34 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         log.info("Answer for question " + questionId + " has been unset.");
     }
 
-    public void editQuestion(ActionRequest request, ActionResponse response) throws PortalException {
+    public void editQuestion(ActionRequest request, ActionResponse response) {
+
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
         long questionId = ParamUtil.getLong(request, "questionID");
-        ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+        ServiceContext serviceContext = null;
 
-        QuestionLocalServiceUtil.editQuestion(questionId, title, text, serviceContext);
+        try {
+            if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
+            if (Validator.isNull(text)) throw new EmptyQuestionTextException();
+
+            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            QuestionLocalServiceUtil.editQuestion(questionId, title, text, serviceContext);
+            SessionMessages.add(request, "questionEdited");
+        } catch (PortalException e) {
+            SessionErrors.add(request, e.getClass().getSimpleName());
+            SessionMessages.add(request, PortalUtil.getPortletId(request) + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+            log.error("An error occured during editQuestion: " + e.getClass().getName());
+        }
+        try {
+            String redirectUrl = ParamUtil.getString(request, "redirectURL");
+            response.sendRedirect(redirectUrl);
+        }
+        catch (IOException e) {
+            log.error("IO Exception during newAnswer()");
+            e.printStackTrace();
+        }
+
     }
 
     public void deleteQuestion(ActionRequest request, ActionResponse response){
@@ -282,17 +304,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     public void newAnswer(ActionRequest request, ActionResponse response) {
 
-        ServiceContext serviceContext = null;
-        try {
-            serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
-        } catch (PortalException e) {
-            e.printStackTrace();
-        }
-
         String text = ParamUtil.getString(request, "text");
         long questionId = ParamUtil.getLong(request, "questionID");
 
         try {
+            ServiceContext serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
             if (Validator.isNull(text)) throw new EmptyAnswerTextException();
             AnswerLocalServiceUtil.addAnswer(text, questionId, serviceContext);
             SessionMessages.add(request, "answerAdded");
@@ -315,20 +331,31 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
-    public void editAnswer(ActionRequest request, ActionResponse response) throws PortalException {
-        ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+    public void editAnswer(ActionRequest request, ActionResponse response) {
+
         long answerId = ParamUtil.getLong(request, "answerID");
         String text = ParamUtil.getString(request, "text");
-        String redirectUrl = ParamUtil.getString(request, "redirectURL");
+
         try {
+            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+            if (Validator.isNull(text)) throw new EmptyAnswerTextException();
             AnswerLocalServiceUtil.editAnswer(answerId, text, serviceContext);
+            SessionMessages.add(request, "answerEdited");
+        }
+        catch (PortalException e) {
+            SessionErrors.add(request, e.getClass().getSimpleName());
+
+            // Prevent default error messages
+            SessionMessages.add(request, PortalUtil.getPortletId(request) + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+            log.error(e.getClass().getName() + "\n" + e.getMessage());
+        }
+        try {
+            String redirectUrl = ParamUtil.getString(request, "redirectURL");
             response.sendRedirect(redirectUrl);
         }
-        catch (Exception e) {
-            SessionErrors.add(request, e.getClass().getName());
-            PortalUtil.copyRequestParameters(request, response);
-            response.setRenderParameter("mvcPath", "/view.jsp");
-            log.error(e.getClass().getName() + "\n" + e.getMessage());
+        catch (IOException e) {
+            log.error("IO Exception during editAnswer()");
+            e.printStackTrace();
         }
     }
 

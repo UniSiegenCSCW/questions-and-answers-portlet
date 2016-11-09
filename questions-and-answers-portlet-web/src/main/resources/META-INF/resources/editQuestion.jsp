@@ -18,7 +18,6 @@
         pageTitle = "Frage bearbeiten";
         questionText = UnicodeFormatter.toString(question.getText());
     }
-
 %>
 
 <liferay-ui:header
@@ -29,9 +28,17 @@
         <portlet:param name="backURL" value="<%= backURL %>" />
 </portlet:actionURL>
 
+
 <c:if test="<%=question != null%>">
+    <portlet:renderURL var="redirectURL">
+        <portlet:param name="mvcPath" value="/showQuestion.jsp"/>
+        <portlet:param name="backURL" value="<%= backURL%>"/>
+        <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
+    </portlet:renderURL>
+
     <portlet:actionURL name="editQuestion" var="editQuestionURL">
         <portlet:param name="backURL" value="<%= backURL %>" />
+        <portlet:param name="redirectURL" value="<%= redirectURL %>" />
     </portlet:actionURL>
 </c:if>
 

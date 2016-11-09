@@ -103,26 +103,28 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         return answer;
     }
 
-    public void editAnswer(long answerId, String text, ServiceContext serviceContext) throws PortalException {
+    public void editAnswer(long answerId, String text, ServiceContext serviceContext) {
         Answer answer = answerPersistence.fetchByPrimaryKey(answerId);
-
-        // Validation
-        if (Validator.isNull(text)) throw new EmptyAnswerTextException();
 
         answer.setEditedBy(serviceContext.getUserId());
         answer.setEditedDate(new Date());
 
         answerPersistence.update(answer);
 
-        assetEntryLocalService.updateEntry(
-                serviceContext.getUserId(), answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
-                Answer.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
-                serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null,
-                null, ContentTypes.TEXT_HTML, QuestionLocalServiceUtil.getQuestion(answer.getQuestionId()).getTitle(), text, null, null,
-                null, 0, 0, 0D);
+        try {
+            assetEntryLocalService.updateEntry(
+                    serviceContext.getUserId(), answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
+                    Answer.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
+                    serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null,
+                    null, ContentTypes.TEXT_HTML, QuestionLocalServiceUtil.getQuestion(answer.getQuestionId()).getTitle(), text, null, null,
+                    null, 0, 0, 0D);
 
-        Indexer<Answer> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Answer.class);
-        indexer.reindex(answer);
+                    Indexer<Answer> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Answer.class);
+                    indexer.reindex(answer);
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Deprecated

@@ -31,7 +31,7 @@
 </portlet:renderURL>
 
 
-<liferay-ui:success key="questionAdded" message="Die Frage wurde erfolgreich hinzugef&uuml;gt" />
+
 
 <aui:container cssClass="qaQuestionOverviewWrapper">
     <aui:button-row>

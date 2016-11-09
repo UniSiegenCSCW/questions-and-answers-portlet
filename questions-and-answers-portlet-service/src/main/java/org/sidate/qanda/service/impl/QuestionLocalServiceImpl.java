@@ -75,6 +75,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
     }
 
     public Question addQuestion(String title, String text, ServiceContext serviceContext) throws PortalException {
+
         String portletId = serviceContext.getPortletId();
         long groupId = serviceContext.getScopeGroupId();
         long questionId = counterLocalService.increment();
@@ -107,6 +108,8 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
         indexer.reindex(question);
 
+
+
         log.info("Question " + questionId + " has been added and indexed.");
 
         return question;
@@ -114,10 +117,6 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 
     public void editQuestion(long questionId, String title, String text, ServiceContext serviceContext)
             throws PortalException {
-
-        // Validation
-        if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
-        if (Validator.isNull(text)) throw new EmptyQuestionTextException();
 
         Question question = questionPersistence.fetchByPrimaryKey(questionId);
 
