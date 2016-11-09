@@ -24,21 +24,21 @@
                         <div class="qaTagContainer">
                             <strong>Tags:</strong>
                             <ul class="qaTags">
-                                <c:forEach items="<%= tags%>" var="tag">
+                                <c:forEach items="<%= tags%>" var="tag_">
                                     <portlet:renderURL var="tagsURL">
                                         <portlet:param name="mvcPath" value="/tags.jsp"/>
-                                        <portlet:param name="tag" value="${tag.name}"/>
+                                        <portlet:param name="tag" value="${tag_.name}"/>
                                         <portlet:param name="backURL" value="<%= mainViewURL%>"/>
                                     </portlet:renderURL>
                                     <%
-                                        AssetTag tag = (AssetTag) pageContext.getAttribute("tag");
-                                        int code = tag.getName().hashCode();
+                                        AssetTag tag_ = (AssetTag) pageContext.getAttribute("tag_");
+                                        int code = tag_.getName().hashCode();
                                         // Modulo fix so that it works for negative integers
                                         int index = (code % tagColors.length + tagColors.length) % tagColors.length;
                                         String color = tagColors[index];
                                     %>
                                     <li style="background: <%= color %>">
-                                        <a href="<%= tagsURL %>">${tag.name}</a>
+                                        <a href="<%= tagsURL %>">${tag_.name}</a>
                                     </li>
                                 </c:forEach>
                             </ul>

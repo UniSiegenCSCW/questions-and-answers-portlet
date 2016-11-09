@@ -70,7 +70,21 @@
                                 <strong>Kategorien:</strong>
                                 <ul class="qaCategories">
                                     <c:forEach items="<%= categories%>" var="category">
-                                        <li>${category.name}</li>
+                                        <portlet:renderURL var="categoryURL">
+                                            <portlet:param name="mvcPath" value="/categories.jsp"/>
+                                            <portlet:param name="category" value="${category.name}"/>
+                                            <portlet:param name="backURL" value="<%= viewURL%>"/>
+                                        </portlet:renderURL>
+                                        <%
+                                            AssetCategory category = (AssetCategory) pageContext.getAttribute("category");
+                                            int code = category.getName().hashCode();
+                                            // Modulo fix so that it works for negative integers
+                                            int index = (code % tagColors.length + tagColors.length) % tagColors.length;
+                                            String color = tagColors[index];
+                                        %>
+                                        <li style="background: <%= color %>">
+                                            <a href="<%= categoryURL %>">${category.name}</a>
+                                        </li>
                                     </c:forEach>
                                 </ul>
                             </div>
@@ -80,7 +94,21 @@
                                 <strong>Tags:</strong>
                                 <ul class="qaTags">
                                     <c:forEach items="<%= tags%>" var="tag">
-                                        <li>${tag.name} </li>
+                                        <portlet:renderURL var="tagsURL">
+                                            <portlet:param name="mvcPath" value="/tags.jsp"/>
+                                            <portlet:param name="tag" value="${tag.name}"/>
+                                            <portlet:param name="backURL" value="<%= viewURL%>"/>
+                                        </portlet:renderURL>
+                                        <%
+                                            AssetTag tag = (AssetTag) pageContext.getAttribute("tag");
+                                            int code = tag.getName().hashCode();
+                                            // Modulo fix so that it works for negative integers
+                                            int index = (code % tagColors.length + tagColors.length) % tagColors.length;
+                                            String color = tagColors[index];
+                                        %>
+                                        <li style="background: <%= color %>">
+                                            <a href="<%= tagsURL %>">${tag.name}</a>
+                                        </li>
                                     </c:forEach>
                                 </ul>
                             </div>
