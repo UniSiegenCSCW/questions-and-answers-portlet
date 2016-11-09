@@ -42,40 +42,46 @@
     <aui:model-context bean="<%=question%>" model="<%=Question.class%>"/>
     <aui:input name="questionID" type="hidden" />
         <aui:fieldset>
-            <aui:input label="Titel der Frage" name="title" type="text"/>
+            <aui:input label="Titel der Frage" name="title" type="text" required="true"/>
             <br/>
-                <liferay-ui:input-editor name="text" initMethod="initEditor" />
+                <liferay-ui:input-editor name="text" initMethod="initEditor"/>
                 <aui:script>
                     function <portlet:namespace />initEditor() {
                         return "<%= questionText %>";
                     }
                 </aui:script>
         </aui:fieldset>
-        <aui:fieldset>
-            <div>
-                <strong>Kategorien</strong>
-                <c:choose>
-                    <c:when test="<%=question != null%>">
-                        <liferay-ui:asset-categories-selector curCategoryIds="<%=StringUtil.merge(question.getCategoryIds(),\",\")%>"/>
-                    </c:when>
-                    <c:otherwise>
-                        <liferay-ui:asset-categories-selector />
-                    </c:otherwise>
-                </c:choose>
-
-            </div><br/>
-            <div>
-                <strong>Tags</strong>
-                <c:choose>
-                    <c:when test="<%=question != null%>">
-                        <liferay-ui:asset-tags-selector curTags="<%=StringUtil.merge(question.getTagNames(),\",\")%>"/>
-                    </c:when>
-                    <c:otherwise>
-                        <liferay-ui:asset-tags-selector  />
-                    </c:otherwise>
-                </c:choose>
-            </div>
-        </aui:fieldset>
+    <aui:fieldset>
+        <div>
+            <strong>Kategorien</strong>
+            <c:choose>
+                <c:when test="<%=question != null%>">
+                    <liferay-ui:asset-categories-selector curCategoryIds="<%=StringUtil.merge(question.getCategoryIds(),\",\")%>"/>
+                </c:when>
+                <c:otherwise>
+                    <liferay-ui:asset-categories-selector />
+                </c:otherwise>
+            </c:choose>
+        </div><br/>
+        <div>
+            <strong>Tags</strong>
+            <c:choose>
+                <c:when test="<%=question != null%>">
+                    <liferay-ui:asset-tags-selector id="qanda" curTags="<%=StringUtil.merge(question.getTagNames(),\",\")%>"/>
+                </c:when>
+                <c:otherwise>
+                    <liferay-ui:asset-tags-selector id="qanda" />
+                </c:otherwise>
+            </c:choose>
+            <script>
+                // FIXME, this is a hotfix to resolve issue #16
+                var elem = $("input[id=qandaassetTagNames]")
+                elem.on("keyup", () => {
+                    elem.val(elem.val().toLowerCase())
+                })
+            </script>
+        </div>
+    </aui:fieldset>
     <aui:button type="submit"/>
     <aui:button type="cancel" onClick="<%= backURL %>"/>
 </aui:form>
