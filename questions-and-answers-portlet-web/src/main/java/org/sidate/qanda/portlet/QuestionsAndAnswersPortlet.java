@@ -22,10 +22,12 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import org.osgi.service.component.annotations.Component;
+import org.sidate.qanda.exception.EmptyAnswerTextException;
 import org.sidate.qanda.exception.EmptyQuestionTextException;
 import org.sidate.qanda.exception.EmptyQuestionTitleException;
 import org.sidate.qanda.model.Answer;
 import org.sidate.qanda.model.Question;
+import org.sidate.qanda.model.QuestionModel;
 import org.sidate.qanda.service.AnswerLocalServiceUtil;
 import org.sidate.qanda.service.QuestionLocalServiceUtil;
 
@@ -236,8 +238,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
      */
     private ArrayList<Question> getQuestionsSortedByRating(ServiceContext serviceContext) {
         List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-        Comparator<Question> byRatingAndDate = Comparator.comparing((Question q) -> q.getRating())
-                .thenComparing((Question q) -> q.getCreateDate());
+        Comparator<Question> byRatingAndDate = Comparator.comparing(Question::getRating)
+                .thenComparing(QuestionModel::getCreateDate);
 
         return (ArrayList<Question>) questions.stream()
                 .filter(isRecent())
@@ -278,26 +280,37 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     // #### Answers ####
 
 
-    public void newAnswer(ActionRequest request, ActionResponse response)
-            throws PortalException, SystemException {
+    public void newAnswer(ActionRequest request, ActionResponse response) {
 
-        ServiceContext serviceContext = ServiceContextFactory.getInstance(
-                Answer.class.getName(), request);
+        ServiceContext serviceContext = null;
+        try {
+            serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
 
         String text = ParamUtil.getString(request, "text");
-        String redirectUrl = ParamUtil.getString(request, "redirectURL");
         long questionId = ParamUtil.getLong(request, "questionID");
 
         try {
+            if (Validator.isNull(text)) throw new EmptyAnswerTextException();
             AnswerLocalServiceUtil.addAnswer(text, questionId, serviceContext);
             SessionMessages.add(request, "answerAdded");
+        }
+        catch (PortalException e) {
+            SessionErrors.add(request, e.getClass().getSimpleName());
+
+            // Prevent default error messages
+            SessionMessages.add(request, PortalUtil.getPortletId(request) + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+            log.error("An error occured during newAnswer: " + e.getClass().getName());
+        }
+        try {
+            String redirectUrl = ParamUtil.getString(request, "redirectURL");
             response.sendRedirect(redirectUrl);
         }
-        catch (Exception e) {
-            SessionErrors.add(request, e.getClass().getName());
-            PortalUtil.copyRequestParameters(request, response);
-            response.setRenderParameter("mvcPath", "/view.jsp");
-            log.error(e.getClass().getName() + "\n" + e.getMessage());
+        catch (IOException e) {
+            log.error("IO Exception during newAnswer()");
+            e.printStackTrace();
         }
 
     }

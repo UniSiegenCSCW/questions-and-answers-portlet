@@ -145,17 +145,18 @@
                 <aui:row cssClass='<%="qaDiscussionWrapper questionDiscussion_"+question.getQuestionID()%>'>
                     <a id="toggleQuestionComment_<%=question.getQuestionID()%>">neuen Kommentar hinzuf&uuml;gen</a>
 
+                    <aui:script>
+                        $("#toggleQuestionComment_<%=question.getQuestionID()%>").click(function () {
+                            $(".questionDiscussion_<%=question.getQuestionID()%> .fieldset.add-comment").toggleClass("unhidden");
+                        });
+                    </aui:script>
+
                     <portlet:actionURL name="invokeTaglibDiscussion" var="discussionURL" />
 
                     <%
                         String currentUrl = PortalUtil.getCurrentURL(request);
                     %>
 
-                    <aui:script>
-                        $("#toggleQuestionComment_<%=question.getQuestionID()%>").click(function () {
-                            $(".questionDiscussion_<%=question.getQuestionID()%> .fieldset.add-comment").toggleClass("unhidden");
-                        });
-                    </aui:script>
 
                     <liferay-ui:discussion className="<%=Question.class.getName()%>"
                                            classPK="<%=question.getQuestionID()%>"
@@ -274,18 +275,19 @@
                                 });
                             </aui:script>
 
-                            <portlet:actionURL name="invokeTaglibDiscussion" var="discussionURL" />
+                            <portlet:actionURL name="invokeTaglibDiscussion" var="answerDiscussionURL" />
 
                             <%
-                                String currentUrl = PortalUtil.getCurrentURL(request);
+                                String answerURL = PortalUtil.getCurrentURL(request);
                             %>
+
 
                             <liferay-ui:discussion className="<%=Answer.class.getName()%>"
                                                    classPK="<%=answer.getAnswerID()%>"
-                                                   formAction="<%=discussionURL%>"
+                                                   formAction="<%=answerDiscussionURL%>"
                                                    formName='<%="answerForm_"+answer.getAnswerID()%>'
                                                    ratingsEnabled="<%=false%>"
-                                                   redirect="<%=currentUrl%>"
+                                                   redirect="<%=answerURL%>"
                                                    userId="<%=themeDisplay.getUserId()%>" />
 
                         </aui:row>

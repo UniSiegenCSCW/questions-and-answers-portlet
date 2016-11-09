@@ -60,10 +60,7 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         return answerPersistence.findByQuestionId(questionId);
     }
 
-    public Answer addAnswer(String text, long questionId, ServiceContext serviceContext) throws PortalException {
-
-        // Validation
-        if (Validator.isNull(text)) throw new EmptyAnswerTextException();
+    public Answer addAnswer(String text, long questionId, ServiceContext serviceContext) {
 
         String portletId = serviceContext.getPortletId();
         long groupId = serviceContext.getScopeGroupId();
@@ -85,9 +82,9 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 
         answerPersistence.update(answer);
 
-        resourceLocalService.addModelResources(answer, serviceContext);
 
         try {
+            resourceLocalService.addModelResources(answer, serviceContext);
             assetEntryLocalService.updateEntry(
                     serviceContext.getUserId(), answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
                     Answer.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
