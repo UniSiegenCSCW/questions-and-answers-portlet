@@ -63,8 +63,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     // #### Question ####
 
 
-    public void newQuestion(ActionRequest request, ActionResponse response) throws EmptyQuestionTextException,
-            EmptyQuestionTitleException {
+    public void newQuestion(ActionRequest request, ActionResponse response) {
 
 
         ServiceContext serviceContext = null;
@@ -89,8 +88,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             // Prevent default error messages
             SessionMessages.add(request, PortalUtil.getPortletId(request) + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
             PortalUtil.copyRequestParameters(request, response);
-            response.setRenderParameter("mvcPath", "/view.jsp");
-            log.error(e);
+            response.setRenderParameter("mvcPath", "/editQuestion.jsp");
+            log.error("An error occured during newQuestion: " + e.getClass().getName());
         }
     }
 

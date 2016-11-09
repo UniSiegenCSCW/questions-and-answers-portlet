@@ -25,10 +25,14 @@
         backURL="<%= backURL %>"
         title='<%= pageTitle%>'
 />
-<portlet:actionURL name="newQuestion" var="editQuestionURL"/>
+<portlet:actionURL name="newQuestion" var="editQuestionURL">
+        <portlet:param name="backURL" value="<%= backURL %>" />
+</portlet:actionURL>
 
 <c:if test="<%=question != null%>">
-    <portlet:actionURL name="editQuestion" var="editQuestionURL"/>
+    <portlet:actionURL name="editQuestion" var="editQuestionURL">
+        <portlet:param name="backURL" value="<%= backURL %>" />
+    </portlet:actionURL>
 </c:if>
 
 <liferay-ui:asset-categories-error />
@@ -67,7 +71,7 @@
                         <liferay-ui:asset-tags-selector curTags="<%=StringUtil.merge(question.getTagNames(),\",\")%>"/>
                     </c:when>
                     <c:otherwise>
-                        <liferay-ui:asset-tags-selector />
+                        <liferay-ui:asset-tags-selector  />
                     </c:otherwise>
                 </c:choose>
             </div>

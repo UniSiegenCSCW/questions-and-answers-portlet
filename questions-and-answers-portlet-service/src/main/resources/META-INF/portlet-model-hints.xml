@@ -25,6 +25,7 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="portletId" type="String" />
+		<field name="isAnswered" type="Boolean" />
 		<field name="correctAnswerId" type="long" />
 		<field name="editedBy" type="long" />
 		<field name="editedDate" type="Date" />

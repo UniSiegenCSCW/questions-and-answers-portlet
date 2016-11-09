@@ -165,7 +165,6 @@
                                            redirect="<%=currentUrl%>"
                                            userId="<%=themeDisplay.getUserId()%>"
                                            hideControls="<%=false%>"/>
-
                 </aui:row>
             </aui:col>
         </aui:row>
@@ -190,7 +189,6 @@
                     List<Organization> answerAuthorOrganizations = answerAuthor.getOrganizations();
                     answersSortedByDate.remove(answer);
                     answersSortedByRating.remove(answer);
-
                 %>
 
                 <aui:row cssClass="qaContentContainer">
@@ -275,6 +273,7 @@
                                 $(".answerDiscussion_<%=answer.getAnswerID()%> .fieldset.add-comment").toggleClass("unhidden");
                                 });
                             </aui:script>
+
                             <portlet:actionURL name="invokeTaglibDiscussion" var="discussionURL" />
 
                             <%
