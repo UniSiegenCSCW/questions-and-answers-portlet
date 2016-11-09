@@ -30,8 +30,16 @@
                                         <portlet:param name="tag" value="${tag.name}"/>
                                         <portlet:param name="backURL" value="<%= mainViewURL%>"/>
                                     </portlet:renderURL>
-
-                                    <li><a href="<%= tagsURL %>">${tag.name}</a></li>
+                                    <%
+                                        AssetTag tag = (AssetTag) pageContext.getAttribute("tag");
+                                        int code = tag.getName().hashCode();
+                                        // Modulo fix so that it works for negative integers
+                                        int index = (code % tagColors.length + tagColors.length) % tagColors.length;
+                                        String color = tagColors[index];
+                                    %>
+                                    <li style="background: <%= color %>">
+                                        <a href="<%= tagsURL %>">${tag.name}</a>
+                                    </li>
                                 </c:forEach>
                             </ul>
                         </div>
@@ -46,8 +54,16 @@
                                         <portlet:param name="category" value="${category.name}"/>
                                         <portlet:param name="backURL" value="<%= mainViewURL%>"/>
                                     </portlet:renderURL>
-
-                                    <li><a href="<%= categoryURL %>">${category.name}</a></li>
+                                    <%
+                                        AssetCategory category = (AssetCategory) pageContext.getAttribute("category");
+                                        int code = category.getName().hashCode();
+                                        // Modulo fix so that it works for negative integers
+                                        int index = (code % tagColors.length + tagColors.length) % tagColors.length;
+                                        String color = tagColors[index];
+                                    %>
+                                    <li style="background: <%= color %>">
+                                        <a href="<%= categoryURL %>">${category.name}</a>
+                                    </li>
                                 </c:forEach>
                             </ul>
                         </div>

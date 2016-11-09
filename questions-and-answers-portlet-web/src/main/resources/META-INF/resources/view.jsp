@@ -79,7 +79,7 @@
                 </liferay-ui:section>
             </liferay-ui:tabs>
         </aui:col>
-        <aui:col cssClass="qaTagOverview" span="2">
+        <aui:col span="2">
             <c:if test="${tags.size() > 0}">
                 <aui:row>
                     <h5>Tags</h5>

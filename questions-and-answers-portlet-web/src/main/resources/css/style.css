@@ -46,36 +46,53 @@
     color: #fff;
 }
 
-.qaTagContainer, .qaCategoryContainer{
+.qaTagContainer {
     float: left;
     margin: 1rem 1rem 1rem 0;
-}
-
-.qaCategories {
-    display: inline;
-    padding-left: 0;
-}
-.qaCategories li {
-    display: inline;
-    list-style: none;
-    background-color: deepskyblue;
-    color: white;
-    border-radius: 0.4rem;
-    padding: 0.3rem;
 }
 
 .qaTags {
     display: inline;
     padding-left: 0;
+    margin: -0.5em 0 0 -0.5em;
 }
 
 .qaTags li {
-    display: inline;
+    display: inline-block;
     list-style: none;
     background-color: deepskyblue;
     color: white;
+    text-align: center;
     border-radius: 0.5rem;
     padding: 0.5rem;
+    margin: 0.5rem 0 0 0.5rem !important;
+}
+
+.qaTags li a {
+    color: white;
+}
+.qaTagOverview {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: -0.5em 0 0 -0.5em;
+}
+
+.qaTagOverview span {
+    /*
+    change this to
+    "flex: 0 0 auto"
+    to prevent tags from growing to fit the container
+    */
+    flex: 1 0 auto;
+    text-align: center;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    margin: 0.5rem 0 0 0.5rem !important;
+}
+
+.qaTagOverview span a {
+    color: white;
 }
 
 .qaAuthorbox {
@@ -204,35 +221,4 @@
     margin-bottom: 0;
 }
 
-.qaTags a {
-    color: white;
-}
 
-.qaCategories a {
-    color: white;
-}
-
-.qaTagOverview {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin: -0.5em 0 0 -0.5em;
-}
-
-.qaTagOverview span {
-    /*
-    change this to
-    "flex: 0 0 auto"
-    to prevent tags from growing to fit the container
-    */
-    flex: 1 0 auto;
-    text-align: center;
-    list-style: none;
-    border-radius: 0.5rem;
-    padding: 0.5em;
-    margin: 0.5em 0 0 0.5em !important;
-}
-
-.qaTagOverview span a {
-    color: white;
-}
