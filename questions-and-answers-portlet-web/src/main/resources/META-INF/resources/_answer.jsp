@@ -76,7 +76,7 @@
             </c:if>
 
         </aui:button-row>
-        <aui:row cssClass='<%="qaDiscussionWrapper answerDiscussion_"+answer.getAnswerID()%>'>
+        <%--<aui:row cssClass='<%="qaDiscussionWrapper answerDiscussion_"+answer.getAnswerID()%>'>
             <a id="toggleAnswerComment_<%=answer.getAnswerID()%>">neuen Kommentar hinzuf&uuml;gen</a>
 
             <aui:script>
@@ -98,6 +98,6 @@
                                    redirect="<%=currentUrl%>"
                                    userId="<%=themeDisplay.getUserId()%>" />
 
-        </aui:row>
+        </aui:row>--%>
     </aui:col>
 </aui:row>

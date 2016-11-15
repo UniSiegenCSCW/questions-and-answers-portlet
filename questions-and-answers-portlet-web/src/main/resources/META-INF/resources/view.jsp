@@ -32,7 +32,7 @@
 
 <aui:container cssClass="qaQuestionOverviewWrapper">
     <aui:button-row>
-        <aui:button cssClass="pull-right" onClick="<%= testURL%>" value="Go to testing view"></aui:button>
+        <%--<aui:button cssClass="pull-right" onClick="<%= testURL%>" value="Go to testing view"></aui:button>--%>
         <aui:button cssClass="pull-right" onClick="<%= newQuestionURL%>" value="Neue Frage stellen"></aui:button>
     </aui:button-row>
     <aui:row>
