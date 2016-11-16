@@ -98,6 +98,6 @@
                                    redirect="<%=currentUrl%>"
                                    userId="<%=themeDisplay.getUserId()%>" />
 
-        </aui:row>--%>
+        </aui:row>
     </aui:col>
 </aui:row>
