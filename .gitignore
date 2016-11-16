@@ -21,3 +21,5 @@ questions-and-answers-portlet-service/src/main/test
 /questions-and-answers-portlet-api/node_modules
 /questions-and-answers-portlet-service/node_modules
 /questions-and-answers-portlet-web/node_modules
+
+.DS_Store
