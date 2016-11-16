@@ -88,8 +88,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         catch (PortalException e) {
             SessionErrors.add(request, e.getClass().getSimpleName());
 
-            // Prevent default error messages
-            SessionMessages.add(request, PortalUtil.getPortletId(request) + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+            hideDefaultErrorMessage(request);
             PortalUtil.copyRequestParameters(request, response);
             response.setRenderParameter("mvcPath", "/editQuestion.jsp");
             log.error("An error occured during newQuestion: " + e.getClass().getName());
@@ -135,8 +134,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             QuestionLocalServiceUtil.editQuestion(questionId, title, text, serviceContext);
             SessionMessages.add(request, "questionEdited");
         } catch (PortalException e) {
+            hideDefaultErrorMessage(request);
             SessionErrors.add(request, e.getClass().getSimpleName());
-            SessionMessages.add(request, PortalUtil.getPortletId(request) + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
             log.error("An error occured during editQuestion: " + e.getClass().getName());
         }
         try {
@@ -305,9 +304,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
         catch (PortalException e) {
             SessionErrors.add(request, e.getClass().getSimpleName());
-
-            // Prevent default error messages
-            SessionMessages.add(request, PortalUtil.getPortletId(request) + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+            hideDefaultErrorMessage(request);
             log.error("An error occured during newAnswer: " + e.getClass().getName());
         }
         try {
@@ -334,9 +331,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
         catch (PortalException e) {
             SessionErrors.add(request, e.getClass().getSimpleName());
-
-            // Prevent default error messages
-            SessionMessages.add(request, PortalUtil.getPortletId(request) + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+            hideDefaultErrorMessage(request);
             log.error(e.getClass().getName() + "\n" + e.getMessage());
         }
         try {
@@ -395,6 +390,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             log.info(categories.size() + " categories and " + tags.size() + " tags");
             log.info(questions.size() + " questions and  " + questionsSortedByRating.size()
                     + " sorted questions have been passed to renderRequest");
+
+            hideDefaultSuccessMessage(renderRequest);
 
             super.render(renderRequest, renderResponse);
         } catch (PortletException e) {

@@ -5,8 +5,17 @@
 %>
 <aui:row cssClass="qaContentContainer">
     <aui:col cssClass="qaAnswerRatingCol" span="1">
-        <liferay-ui:ratings className="<%=Answer.class.getName()%>"
-                            classPK="<%=answer.getAnswerID()%>" type="like" />
+        <c:choose>
+            <c:when test="<%= themeDisplay.getUserId() == answer.getUserId() %>">
+                <liferay-ui:ratings className="<%=Answer.class.getName()%>"
+                                    classPK="<%=answer.getAnswerID()%>" type="like"
+                                    url="blocked"/>
+            </c:when>
+            <c:otherwise>
+                <liferay-ui:ratings className="<%=Answer.class.getName()%>"
+                                    classPK="<%=answer.getAnswerID()%>" type="like"/>
+            </c:otherwise>
+        </c:choose>
     </aui:col>
     <aui:col span="11">
         <aui:row>
