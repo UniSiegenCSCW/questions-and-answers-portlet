@@ -77,13 +77,14 @@
 
         </aui:button-row>
         <aui:row cssClass='<%="qaDiscussionWrapper answerDiscussion_"+answer.getAnswerID()%>'>
-            <a id="toggleAnswerComment_<%=answer.getAnswerID()%>">neuen Kommentar hinzuf&uuml;gen</a>
+            <a id="toggleAnswerComment_<%=answer.getAnswerID()%>_<%=identifier%>">neuen Kommentar hinzuf&uuml;gen</a>
 
             <aui:script>
-                $("#toggleAnswerComment_<%=answer.getAnswerID()%>").click(function () {
+               $("#toggleAnswerComment_<%=answer.getAnswerID()%>_<%=identifier%>").click(function () {
                 $(".answerDiscussion_<%=answer.getAnswerID()%> .fieldset.add-comment").toggleClass("unhidden");
                 });
             </aui:script>
+
             <portlet:actionURL name="invokeTaglibDiscussion" var="discussionURL" />
 
             <%

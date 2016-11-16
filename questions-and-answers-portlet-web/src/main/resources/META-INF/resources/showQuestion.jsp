@@ -326,6 +326,7 @@
 
             <liferay-ui:section>
                 <aui:container cssClass="qaAnswersWrapper">
+                    <% String identifier = "date"; %>
                     <c:forEach var="answer" items="<%=answersSortedByDate%>">
                         <%@ include file="_answer.jsp" %>
                     </c:forEach>
@@ -335,6 +336,7 @@
 
             <liferay-ui:section>
                 <aui:container cssClass="qaAnswersWrapper">
+                    <% String identifier = "rating"; %>
                     <c:forEach var="answer" items="<%=answersSortedByRating%>">
                         <%@ include file="_answer.jsp" %>
                     </c:forEach>
