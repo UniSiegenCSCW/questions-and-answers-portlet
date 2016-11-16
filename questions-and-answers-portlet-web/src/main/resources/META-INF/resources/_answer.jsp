@@ -78,7 +78,6 @@
         </aui:button-row>
         <aui:row cssClass='<%="qaDiscussionWrapper answerDiscussion_"+answer.getAnswerID()%>'>
             <a id="toggleAnswerComment_<%=answer.getAnswerID()%>_<%=identifier%>">neuen Kommentar hinzuf&uuml;gen</a>
-
             <aui:script>
                $("#toggleAnswerComment_<%=answer.getAnswerID()%>_<%=identifier%>").click(function () {
                 $(".answerDiscussion_<%=answer.getAnswerID()%> .fieldset.add-comment").toggleClass("unhidden");
@@ -99,6 +98,6 @@
                                    redirect="<%=currentUrl%>"
                                    userId="<%=themeDisplay.getUserId()%>" />
 
-        </aui:row>
+        </aui:row>--%>
     </aui:col>
 </aui:row>

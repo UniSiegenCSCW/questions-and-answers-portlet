@@ -171,7 +171,7 @@
                         });
                     </aui:script>
                 </aui:button-row>
-                <aui:row cssClass='<%="qaDiscussionWrapper questionDiscussion_"+question.getQuestionID()%>'>
+                <%--<aui:row cssClass='<%="qaDiscussionWrapper questionDiscussion_"+question.getQuestionID()%>'>
                     <a id="toggleQuestionComment_<%=question.getQuestionID()%>">neuen Kommentar hinzuf&uuml;gen</a>
 
                     <aui:script>
@@ -195,7 +195,7 @@
                                            redirect="<%=currentUrl%>"
                                            userId="<%=themeDisplay.getUserId()%>"
                                            hideControls="<%=false%>"/>
-                </aui:row>
+                </aui:row>--%>
             </aui:col>
         </aui:row>
     </aui:container>
@@ -295,7 +295,7 @@
 
 
                         </aui:button-row>
-                        <aui:row cssClass='<%="qaDiscussionWrapper answerDiscussion_"+answer.getAnswerID()%>'>
+                        <%--<aui:row cssClass='<%="qaDiscussionWrapper answerDiscussion_"+answer.getAnswerID()%>'>
                             <a id="toggleAnswerComment_<%=answer.getAnswerID()%>">neuen Kommentar hinzuf&uuml;gen</a>
 
                             <aui:script>
@@ -319,7 +319,7 @@
                                                    redirect="<%=answerURL%>"
                                                    userId="<%=themeDisplay.getUserId()%>" />
 
-                        </aui:row>
+                        </aui:row>--%>
                     </aui:col>
                 </aui:row>
             </c:if>
