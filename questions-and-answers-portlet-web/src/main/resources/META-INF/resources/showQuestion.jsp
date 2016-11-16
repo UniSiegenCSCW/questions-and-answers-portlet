@@ -73,9 +73,9 @@
                 <aui:row>
                     <div class="">
                         <c:if test="<%=categories.size() > 0 %>">
-                            <div class="qaCategoryContainer">
+                            <div class="qaTagContainer">
                                 <strong>Kategorien:</strong>
-                                <ul class="qaCategories">
+                                <ul class="qaTags">
                                     <c:forEach items="<%= categories%>" var="category">
                                         <portlet:renderURL var="categoryURL">
                                             <portlet:param name="mvcPath" value="/categories.jsp"/>
