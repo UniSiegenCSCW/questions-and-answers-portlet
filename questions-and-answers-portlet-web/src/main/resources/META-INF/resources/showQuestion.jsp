@@ -45,8 +45,6 @@
     <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
 </portlet:renderURL>
 
-
-
 <liferay-ui:header
         backURL="<%= backURL %>"
         title='<%=question.getTitle() %>'
@@ -182,9 +180,7 @@
 
                     <portlet:actionURL name="invokeTaglibDiscussion" var="discussionURL" />
 
-                    <%
-                        String currentUrl = PortalUtil.getCurrentURL(request);
-                    %>
+                    <% String currentUrl = PortalUtil.getCurrentURL(request); %>
 
 
                     <liferay-ui:discussion className="<%=Question.class.getName()%>"
@@ -306,10 +302,7 @@
 
                             <portlet:actionURL name="invokeTaglibDiscussion" var="answerDiscussionURL" />
 
-                            <%
-                                String answerURL = PortalUtil.getCurrentURL(request);
-                            %>
-
+                            <% String answerURL = PortalUtil.getCurrentURL(request); %>
 
                             <liferay-ui:discussion className="<%=Answer.class.getName()%>"
                                                    classPK="<%=answer.getAnswerID()%>"
@@ -342,17 +335,12 @@
                     </c:forEach>
                 </aui:container>
             </liferay-ui:section>
-
         </liferay-ui:tabs>
     </aui:container>
-
-
-
     <portlet:actionURL name="newAnswer" var="newAnswerURL">
         <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
         <portlet:param name="redirectURL" value="<%=showQuestionsURL%>"/>
     </portlet:actionURL>
-
     <aui:container>
         <aui:form action="<%= newAnswerURL %>" name="AnswerForm">
             <h5 id="newAnswerFormContainer">Ihre Antwort</h5>
@@ -367,5 +355,4 @@
             </aui:button-row>
         </aui:form>
     </aui:container>
-
 </aui:container>

@@ -152,4 +152,22 @@ public class QuestionImpl extends QuestionBaseImpl {
 					+ watcherId);
 		}
 	}
+
+	public String safeGetTitle() {
+        try {
+            return getTitle();
+        } catch (PortalException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<AssetCategory> safeGetCategories() {
+        try {
+            return getCategories();
+        } catch (Exception e) {
+            e.printStackTrace();
+			return null;
+        }
+    }
 }
