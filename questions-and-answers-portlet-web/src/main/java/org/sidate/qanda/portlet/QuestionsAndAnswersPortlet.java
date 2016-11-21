@@ -280,13 +280,13 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
 
     private boolean filterByCategoryId(Question question, long idToFilter) {
-        return LongStream.of(question.getCategoryIds())
-                .anyMatch(categoryId -> categoryId == idToFilter);
+        long[] categoryIds = question.getCategoryIds();
+        return categoryIds != null && LongStream.of(categoryIds).anyMatch(categoryId -> categoryId == idToFilter);
     }
 
     private boolean filterByTagName(Question question, String tagToFilter) {
-        return Arrays.stream(question.getTagNames())
-                .anyMatch(tag -> tag.equals(tagToFilter));
+        String[] tagNames = question.getTagNames();
+        return tagNames != null && Arrays.stream(tagNames).anyMatch(tag -> tag.equals(tagToFilter));
     }
 
     // #### Answers ####
