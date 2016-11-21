@@ -45,8 +45,6 @@
     <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
 </portlet:renderURL>
 
-
-
 <liferay-ui:header
         backURL="<%= backURL %>"
         title='<%=question.getTitle() %>'
@@ -56,8 +54,17 @@
     <aui:container>
         <aui:row>
             <aui:col cssClass="qaQuestionRatingCol" span="1">
-                <liferay-ui:ratings className="<%=Question.class.getName()%>"
-                                    classPK="<%=question.getQuestionID()%>" type="like" />
+                <c:choose>
+                    <c:when test="<%= themeDisplay.getUserId() == question.getUserId() %>">
+                        <liferay-ui:ratings className="<%=Question.class.getName()%>"
+                                            classPK="<%=question.getQuestionID()%>" type="like"
+                                            url="blocked"/>
+                    </c:when>
+                    <c:otherwise>
+                        <liferay-ui:ratings className="<%=Question.class.getName()%>"
+                                            classPK="<%=question.getQuestionID()%>" type="like"/>
+                    </c:otherwise>
+                </c:choose>
             </aui:col>
             <aui:col span="11">
                 <aui:row>
@@ -66,9 +73,9 @@
                 <aui:row>
                     <div class="">
                         <c:if test="<%=categories.size() > 0 %>">
-                            <div class="qaCategoryContainer">
+                            <div class="qaTagContainer">
                                 <strong>Kategorien:</strong>
-                                <ul class="qaCategories">
+                                <ul class="qaTags">
                                     <c:forEach items="<%= categories%>" var="category">
                                         <portlet:renderURL var="categoryURL">
                                             <portlet:param name="mvcPath" value="/categories.jsp"/>
@@ -182,9 +189,7 @@
 
                     <portlet:actionURL name="invokeTaglibDiscussion" var="discussionURL" />
 
-                    <%
-                        String currentUrl = PortalUtil.getCurrentURL(request);
-                    %>
+                    <% String currentUrl = PortalUtil.getCurrentURL(request); %>
 
 
                     <liferay-ui:discussion className="<%=Question.class.getName()%>"
@@ -223,8 +228,17 @@
 
                 <aui:row cssClass="qaContentContainer">
                     <aui:col cssClass="qaAnswerRatingCol" span="1">
-                        <liferay-ui:ratings className="<%=Answer.class.getName()%>"
-                                            classPK="<%=answer.getAnswerID()%>" type="like" />
+                        <c:choose>
+                            <c:when test="<%= themeDisplay.getUserId() == answer.getUserId() %>">
+                                <liferay-ui:ratings className="<%=Answer.class.getName()%>"
+                                                    classPK="<%=answer.getAnswerID()%>" type="like"
+                                                    url="blocked"/>
+                            </c:when>
+                            <c:otherwise>
+                                <liferay-ui:ratings className="<%=Answer.class.getName()%>"
+                                                    classPK="<%=answer.getAnswerID()%>" type="like"/>
+                            </c:otherwise>
+                        </c:choose>
                         <span class="qaCorreckAnswerCheckmark glyphicon glyphicon-ok"/>
                     </aui:col>
                     <aui:col span="11">
@@ -306,10 +320,7 @@
 
                             <portlet:actionURL name="invokeTaglibDiscussion" var="answerDiscussionURL" />
 
-                            <%
-                                String answerURL = PortalUtil.getCurrentURL(request);
-                            %>
-
+                            <% String answerURL = PortalUtil.getCurrentURL(request); %>
 
                             <liferay-ui:discussion className="<%=Answer.class.getName()%>"
                                                    classPK="<%=answer.getAnswerID()%>"
@@ -342,17 +353,12 @@
                     </c:forEach>
                 </aui:container>
             </liferay-ui:section>
-
         </liferay-ui:tabs>
     </aui:container>
-
-
-
     <portlet:actionURL name="newAnswer" var="newAnswerURL">
         <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
         <portlet:param name="redirectURL" value="<%=showQuestionsURL%>"/>
     </portlet:actionURL>
-
     <aui:container>
         <aui:form action="<%= newAnswerURL %>" name="AnswerForm">
             <h5 id="newAnswerFormContainer">Ihre Antwort</h5>
@@ -367,5 +373,4 @@
             </aui:button-row>
         </aui:form>
     </aui:container>
-
 </aui:container>

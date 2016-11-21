@@ -47,6 +47,8 @@ public class QuestionIndexer extends BaseIndexer<Question> {
 
         //document.addText(Field.CAPTION, object.getCoverImageCaption());
         document.addText(Field.CONTENT, HtmlUtil.extractText(question.getText()));
+        document.addText(Field.DESCRIPTION, "Frage");
+        document.addText(Field.TYPE, "FrageTyp");
         document.addText(Field.TITLE, HtmlUtil.extractText(question.getTitle()));
         document.addText(Field.USER_NAME, HtmlUtil.extractText(question.getUserName()));
         return document;

@@ -49,7 +49,7 @@
     <aui:model-context bean="<%=question%>" model="<%=Question.class%>"/>
     <aui:input name="questionID" type="hidden" />
         <aui:fieldset>
-            <aui:input label="Titel der Frage" name="title" type="text" required="true"/>
+            <aui:input label="Titel der Frage" name="title" type="text" required="true" maxlength="40"/>
             <br/>
                 <liferay-ui:input-editor name="text" initMethod="initEditor"/>
                 <aui:script>
