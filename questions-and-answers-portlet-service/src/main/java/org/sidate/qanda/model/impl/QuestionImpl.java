@@ -167,7 +167,7 @@ public class QuestionImpl extends QuestionBaseImpl {
             return getCategories();
         } catch (Exception e) {
             e.printStackTrace();
-			return null;
+			return new ArrayList<AssetCategory>();
         }
     }
 }
