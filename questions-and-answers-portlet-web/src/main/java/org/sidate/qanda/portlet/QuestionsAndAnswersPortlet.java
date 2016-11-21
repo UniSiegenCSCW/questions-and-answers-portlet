@@ -1,12 +1,12 @@
 package org.sidate.qanda.portlet;
 
-import com.liferay.asset.kernel.model.AssetTag;
-import com.liferay.asset.kernel.service.AssetTagLocalServiceUtil;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetCategoryModel;
 import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetCategoryLocalServiceUtil;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
+import com.liferay.asset.kernel.service.AssetTagLocalServiceUtil;
 import com.liferay.exportimport.kernel.staging.permission.StagingPermissionUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -38,7 +38,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 import static java.util.stream.Collectors.toList;
@@ -170,32 +169,21 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
      * Annotation: This method allows querying the questions by category name, not ID! It depends on the GUI layout
      * whether the ID or name will be used.
      */
-    public void getQuestionsFilteredByCategory(RenderRequest request, RenderResponse response){
+    public void getQuestionsFilteredByCategory(RenderRequest request) throws NoSuchElementException, PortalException {
 
-        ServiceContext serviceContext;
+        ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+        List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+        String categoryName = ParamUtil.getString(request, "category");
+        long categoryId = getCategoryIdByName(categoryName);
 
-        try {
-            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
-            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-            String categoryName = ParamUtil.getString(request, "category");
-            long categoryId = getCategoryIdByName(categoryName);
+        List<Question> filteredQuestions = questions.stream()
+                .filter(question -> filterByCategoryId(question, categoryId))
+                .collect(toList());
 
-            List<Question> filteredQuestions = questions.stream()
-                    .filter(question -> filterByCategoryId(question, categoryId))
-                    .collect(toList());
+        request.setAttribute("questionsFilteredByCategory", filteredQuestions);
 
-            request.setAttribute("questionsFilteredByCategory", filteredQuestions);
-
-            log.info(filteredQuestions.size() + " questions filtered by category " + categoryId
-                    + " have been passed to renderRequest");
-
-        } catch (PortalException e) {
-            SessionErrors.add(request, e.getClass().getName());
-            log.error(e.getClass().getName() + "\n" + e.getMessage());
-        } catch (NoSuchElementException e) {
-            log.info("You supplied a category name which does not seem to have a corresponding category!");
-        }
-
+        log.info(filteredQuestions.size() + " questions filtered by category " + categoryId
+                + " have been passed to renderRequest");
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -228,26 +216,25 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
      * Returns the questions with a specified Tag name passed via ParamUtil. This method filters the questions by that
      * tag, so if a non existing tag is supplied it will return an empty List.
      */
-    public void getQuestionsFilteredByTag(RenderRequest renderRequest) {
+    public void getQuestionsFilteredByTag(RenderRequest renderRequest) throws NoSuchElementException, PortalException {
         ServiceContext serviceContext;
-        try {
-            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), renderRequest);
-            List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-            String tagToFilter = ParamUtil.getString(renderRequest, "tag");
+        serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), renderRequest);
+        List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
+        String tagToFilter = ParamUtil.getString(renderRequest, "tag");
 
-            List<Question> filteredQuestions = questions.stream()
-                    .filter(question -> filterByTagName(question, tagToFilter))
-                    .collect(toList());
+        List<Question> filteredQuestions = questions.stream()
+                .filter(question -> filterByTagName(question, tagToFilter))
+                .collect(toList());
 
-            renderRequest.setAttribute("questionsFilteredByTag", filteredQuestions);
-
-            log.info(filteredQuestions.size() + " questions filtered by tag " + tagToFilter
-                    + " have been passed to renderRequest");
-
-
-        } catch (PortalException e) {
-            e.printStackTrace();
+        if (filteredQuestions.isEmpty()) {
+            throw new NoSuchElementException();
         }
+
+        renderRequest.setAttribute("questionsFilteredByTag", filteredQuestions);
+
+        log.info(filteredQuestions.size() + " questions filtered by tag " + tagToFilter
+                + " have been passed to renderRequest");
+
     }
 
     /**
@@ -366,8 +353,18 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             ArrayList<Question> questions = new ArrayList<>(QuestionLocalServiceUtil.getQuestions(groupID));
             ArrayList<Question> questionsSortedByRating = getQuestionsSortedByRating(serviceContext);
-            getQuestionsFilteredByTag(renderRequest);
-            getQuestionsFilteredByCategory(renderRequest, renderResponse);
+
+            try {
+                getQuestionsFilteredByTag(renderRequest);
+            } catch (NoSuchElementException e) {
+                log.info("No tag was specified to filter questions.");
+            }
+
+            try {
+                getQuestionsFilteredByCategory(renderRequest);
+            } catch (NoSuchElementException e) {
+                log.info("No category was specified to filter questions.");
+            }
 
             ArrayList<AssetCategory> categories = (ArrayList<AssetCategory>) questions.stream()
                         .flatMap(q -> q.safeGetCategories().stream())
@@ -393,14 +390,14 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             hideDefaultSuccessMessage(renderRequest);
 
+
             super.render(renderRequest, renderResponse);
         } catch (PortletException e) {
-            log.error("A Portlet Error has been thrown by render()");
-            e.printStackTrace();
+            log.error("Portlet can not fulfill this request");
         } catch (PortalException e) {
-            log.error("A Portal Error has been thrown by render()");
-            e.printStackTrace();
+            log.error("Fatal exception while processing render()");
         }
+
     }
 
 
