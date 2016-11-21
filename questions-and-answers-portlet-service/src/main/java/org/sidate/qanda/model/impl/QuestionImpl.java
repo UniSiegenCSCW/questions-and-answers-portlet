@@ -81,9 +81,9 @@ public class QuestionImpl extends QuestionBaseImpl {
 		try {
 			return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTagNames();
 		} catch (PortalException e) {
-			log.error("Could not get asset entry for the specified question.");
+			log.error("Could not get tag asset entry for the specified question.");
 			e.printStackTrace();
-			return null;
+			return new String[0];
 		}
 	}
 
@@ -93,7 +93,7 @@ public class QuestionImpl extends QuestionBaseImpl {
 		} catch (PortalException e) {
 			log.error("Could not get asset entry for the specified question.");
 			e.printStackTrace();
-			return null;
+			return new long[0];
 		}
 	}
 
