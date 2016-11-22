@@ -1,11 +1,11 @@
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- *
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -48,115 +48,116 @@ import static java.util.stream.Collectors.toList;
  */
 @ProviderType
 public class QuestionImpl extends QuestionBaseImpl {
-	/*
+    /*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. All methods that expect a question model instance should use the {@link org.sidate.qanda.model.Question} interface instead.
 	 */
 
-	private static Log log = LogFactoryUtil.getLog(QuestionImpl.class);
+    private static Log log = LogFactoryUtil.getLog(QuestionImpl.class);
 
-	public QuestionImpl() {
-	}
+    public QuestionImpl() {
+    }
 
-	public String getTimeSinceCreated() {
-		Date created = this.getCreateDate();
-		return TimeDiffFormatter.format(created);
-	}
+    public String getTimeSinceCreated() {
+        Date created = this.getCreateDate();
+        return TimeDiffFormatter.format(created);
+    }
 
-	public String getTimeSinceEdited() {
-		Date edited = this.getEditedDate();
-		return TimeDiffFormatter.format(edited);
-	}
+    public String getTimeSinceEdited() {
+        Date edited = this.getEditedDate();
+        return TimeDiffFormatter.format(edited);
+    }
 
-	public List<AssetTag> getTags() throws PortalException {
-		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTags();
-	}
+    public List<AssetTag> getTags() throws PortalException {
+        return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTags();
+    }
 
-	public List<AssetCategory> getCategories() throws PortalException {
-		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategories();
-	}
+    public List<AssetCategory> getCategories() throws PortalException {
+        return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategories();
+    }
 
-	public String[] getTagNames() {
-		try {
-			return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTagNames();
-		} catch (PortalException e) {
-			log.error("Could not get tag asset entry for the specified question.");
-			return new String[0];
-		}
-	}
+    public String[] getTagNames() {
+        try {
+            return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTagNames();
+        } catch (PortalException e) {
+            log.error("Could not get tag asset entry for the specified question.");
+            return new String[0];
+        }
+    }
 
-	public long[] getCategoryIds() {
-		try {
-			return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategoryIds();
-		} catch (PortalException e) {
-			log.error("Could not get asset entry for the specified question.");
-			return new long[0];
-		}
-	}
+    public long[] getCategoryIds() {
+        try {
+            return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getCategoryIds();
+        } catch (PortalException e) {
+            log.error("Could not get asset entry for the specified question.");
+            return new long[0];
+        }
+    }
 
-	public String getTitle() throws PortalException {
-		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTitle();
-	}
+    public String getTitle() throws PortalException {
+        return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getTitle();
+    }
 
-	public String getText() throws PortalException {
-		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getDescription();
-	}
+    public String getText() throws PortalException {
+        return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getDescription();
+    }
 
-	public int getViewCount() throws PortalException {
-		return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getViewCount();
-	}
+    public int getViewCount() throws PortalException {
+        return AssetEntryLocalServiceUtil.getEntry(Question.class.getName(), this.getQuestionID()).getViewCount();
+    }
 
-	public double getRating() {
-		RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.getStats(Question.class.getName(),
-				this.getQuestionID());
-		return ratingsStats.getTotalScore();
-	}
+    public double getRating() {
+        RatingsStats ratingsStats = RatingsStatsLocalServiceUtil.getStats(Question.class.getName(),
+                this.getQuestionID());
+        return ratingsStats.getTotalScore();
+    }
 
-	public void setCorrectAnswer(long answerId) {
-		QuestionLocalServiceUtil.setCorrectAnswer(answerId, this.getQuestionID());
-	}
+    public void setCorrectAnswer(long answerId) {
+        QuestionLocalServiceUtil.setCorrectAnswer(answerId, this.getQuestionID());
+    }
 
-	public void unsetCorrectAnswer() {
-		QuestionLocalServiceUtil.unsetCorrectAnswer(this.getQuestionID());
-	}
+    public void unsetCorrectAnswer() {
+        QuestionLocalServiceUtil.unsetCorrectAnswer(this.getQuestionID());
+    }
 
-	public Answer getCorrectAnswer() throws PortalException {
-		if (this.getIsAnswered()) {
-			return AnswerLocalServiceUtil.getAnswer(this.getCorrectAnswerId());
-		} else {
-			log.error("Correct answer has not been set for question " + this.getQuestionID());
-			throw new CorrectAnswerNotSetException();
-		}
-	}
+    public Answer getCorrectAnswer() throws PortalException {
+        if (this.getIsAnswered()) {
+            return AnswerLocalServiceUtil.getAnswer(this.getCorrectAnswerId());
+        } else {
+            log.error("Correct answer has not been set for question " + this.getQuestionID());
+            throw new CorrectAnswerNotSetException();
+        }
+    }
 
-	public List<Answer> getAnswersSortedByRating() {
+    public List<Answer> getAnswersSortedByRating() {
 
-		List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(this.getQuestionID());
+        List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(this.getQuestionID());
 
-		Comparator<Answer> byRating = (answerOne, answerTwo) -> Double.compare(answerTwo.getRating(),
-				answerOne.getRating());
+        Comparator<Answer> byRating = (answerOne, answerTwo) -> Double.compare(answerTwo.getRating(),
+                answerOne.getRating());
 
-		return answers.stream()
-				.sorted(byRating)
-				.collect(toList());
-	}
+        return answers.stream()
+                .sorted(byRating)
+                .collect(toList());
+    }
 
-	public void increaseViewCounter(long watcherId) {
-		try {
-			AssetEntryLocalServiceUtil.incrementViewCounter(watcherId, Question.class.getName(), this.getQuestionID());
-		} catch (PortalException e) {
-			log.error("Could not increment viewCount for question " + this.getQuestionID() + " with watching user "
-					+ watcherId);
-		}
-	}
+    public void increaseViewCounter(long watcherId) {
+        try {
+            AssetEntryLocalServiceUtil.incrementViewCounter(watcherId, Question.class.getName(), this.getQuestionID());
+        } catch (PortalException e) {
+            log.error("Could not increment viewCount for question " + this.getQuestionID() + " with watching user "
+                    + watcherId);
+            log.error(e);
+        }
+    }
 
-	public String safeGetTitle() {
+    public String safeGetTitle() {
         try {
             return getTitle();
         } catch (PortalException e) {
-            e.printStackTrace();
-            return null;
+            log.error(e);
+            return "";
         }
     }
 
@@ -164,8 +165,8 @@ public class QuestionImpl extends QuestionBaseImpl {
         try {
             return getCategories();
         } catch (Exception e) {
-            e.printStackTrace();
-			return new ArrayList<AssetCategory>();
+            log.error(e);
+            return new ArrayList<>();
         }
     }
 }
