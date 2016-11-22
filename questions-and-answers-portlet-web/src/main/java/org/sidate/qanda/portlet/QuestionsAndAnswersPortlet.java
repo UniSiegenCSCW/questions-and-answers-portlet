@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ExceptionRetryAcceptor;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -63,17 +64,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     // #### Question ####
 
-
     public void newQuestion(ActionRequest request, ActionResponse response) {
-
-
-        ServiceContext serviceContext = null;
-        try {
-            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
-        } catch (PortalException e) {
-            e.printStackTrace();
-        }
-
+        ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
 
@@ -85,14 +77,13 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             SessionMessages.add(request, "questionAdded");
         }
         catch (PortalException e) {
-            SessionErrors.add(request, e.getClass().getSimpleName());
-
-            hideDefaultErrorMessage(request);
+            handleError(request, e, "An error occured during newQuestion");
             PortalUtil.copyRequestParameters(request, response);
             response.setRenderParameter("mvcPath", "/editQuestion.jsp");
-            log.error("An error occured during newQuestion: " + e.getClass().getName());
         }
     }
+
+
 
     /**
      * Sets the correct answer ID, may also be used to unset the correct answer ID by
@@ -119,48 +110,35 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public void editQuestion(ActionRequest request, ActionResponse response) {
-
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
         long questionId = ParamUtil.getLong(request, "questionID");
-        ServiceContext serviceContext = null;
-
+        ServiceContext serviceContext = getServiceContext(request,Question.class.getName());
+        if(Validator.isNull(title)){
+            handleError(request,new EmptyQuestionTitleException(),"An error occured during editQuestion");
+            return;
+        }
+        if(Validator.isNull(text)){
+            handleError(request,new EmptyQuestionTextException(),"An error occured during editQuestion");
+            return;
+        }
         try {
-            if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
-            if (Validator.isNull(text)) throw new EmptyQuestionTextException();
-
-            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
             QuestionLocalServiceUtil.editQuestion(questionId, title, text, serviceContext);
-            SessionMessages.add(request, "questionEdited");
         } catch (PortalException e) {
-            hideDefaultErrorMessage(request);
-            SessionErrors.add(request, e.getClass().getSimpleName());
-            log.error("An error occured during editQuestion: " + e.getClass().getName());
+            log.error(e);
+            return;
         }
-        try {
-            String redirectUrl = ParamUtil.getString(request, "redirectURL");
-            response.sendRedirect(redirectUrl);
-        }
-        catch (IOException e) {
-            log.error("IO Exception during newAnswer()");
-            e.printStackTrace();
-        }
-
+        SessionMessages.add(request, "questionEdited");
+        redirectToRedirectUrl(request, response);
     }
+
 
     public void deleteQuestion(ActionRequest request, ActionResponse response){
+        ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
         long questionId = ParamUtil.getLong(request, "questionID");
-
-        try {
-            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
-            QuestionLocalServiceUtil.deleteQuestion(questionId, serviceContext);
-        } catch (Exception e) {
-            SessionErrors.add(request, e.getClass().getName());
-            //PortalUtil.copyRequestParameters(request, response); ???
-            response.setRenderParameter("mvcPath", "/view.jsp");
-            log.error("Error on getInstance from ServiceContextFactory!");
-        }
+        QuestionLocalServiceUtil.deleteQuestion(questionId, serviceContext);
     }
+
 
     /**
      * Returns the questions with a specified AssetCategory name passed via ParamUtil. This method first searches for
@@ -169,19 +147,15 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
      * Annotation: This method allows querying the questions by category name, not ID! It depends on the GUI layout
      * whether the ID or name will be used.
      */
-    public void getQuestionsFilteredByCategory(RenderRequest request) throws NoSuchElementException, PortalException {
-
-        ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
+    private void getQuestionsFilteredByCategory(RenderRequest request) throws NoSuchElementException, PortalException {
+        ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
         List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
         String categoryName = ParamUtil.getString(request, "category");
         long categoryId = getCategoryIdByName(categoryName);
-
         List<Question> filteredQuestions = questions.stream()
                 .filter(question -> filterByCategoryId(question, categoryId))
                 .collect(toList());
-
         request.setAttribute("questionsFilteredByCategory", filteredQuestions);
-
         log.info(filteredQuestions.size() + " questions filtered by category " + categoryId
                 + " have been passed to renderRequest");
     }
@@ -189,52 +163,34 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     private long getCategoryIdByName(String categoryName) throws NoSuchElementException {
         List<AssetCategory> categories = AssetCategoryLocalServiceUtil.getCategories();
-
         return categories.parallelStream()
                     .filter(category -> category.getName().equals(categoryName))
                     .mapToLong(AssetCategoryModel::getCategoryId)
                     .findFirst().getAsLong();
     }
 
-    public ArrayList<Question> getQuestionsFilteredByTag(String tag, RenderRequest renderRequest) {
-        ServiceContext serviceContext = null;
-        try {
-            serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), renderRequest);
-        } catch (PortalException e) {
-            log.error("Error while trying to fetch questions filtered by tag " + tag);
-        }
-
-        assert serviceContext != null;
+    public List<Question> getQuestionsFilteredByTag(String tag, RenderRequest renderRequest) {
+        ServiceContext serviceContext = getServiceContext(renderRequest,Question.class.getName());
         List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-
-        return (ArrayList<Question>) questions.stream()
-                                                .filter(question -> filterByTagName(question, tag))
-                                                .collect(toList());
+        return questions.stream()
+                .filter(question -> filterByTagName(question, tag))
+                .collect(toList());
     }
 
     /**
      * Returns the questions with a specified Tag name passed via ParamUtil. This method filters the questions by that
      * tag, so if a non existing tag is supplied it will return an empty List.
      */
-    public void getQuestionsFilteredByTag(RenderRequest renderRequest) throws NoSuchElementException, PortalException {
-        ServiceContext serviceContext;
-        serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), renderRequest);
+    private void getQuestionsFilteredByTag(RenderRequest renderRequest) {
+        ServiceContext serviceContext = getServiceContext(renderRequest, Question.class.getName());
         List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
         String tagToFilter = ParamUtil.getString(renderRequest, "tag");
-
         List<Question> filteredQuestions = questions.stream()
                 .filter(question -> filterByTagName(question, tagToFilter))
                 .collect(toList());
-
-        if (filteredQuestions.isEmpty()) {
-            throw new NoSuchElementException();
-        }
-
         renderRequest.setAttribute("questionsFilteredByTag", filteredQuestions);
-
         log.info(filteredQuestions.size() + " questions filtered by tag " + tagToFilter
                 + " have been passed to renderRequest");
-
     }
 
     /**
@@ -248,7 +204,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
         Comparator<Question> byRatingAndDate = Comparator.comparing(Question::getRating)
                 .thenComparing(QuestionModel::getCreateDate);
-
         return (ArrayList<Question>) questions.stream()
                 .filter(isRecent())
                 .sorted(byRatingAndDate.reversed())
@@ -257,7 +212,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     private Predicate<Question> isRecent() {
         LocalDate currentDate = LocalDate.now();
-
         return question -> Instant.ofEpochMilli(question.getCreateDate()
                 .getTime())
                     .atZone(ZoneId.systemDefault())
@@ -279,30 +233,16 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     // #### Answers ####
 
     public void newAnswer(ActionRequest request, ActionResponse response) {
-
         String text = ParamUtil.getString(request, "text");
+        if(Validator.isNull(text)) {
+            handleError(request,new EmptyAnswerTextException(), "Answer text is empty.");
+            return;
+        }
         long questionId = ParamUtil.getLong(request, "questionID");
-
-        try {
-            ServiceContext serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
-            if (Validator.isNull(text)) throw new EmptyAnswerTextException();
-            AnswerLocalServiceUtil.addAnswer(text, questionId, serviceContext);
-            SessionMessages.add(request, "answerAdded");
-        }
-        catch (PortalException e) {
-            SessionErrors.add(request, e.getClass().getSimpleName());
-            hideDefaultErrorMessage(request);
-            log.error("An error occured during newAnswer: " + e.getClass().getName());
-        }
-        try {
-            String redirectUrl = ParamUtil.getString(request, "redirectURL");
-            response.sendRedirect(redirectUrl);
-        }
-        catch (IOException e) {
-            log.error("IO Exception during newAnswer()");
-            e.printStackTrace();
-        }
-
+        ServiceContext serviceContext = getServiceContext(request, Answer.class.getName());
+        AnswerLocalServiceUtil.addAnswer(text, questionId, serviceContext);
+        SessionMessages.add(request, "answerAdded");
+        redirectToRedirectUrl(request, response);
     }
 
     public void editAnswer(ActionRequest request, ActionResponse response) {
@@ -370,7 +310,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                         .flatMap(q -> q.safeGetCategories().stream())
                         .distinct()
                         .collect(toList());
-            //ArrayList<AssetCategory> categories = new ArrayList<>(AssetCategoryLocalServiceUtil.getCategories());
             ArrayList<AssetTag> tags = new ArrayList<>(AssetTagLocalServiceUtil.getTags());
 
             if (!questions.isEmpty()) {
@@ -398,6 +337,34 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             log.error("Fatal exception while processing render()");
         }
 
+    }
+
+
+    private ServiceContext getServiceContext(PortletRequest request, String className) {
+        try {
+            return ServiceContextFactory.getInstance(className, request);
+        } catch (PortalException e) {
+            log.error(e);
+        }
+        return null;
+    }
+
+    private void handleError(ActionRequest request, Exception e, String msg) {
+        SessionErrors.add(request, e.getClass().getSimpleName());
+        hideDefaultErrorMessage(request);
+        log.error(msg);
+        log.error(e);
+    }
+
+    private void redirectToRedirectUrl(ActionRequest request, ActionResponse response) {
+        try {
+            String redirectUrl = ParamUtil.getString(request, "redirectURL");
+            response.sendRedirect(redirectUrl);
+        }
+        catch (IOException e) {
+            log.error("IO Exception during redirect");
+            log.error(e);
+        }
     }
 
 
