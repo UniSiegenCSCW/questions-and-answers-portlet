@@ -344,7 +344,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         } catch (PortalException e) {
             log.error(e);
         }
-        return null;
+        return new ServiceContext();
     }
 
     private void handleError(ActionRequest request, Exception e, String msg) {
