@@ -1,7 +1,6 @@
 package org.sidate.qanda.portlet;
 
 import com.liferay.asset.kernel.model.AssetCategory;
-import com.liferay.asset.kernel.model.AssetCategoryModel;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetCategoryLocalServiceUtil;
@@ -9,7 +8,6 @@ import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.asset.kernel.service.AssetTagLocalServiceUtil;
 import com.liferay.exportimport.kernel.staging.permission.StagingPermissionUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -154,23 +152,25 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
         List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
         String categoryName = ParamUtil.getString(request, "category");
-        long categoryId = getCategoryIdByName(categoryName);
+        Optional<AssetCategory> category = getCategoryByName(categoryName);
+        if(!category.isPresent()){
+            return;
+        }
+        long categoryId = category.get().getCategoryId();
         List<Question> filteredQuestions = questions.stream()
                 .filter(question -> filterByCategoryId(question, categoryId))
                 .collect(toList());
-        request.setAttribute("questionsFilteredByCategory", filteredQuestions);
+        request.setAttribute("questionsFilteredByCategory",  new ArrayList<>(filteredQuestions));
         log.info(filteredQuestions.size() + " questions filtered by category " + categoryId
                 + " have been passed to renderRequest");
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
-    private long getCategoryIdByName(String categoryName) throws NoSuchElementException {
+    private Optional<AssetCategory> getCategoryByName(String categoryName){
         List<AssetCategory> categories = AssetCategoryLocalServiceUtil.getCategories();
         return categories.parallelStream()
-                .filter(category -> category.getName().equals(categoryName))
-                .mapToLong(AssetCategoryModel::getCategoryId)
-                .findFirst().getAsLong();
+                .filter(category -> category.getName().equals(categoryName)).findFirst();
     }
+
 
     public List<Question> getQuestionsFilteredByTag(String tag, RenderRequest renderRequest) {
         ServiceContext serviceContext = getServiceContext(renderRequest, Question.class.getName());
@@ -191,24 +191,24 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         List<Question> filteredQuestions = questions.stream()
                 .filter(question -> filterByTagName(question, tagToFilter))
                 .collect(toList());
-        renderRequest.setAttribute("questionsFilteredByTag", filteredQuestions);
+        renderRequest.setAttribute("questionsFilteredByTag",  new ArrayList<>(filteredQuestions));
         log.info(filteredQuestions.size() + " questions filtered by tag " + tagToFilter
                 + " have been passed to renderRequest");
     }
 
     /**
-     * This method returns an ArrayList of questions sorted by their rating.
+     * This method returns an List of questions sorted by their rating.
      * If two questions have the same rating, they are sorted by their date (older > newer)
      * Questions that are older than one month
      * are dismissed.
      *
-     * @return An ArrayList of sorted questions.
+     * @return An List of sorted questions.
      */
-    private ArrayList<Question> getQuestionsSortedByRating(ServiceContext serviceContext) {
+    private List<Question> getQuestionsSortedByRating(ServiceContext serviceContext) {
         List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
         Comparator<Question> byRatingAndDate = Comparator.comparing(Question::getRating)
                 .thenComparing(QuestionModel::getCreateDate);
-        return (ArrayList<Question>) questions.stream()
+        return questions.stream()
                 .filter(isRecent())
                 .sorted(byRatingAndDate.reversed())
                 .collect(toList());
@@ -288,11 +288,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                 .collect(toList());
         List<AssetTag> tags = AssetTagLocalServiceUtil.getTags();
         if (!questions.isEmpty()) {
-            renderRequest.setAttribute("questions", questions);
-            renderRequest.setAttribute("questionsSortedByRating", questionsSortedByRating);
+            renderRequest.setAttribute("questions", new ArrayList<>(questions));
+            renderRequest.setAttribute("questionsSortedByRating",  new ArrayList<>(questionsSortedByRating));
         }
         if (!categories.isEmpty()) {
-            renderRequest.setAttribute("categories", categories);
+            renderRequest.setAttribute("categories",  new ArrayList<>(categories));
         }
         if (!tags.isEmpty()) {
             renderRequest.setAttribute("tags", tags);
