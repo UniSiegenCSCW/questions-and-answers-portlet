@@ -305,7 +305,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public static boolean qandaPermissionContains(PermissionChecker permissionChecker, long groupId, String resourceName, String actionId) {
-        System.out.println("GroupId = " + groupId + " Resource Name = " + resourceName + " Action Id = " + actionId);
+        log.info("GroupId = " + groupId + " Resource Name = " + resourceName + " Action Id = " + actionId);
         return permissionChecker.hasPermission(groupId, resourceName, groupId, actionId);
     }
 
@@ -368,52 +368,34 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     // #### Testing ####
 
     public void testSortByRating(ActionRequest request, ActionResponse response) {
-        try {
-            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
-            getQuestionsSortedByRating(serviceContext).forEach(question -> {
-                try {
-                    System.out.println(question.getTitle());
-                } catch (PortalException e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (PortalException e) {
-            e.printStackTrace();
-        }
+        ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
+        getQuestionsSortedByRating(serviceContext).forEach(question -> {
+            try {
+                log.info(question.getTitle());
+            } catch (PortalException e) {
+                log.error(e);
+            }
+        });
     }
 
-    private void testNewAnswer(ActionRequest request, ActionResponse response, long questionId, String text)
-            throws PortalException, SystemException {
-
-        ServiceContext serviceContext = ServiceContextFactory.getInstance(
-                Answer.class.getName(), request);
-
-        try {
-            AnswerLocalServiceUtil.addAnswer(text, questionId, serviceContext);
-            SessionMessages.add(request, "answerAdded");
-        } catch (Exception e) {
-            SessionErrors.add(request, e.getClass().getName());
-            PortalUtil.copyRequestParameters(request, response);
-            response.setRenderParameter("mvcPath", "/view.jsp");
-            log.error(e.getClass().getName() + "\n" + e.getMessage());
-        }
-
+    private void testNewAnswer(ActionRequest request, ActionResponse response, long questionId, String text) {
+        ServiceContext serviceContext = getServiceContext(request, Answer.class.getName());
+        AnswerLocalServiceUtil.addAnswer(text, questionId, serviceContext);
+        SessionMessages.add(request, "answerAdded");
     }
 
-    public void testNewQuestion(ActionRequest request, ActionResponse response) {
+    public void testNewQuestion(ActionRequest request, ActionResponse response){
         String title = "Toller Titel";
         String text = "Einzigartiger Text";
-
+        ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
         try {
-            ServiceContext serviceContext = ServiceContextFactory.getInstance(
-                    Question.class.getName(), request);
             QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
             SessionMessages.add(request, "questionAdded");
         } catch (Exception e) {
             SessionErrors.add(request, e.getClass().getName());
             PortalUtil.copyRequestParameters(request, response);
             response.setRenderParameter("mvcPath", "/view.jsp");
-            log.error(e.getClass().getName() + "\n" + e.getMessage());
+            log.error(e);
         }
 
     }
@@ -431,19 +413,19 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
 
             List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
-            System.out.println("Erste Frage:");
+            log.info("Erste Frage:");
             for (Answer answer : answers) {
-                System.out.println(answer.getText());
+                log.info(answer.getText());
             }
 
             List<Answer> answers2 = AnswerLocalServiceUtil.getAnswersForQuestion(question2.getQuestionID());
-            System.out.println("Zweite Frage:");
+            log.info("Zweite Frage:");
             for (Answer answer : answers) {
-                System.out.println(answer.getText());
+                log.info(answer.getText());
             }
 
         } catch (PortalException e) {
-            e.printStackTrace();
+            log.error(e);
         }
 
     }
@@ -456,11 +438,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             Question question = questions.get(0);
 
             if (!question.getIsAnswered()) {
-                System.out.println("Not answered yet!");
+                log.info("Not answered yet!");
             } else {
                 Answer correctAnswer = question.getCorrectAnswer();
 
-                System.out.println("Correct Answer: "
+                log.info("Correct Answer: "
                         + correctAnswer.getAnswerID()
                         + " --- Text "
                         + correctAnswer.getText()
@@ -468,7 +450,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                         + correctAnswer.getUserName());
             }
         } catch (PortalException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
@@ -481,9 +463,9 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             Question question = questions.get(0);
 
             List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
-            System.out.println("Vor dem löschen");
+            log.info("Vor dem löschen");
             for (Answer answer : answers) {
-                System.out.println(answer.getAnswerID() + ": " + answer.getText());
+                log.info(answer.getAnswerID() + ": " + answer.getText());
             }
             System.out.print("Asset Count: ");
             testDisplayAssetCount(request, response);
@@ -492,15 +474,15 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             AnswerLocalServiceUtil.deleteAnswer(answer.getAnswerID(), serviceContext);
 
             answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
-            System.out.println("Nach dem löschen");
+            log.info("Nach dem löschen");
             for (Answer editedAnswer : answers) {
-                System.out.println(answer.getAnswerID() + ": " + answer.getText());
+                log.info(answer.getAnswerID() + ": " + answer.getText());
             }
-            System.out.println("Asset Count");
+            log.info("Asset Count");
             testDisplayAssetCount(request, response);
 
         } catch (PortalException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
@@ -510,9 +492,9 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
 
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-            System.out.println("Vor dem löschen:");
+            log.info("Vor dem löschen:");
             for (Question question : questions) {
-                System.out.println(question.getTitle());
+                log.info(question.getTitle());
             }
             System.out.print("Asset Count: ");
             testDisplayAssetCount(request, response);
@@ -521,15 +503,15 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             QuestionLocalServiceUtil.deleteQuestion(toDelete.getQuestionID(), serviceContext);
 
             questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
-            System.out.println("Nach dem löschen");
+            log.info("Nach dem löschen");
             for (Question question : questions) {
-                System.out.println(question.getTitle());
+                log.info(question.getTitle());
             }
             System.out.print("Asset Count: ");
             testDisplayAssetCount(request, response);
 
         } catch (PortalException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
@@ -540,7 +522,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
 
             Question question = questions.get(0);
-            System.out.println("Vor dem Edit: " + question.getTitle() + ": " + question.getText() + " von " +
+            log.info("Vor dem Edit: " + question.getTitle() + ": " + question.getText() + " von " +
                     question.getEditedBy());
 
             QuestionLocalServiceUtil.editQuestion(question.getQuestionID(), "Ganz neuer Titel", "Ganz neuer Text",
@@ -549,11 +531,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
             question = questions.get(0);
 
-            System.out.println("Nach dem Edit: " + question.getTitle() + ": " + question.getText() + " von " +
+            log.info("Nach dem Edit: " + question.getTitle() + ": " + question.getText() + " von " +
                     question.getEditedBy());
 
         } catch (PortalException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
@@ -566,22 +548,22 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             Answer answer = answers.get(0);
 
-            System.out.println("Vor dem edit: " + answer.getText() + " editiert am " + answer.getModifiedDate());
+            log.info("Vor dem edit: " + answer.getText() + " editiert am " + answer.getModifiedDate());
 
             AnswerLocalServiceUtil.editAnswer(answer.getAnswerID(), "Ganz neue Antwort", serviceContext);
 
             answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             answer = answers.get(0);
 
-            System.out.println("Nach dem edit: " + answer.getText() + " editiert am " + answer.getModifiedDate());
+            log.info("Nach dem edit: " + answer.getText() + " editiert am " + answer.getModifiedDate());
 
         } catch (PortalException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
     public void testDisplayAssetCount(ActionRequest request, ActionResponse response) {
-        System.out.println(AssetEntryLocalServiceUtil.getAssetEntriesCount());
+        log.info(AssetEntryLocalServiceUtil.getAssetEntriesCount());
     }
 
     public void testDisplayAssets(ActionRequest request, ActionResponse response) throws PortalException {
@@ -590,7 +572,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             if (entry.getClassName().equals(Question.class.getName())) {
                 Question question = QuestionLocalServiceUtil.getQuestion(entry.getClassPK());
-                System.out.println("Class PK: " + entry.getClassPK()
+                log.info("Class PK: " + entry.getClassPK()
                         + " --- Class Name ID: " + entry.getClassNameId()
                         + " --- Title: " + entry.getTitle()
                         + " --- Text: " + entry.getDescription()
@@ -598,12 +580,12 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                         + " --- correct answer ID: " + question.getCorrectAnswerId());
             } else if (entry.getClassName().equals(Answer.class.getName())) {
                 try {
-                    System.out.println("Class PK: " + entry.getClassPK()
+                    log.info("Class PK: " + entry.getClassPK()
                             + " --- Class Name ID: " + entry.getClassNameId()
                             + " --- Text: " + entry.getDescription()
                             + " to Question " + AnswerLocalServiceUtil.getAnswer(entry.getClassPK()).getQuestionId());
                 } catch (PortalException e) {
-                    e.printStackTrace();
+                    log.error(e);
                 }
             }
         }
@@ -628,10 +610,10 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             Question question = questions.get(0);
             long[] categoryIds = question.getCategoryIds();
             for (long id : categoryIds) {
-                System.out.println(id);
+                log.info(id);
             }
         } catch (PortalException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
@@ -646,11 +628,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                     .filter(question -> filterByCategoryId(question, idToFilter))
                     .collect(toList());
 
-            System.out.println("Gefilterte Fragen: ");
-            filteredQuestions.forEach(question -> System.out.println(question.safeGetTitle()));
+            log.info("Gefilterte Fragen: ");
+            filteredQuestions.forEach(question -> log.info(question.safeGetTitle()));
 
         } catch (PortalException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
@@ -665,11 +647,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                     .filter(question -> filterByTagName(question, tagToFilter))
                     .collect(toList());
 
-            System.out.println("Gefilterte Fragen: ");
-            filteredQuestions.forEach(question -> System.out.println(question.safeGetTitle()));
+            log.info("Gefilterte Fragen: ");
+            filteredQuestions.forEach(question -> log.info(question.safeGetTitle()));
 
         } catch (PortalException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 }
