@@ -14,7 +14,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.service.ExceptionRetryAcceptor;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -68,21 +67,26 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
-
-        try {
-            if (Validator.isNull(title)) throw new EmptyQuestionTitleException();
-            if (Validator.isNull(text)) throw new EmptyQuestionTextException();
-
-            QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
-            SessionMessages.add(request, "questionAdded");
-        }
-        catch (PortalException e) {
-            handleError(request, e, "An error occured during newQuestion");
+        if (Validator.isNull(title)) {
+            handleError(request, new EmptyQuestionTitleException(), "An error occurred during newQuestion");
             PortalUtil.copyRequestParameters(request, response);
             response.setRenderParameter("mvcPath", "/editQuestion.jsp");
+            return;
         }
+        if (Validator.isNull(text)) {
+            handleError(request, new EmptyQuestionTextException(), "An error occurred during newQuestion");
+            PortalUtil.copyRequestParameters(request, response);
+            response.setRenderParameter("mvcPath", "/editQuestion.jsp");
+            return;
+        }
+        try {
+            QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
+        } catch (PortalException e) {
+            handleError(request, e, "An error occured during newQuestion");
+            return;
+        }
+        SessionMessages.add(request, "questionAdded");
     }
-
 
 
     /**
@@ -95,7 +99,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         long questionId = answer.getQuestionId();
         Question question = QuestionLocalServiceUtil.getQuestion(questionId);
         question.setCorrectAnswer(answerId);
-
         SessionMessages.add(request, "answerAccepted");
         log.info("Answer " + answerId + " has been accepted");
     }
@@ -113,19 +116,19 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
         long questionId = ParamUtil.getLong(request, "questionID");
-        ServiceContext serviceContext = getServiceContext(request,Question.class.getName());
-        if(Validator.isNull(title)){
-            handleError(request,new EmptyQuestionTitleException(),"An error occured during editQuestion");
+        ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
+        if (Validator.isNull(title)) {
+            handleError(request, new EmptyQuestionTitleException(), "An error occurred during editQuestion");
             return;
         }
-        if(Validator.isNull(text)){
-            handleError(request,new EmptyQuestionTextException(),"An error occured during editQuestion");
+        if (Validator.isNull(text)) {
+            handleError(request, new EmptyQuestionTextException(), "An error occurred during editQuestion");
             return;
         }
         try {
             QuestionLocalServiceUtil.editQuestion(questionId, title, text, serviceContext);
         } catch (PortalException e) {
-            log.error(e);
+            handleError(request, e, "An error occurred during editQuestion");
             return;
         }
         SessionMessages.add(request, "questionEdited");
@@ -133,7 +136,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
 
-    public void deleteQuestion(ActionRequest request, ActionResponse response){
+    public void deleteQuestion(ActionRequest request) {
         ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
         long questionId = ParamUtil.getLong(request, "questionID");
         QuestionLocalServiceUtil.deleteQuestion(questionId, serviceContext);
@@ -143,11 +146,11 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     /**
      * Returns the questions with a specified AssetCategory name passed via ParamUtil. This method first searches for
      * the AssetCategory with the given name and if exists, filters the questions by that ID.
-     *
+     * <p>
      * Annotation: This method allows querying the questions by category name, not ID! It depends on the GUI layout
      * whether the ID or name will be used.
      */
-    private void getQuestionsFilteredByCategory(RenderRequest request) throws NoSuchElementException, PortalException {
+    private void getQuestionsFilteredByCategory(RenderRequest request) {
         ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
         List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
         String categoryName = ParamUtil.getString(request, "category");
@@ -164,13 +167,13 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     private long getCategoryIdByName(String categoryName) throws NoSuchElementException {
         List<AssetCategory> categories = AssetCategoryLocalServiceUtil.getCategories();
         return categories.parallelStream()
-                    .filter(category -> category.getName().equals(categoryName))
-                    .mapToLong(AssetCategoryModel::getCategoryId)
-                    .findFirst().getAsLong();
+                .filter(category -> category.getName().equals(categoryName))
+                .mapToLong(AssetCategoryModel::getCategoryId)
+                .findFirst().getAsLong();
     }
 
     public List<Question> getQuestionsFilteredByTag(String tag, RenderRequest renderRequest) {
-        ServiceContext serviceContext = getServiceContext(renderRequest,Question.class.getName());
+        ServiceContext serviceContext = getServiceContext(renderRequest, Question.class.getName());
         List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
         return questions.stream()
                 .filter(question -> filterByTagName(question, tag))
@@ -198,6 +201,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
      * If two questions have the same rating, they are sorted by their date (older > newer)
      * Questions that are older than one month
      * are dismissed.
+     *
      * @return An ArrayList of sorted questions.
      */
     private ArrayList<Question> getQuestionsSortedByRating(ServiceContext serviceContext) {
@@ -214,9 +218,9 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         LocalDate currentDate = LocalDate.now();
         return question -> Instant.ofEpochMilli(question.getCreateDate()
                 .getTime())
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-                        .isAfter(currentDate.minusMonths(1));
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+                .isAfter(currentDate.minusMonths(1));
     }
 
 
@@ -234,8 +238,8 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     public void newAnswer(ActionRequest request, ActionResponse response) {
         String text = ParamUtil.getString(request, "text");
-        if(Validator.isNull(text)) {
-            handleError(request,new EmptyAnswerTextException(), "Answer text is empty.");
+        if (Validator.isNull(text)) {
+            handleError(request, new EmptyAnswerTextException(), "Answer text is empty.");
             return;
         }
         long questionId = ParamUtil.getLong(request, "questionID");
@@ -246,97 +250,91 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
     public void editAnswer(ActionRequest request, ActionResponse response) {
-
         long answerId = ParamUtil.getLong(request, "answerID");
         String text = ParamUtil.getString(request, "text");
-
-        try {
-            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
-            if (Validator.isNull(text)) throw new EmptyAnswerTextException();
-            AnswerLocalServiceUtil.editAnswer(answerId, text, serviceContext);
-            SessionMessages.add(request, "answerEdited");
+        ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
+        if (Validator.isNull(text)) {
+            handleError(request, new EmptyAnswerTextException(), "Error during editAnswer");
+            return;
         }
-        catch (PortalException e) {
-            SessionErrors.add(request, e.getClass().getSimpleName());
-            hideDefaultErrorMessage(request);
-            log.error(e.getClass().getName() + "\n" + e.getMessage());
-        }
-        try {
-            String redirectUrl = ParamUtil.getString(request, "redirectURL");
-            response.sendRedirect(redirectUrl);
-        }
-        catch (IOException e) {
-            log.error("IO Exception during editAnswer()");
-            e.printStackTrace();
-        }
+        AnswerLocalServiceUtil.editAnswer(answerId, text, serviceContext);
+        SessionMessages.add(request, "answerEdited");
+        redirectToRedirectUrl(request, response);
     }
 
-
-    public void deleteAnswer(ActionRequest request, ActionResponse response) throws PortalException{
-        ServiceContext serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
+    public void deleteAnswer(ActionRequest request, ActionResponse response) {
+        ServiceContext serviceContext = getServiceContext(request, Answer.class.getName());
         long answerId = ParamUtil.getLong(request, "answerID");
-        String redirectUrl = ParamUtil.getString(request, "redirectURL");
         try {
             AnswerLocalServiceUtil.deleteAnswer(answerId, serviceContext);
-            response.sendRedirect(redirectUrl);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (PortalException e) {
+            handleError(request, e, "deleteAnswer");
+            return;
         }
+        redirectToRedirectUrl(request, response);
     }
 
     @Override
-    public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException {
-
-        try {
-            ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), renderRequest);
-            long groupID = serviceContext.getScopeGroupId();
-
-            ArrayList<Question> questions = new ArrayList<>(QuestionLocalServiceUtil.getQuestions(groupID));
-            ArrayList<Question> questionsSortedByRating = getQuestionsSortedByRating(serviceContext);
-
-            try {
-                getQuestionsFilteredByTag(renderRequest);
-            } catch (NoSuchElementException e) {
-                log.info("No tag was specified to filter questions.");
-            }
-
-            try {
-                getQuestionsFilteredByCategory(renderRequest);
-            } catch (NoSuchElementException e) {
-                log.info("No category was specified to filter questions.");
-            }
-
-            ArrayList<AssetCategory> categories = (ArrayList<AssetCategory>) questions.stream()
-                        .flatMap(q -> q.safeGetCategories().stream())
-                        .distinct()
-                        .collect(toList());
-            ArrayList<AssetTag> tags = new ArrayList<>(AssetTagLocalServiceUtil.getTags());
-
-            if (!questions.isEmpty()) {
-                renderRequest.setAttribute("questions", questions);
-                renderRequest.setAttribute("questionsSortedByRating", questionsSortedByRating);
-            }
-            if (!categories.isEmpty()) {
-				renderRequest.setAttribute("categories", categories);
-            }
-            if (!tags.isEmpty()) {
-                renderRequest.setAttribute("tags", tags);
-            }
-
-            log.info(categories.size() + " categories and " + tags.size() + " tags");
-            log.info(questions.size() + " questions and  " + questionsSortedByRating.size()
-                    + " sorted questions have been passed to renderRequest");
-
-            hideDefaultSuccessMessage(renderRequest);
-
-
-            super.render(renderRequest, renderResponse);
-        } catch (PortletException e) {
-            log.error("Portlet can not fulfill this request");
-        } catch (PortalException e) {
-            log.error("Fatal exception while processing render()");
+    public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException, IOException {
+        ServiceContext serviceContext = getServiceContext(renderRequest, Question.class.getName());
+        long groupID = serviceContext.getScopeGroupId();
+        List<Question> questions = QuestionLocalServiceUtil.getQuestions(groupID);
+        List<Question> questionsSortedByRating = getQuestionsSortedByRating(serviceContext);
+        getQuestionsFilteredByTag(renderRequest);
+        getQuestionsFilteredByCategory(renderRequest);
+        List<AssetCategory> categories = questions.stream()
+                .flatMap(q -> q.safeGetCategories().stream())
+                .distinct()
+                .collect(toList());
+        List<AssetTag> tags = AssetTagLocalServiceUtil.getTags();
+        if (!questions.isEmpty()) {
+            renderRequest.setAttribute("questions", questions);
+            renderRequest.setAttribute("questionsSortedByRating", questionsSortedByRating);
         }
+        if (!categories.isEmpty()) {
+            renderRequest.setAttribute("categories", categories);
+        }
+        if (!tags.isEmpty()) {
+            renderRequest.setAttribute("tags", tags);
+        }
+        log.info(categories.size() + " categories and " + tags.size() + " tags");
+        log.info(questions.size() + " questions and  " + questionsSortedByRating.size()
+                + " sorted questions have been passed to renderRequest");
+        hideDefaultSuccessMessage(renderRequest);
+        super.render(renderRequest, renderResponse);
+    }
 
+    public static boolean qandaPermissionContains(PermissionChecker permissionChecker, long groupId, String resourceName, String actionId) {
+        System.out.println("GroupId = " + groupId + " Resource Name = " + resourceName + " Action Id = " + actionId);
+        return permissionChecker.hasPermission(groupId, resourceName, groupId, actionId);
+    }
+
+    public static boolean questionPermissionContains(PermissionChecker permissionChecker, Question question, String actionId) {
+        String QUESTION_CLASS_NAME = Question.class.getName();
+        final long QUESTION_ID = question.getQuestionID();
+        final long GROUP_ID = question.getGroupId();
+        Boolean hasPermission = StagingPermissionUtil.hasPermission(permissionChecker, GROUP_ID, QUESTION_CLASS_NAME,
+                QUESTION_ID, question.getPortletId(), actionId);
+        if (hasPermission != null) {
+            return hasPermission;
+        }
+        return permissionChecker.hasOwnerPermission(question.getCompanyId(), QUESTION_CLASS_NAME, QUESTION_ID,
+                question.getUserId(), actionId)
+                || permissionChecker.hasPermission(GROUP_ID, QUESTION_CLASS_NAME, QUESTION_ID, actionId);
+    }
+
+    public static boolean answerPermissionContains(PermissionChecker permissionChecker, Answer answer, String actionId) {
+        String ANSWER_CLASS_NAME = Answer.class.getName();
+        final long ANSWER_ID = answer.getAnswerID();
+        final long GROUP_ID = answer.getGroupId();
+        Boolean hasPermission = StagingPermissionUtil.hasPermission(permissionChecker, GROUP_ID, ANSWER_CLASS_NAME,
+                ANSWER_ID, answer.getPortletId(), actionId);
+        if (hasPermission != null) {
+            return hasPermission;
+        }
+        return permissionChecker.hasOwnerPermission(answer.getCompanyId(), ANSWER_CLASS_NAME, ANSWER_ID,
+                answer.getUserId(), actionId)
+                || permissionChecker.hasPermission(GROUP_ID, ANSWER_CLASS_NAME, ANSWER_ID, actionId);
     }
 
 
@@ -360,8 +358,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         try {
             String redirectUrl = ParamUtil.getString(request, "redirectURL");
             response.sendRedirect(redirectUrl);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             log.error("IO Exception during redirect");
             log.error(e);
         }
@@ -394,8 +391,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         try {
             AnswerLocalServiceUtil.addAnswer(text, questionId, serviceContext);
             SessionMessages.add(request, "answerAdded");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             SessionErrors.add(request, e.getClass().getName());
             PortalUtil.copyRequestParameters(request, response);
             response.setRenderParameter("mvcPath", "/view.jsp");
@@ -404,17 +400,16 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
-    public void testNewQuestion(ActionRequest request, ActionResponse response){
+    public void testNewQuestion(ActionRequest request, ActionResponse response) {
         String title = "Toller Titel";
         String text = "Einzigartiger Text";
 
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(
-                Question.class.getName(), request);
+                    Question.class.getName(), request);
             QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
             SessionMessages.add(request, "questionAdded");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             SessionErrors.add(request, e.getClass().getName());
             PortalUtil.copyRequestParameters(request, response);
             response.setRenderParameter("mvcPath", "/view.jsp");
@@ -423,7 +418,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
-    public void testAnswer(ActionRequest request, ActionResponse response){
+    public void testAnswer(ActionRequest request, ActionResponse response) {
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
@@ -437,13 +432,13 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             System.out.println("Erste Frage:");
-            for (Answer answer:answers) {
+            for (Answer answer : answers) {
                 System.out.println(answer.getText());
             }
 
             List<Answer> answers2 = AnswerLocalServiceUtil.getAnswersForQuestion(question2.getQuestionID());
             System.out.println("Zweite Frage:");
-            for (Answer answer:answers) {
+            for (Answer answer : answers) {
                 System.out.println(answer.getText());
             }
 
@@ -453,7 +448,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
     }
 
-    public void testDisplayCorrectAnswer(ActionRequest request, ActionResponse response){
+    public void testDisplayCorrectAnswer(ActionRequest request, ActionResponse response) {
         try {
             ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
 
@@ -477,7 +472,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
     }
 
-    public void testDeleteAnswer(ActionRequest request, ActionResponse response){
+    public void testDeleteAnswer(ActionRequest request, ActionResponse response) {
         ServiceContext serviceContext;
         try {
             serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), request);
@@ -487,7 +482,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             System.out.println("Vor dem löschen");
-            for (Answer answer:answers) {
+            for (Answer answer : answers) {
                 System.out.println(answer.getAnswerID() + ": " + answer.getText());
             }
             System.out.print("Asset Count: ");
@@ -498,7 +493,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
 
             answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
             System.out.println("Nach dem löschen");
-            for (Answer editedAnswer:answers) {
+            for (Answer editedAnswer : answers) {
                 System.out.println(answer.getAnswerID() + ": " + answer.getText());
             }
             System.out.println("Asset Count");
@@ -509,7 +504,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
     }
 
-    public void testDeleteQuestion(ActionRequest request, ActionResponse response){
+    public void testDeleteQuestion(ActionRequest request, ActionResponse response) {
         ServiceContext serviceContext;
         try {
             serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), request);
@@ -545,7 +540,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             List<Question> questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
 
             Question question = questions.get(0);
-            System.out.println("Vor dem Edit: " + question.getTitle() + ": " + question.getText()+" von " +
+            System.out.println("Vor dem Edit: " + question.getTitle() + ": " + question.getText() + " von " +
                     question.getEditedBy());
 
             QuestionLocalServiceUtil.editQuestion(question.getQuestionID(), "Ganz neuer Titel", "Ganz neuer Text",
@@ -554,7 +549,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             questions = QuestionLocalServiceUtil.getQuestions(serviceContext.getScopeGroupId());
             question = questions.get(0);
 
-            System.out.println("Nach dem Edit: " + question.getTitle() + ": " + question.getText()+" von " +
+            System.out.println("Nach dem Edit: " + question.getTitle() + ": " + question.getText() + " von " +
                     question.getEditedBy());
 
         } catch (PortalException e) {
@@ -601,8 +596,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                         + " --- Text: " + entry.getDescription()
                         + " --- isAnswered: " + question.getIsAnswered()
                         + " --- correct answer ID: " + question.getCorrectAnswerId());
-            }
-            else if (entry.getClassName().equals(Answer.class.getName())) {
+            } else if (entry.getClassName().equals(Answer.class.getName())) {
                 try {
                     System.out.println("Class PK: " + entry.getClassPK()
                             + " --- Class Name ID: " + entry.getClassNameId()
@@ -677,48 +671,5 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         } catch (PortalException e) {
             e.printStackTrace();
         }
-    }
-
-    public static boolean qandaPermissionContains(PermissionChecker permissionChecker, long groupId, String resourceName, String actionId){
-        System.out.println("GroupId = "+groupId+" Resource Name = "+resourceName+" Action Id = "+actionId);
-        return permissionChecker.hasPermission(groupId, resourceName, groupId, actionId);
-    }
-
-    public static boolean questionPermissionContains(PermissionChecker permissionChecker, Question question, String actionId){
-
-        String QUESTION_CLASS_NAME = Question.class.getName();
-
-        final long QUESTION_ID = question.getQuestionID();
-        final long GROUP_ID = question.getGroupId();
-
-        Boolean hasPermission = StagingPermissionUtil.hasPermission(permissionChecker, GROUP_ID, QUESTION_CLASS_NAME,
-                QUESTION_ID, question.getPortletId(), actionId);
-
-        if (hasPermission != null) {
-            return hasPermission;
-        }
-
-        return permissionChecker.hasOwnerPermission(question.getCompanyId(), QUESTION_CLASS_NAME, QUESTION_ID,
-                question.getUserId(), actionId)
-                || permissionChecker.hasPermission(GROUP_ID, QUESTION_CLASS_NAME, QUESTION_ID, actionId);
-    }
-
-    public static boolean answerPermissionContains(PermissionChecker permissionChecker, Answer answer, String actionId){
-
-        String ANSWER_CLASS_NAME = Answer.class.getName();
-
-        final long ANSWER_ID = answer.getAnswerID();
-        final long GROUP_ID = answer.getGroupId();
-
-        Boolean hasPermission = StagingPermissionUtil.hasPermission(permissionChecker, GROUP_ID, ANSWER_CLASS_NAME,
-                ANSWER_ID, answer.getPortletId(), actionId);
-
-        if (hasPermission != null) {
-            return hasPermission;
-        }
-
-        return permissionChecker.hasOwnerPermission(answer.getCompanyId(), ANSWER_CLASS_NAME, ANSWER_ID,
-                answer.getUserId(), actionId)
-                || permissionChecker.hasPermission(GROUP_ID, ANSWER_CLASS_NAME, ANSWER_ID, actionId);
     }
 }
