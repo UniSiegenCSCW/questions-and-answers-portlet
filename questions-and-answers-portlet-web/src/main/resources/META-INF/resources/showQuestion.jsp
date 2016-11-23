@@ -33,6 +33,7 @@
 
     User author = UserLocalServiceUtil.getUser(question.getUserId());
     List<Organization> authorOrganisations = author.getOrganizations();
+
 %>
 
 <portlet:renderURL var="viewURL">
@@ -157,6 +158,7 @@
                     </c:if>
                 </aui:row>
                 <aui:button-row cssClass="qaButtonRow">
+
                     <c:if test="<%= QuestionsAndAnswersPortlet.questionPermissionContains(permissionChecker, question, "EDIT") %>">
                         <portlet:renderURL var="editQuestionURL">
                             <portlet:param name="mvcPath" value="/editQuestion.jsp"/>
@@ -165,13 +167,18 @@
                         </portlet:renderURL>
                         <aui:button onClick="<%=editQuestionURL%>" value="Frage bearbeiten"/>
                     </c:if>
+
                     <c:if test="<%= QuestionsAndAnswersPortlet.questionPermissionContains(permissionChecker, question, "DELETE") %>">
                         <portlet:actionURL name="deleteQuestion" var="deleteQuestionURL">
                             <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
                         </portlet:actionURL>
                         <aui:button onClick="<%=deleteQuestionURL%>" value="Frage l&ouml;schen"/>
                     </c:if>
-                    <aui:button id="addNewAnswerButton" value="Frage beantworten"/>
+
+                    <c:if test="<%= permissionChecker.hasPermission(scopeGroupId, "org.sidate.qanda.model", scopeGroupId, "ADD_ANSWER") %>" >
+                        <aui:button id="addNewAnswerButton" value="Frage beantworten"/>
+                    </c:if>
+
                     <aui:script>
                         $("#<portlet:namespace/>addNewAnswerButton").click(function () {
                             $(".main-container").animate({scrollTop: $("#newAnswerFormContainer").position().top}, 500, 'swing');
@@ -355,22 +362,26 @@
             </liferay-ui:section>
         </liferay-ui:tabs>
     </aui:container>
-    <portlet:actionURL name="newAnswer" var="newAnswerURL">
-        <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
-        <portlet:param name="redirectURL" value="<%=showQuestionsURL%>"/>
-    </portlet:actionURL>
-    <aui:container>
-        <aui:form action="<%= newAnswerURL %>" name="AnswerForm">
-            <h5 id="newAnswerFormContainer">Ihre Antwort</h5>
-            <liferay-ui:input-editor name="text"/>
-            <aui:script>
-                function <portlet:namespace />initEditor() {
-                    return "";
-                }
-            </aui:script>
-            <aui:button-row>
-                <aui:button value="Antwort absenden" type="submit"/>
-            </aui:button-row>
-        </aui:form>
-    </aui:container>
+
+    <c:if test="<%= permissionChecker.hasPermission(scopeGroupId, "org.sidate.qanda.model", scopeGroupId, "ADD_ANSWER") %>" >
+        <portlet:actionURL name="newAnswer" var="newAnswerURL">
+            <portlet:param name="questionID" value="<%=String.valueOf(question.getQuestionID())%>"/>
+            <portlet:param name="redirectURL" value="<%=showQuestionsURL%>"/>
+        </portlet:actionURL>
+        <aui:container>
+            <aui:form action="<%= newAnswerURL %>" name="AnswerForm">
+                <h5 id="newAnswerFormContainer">Ihre Antwort</h5>
+                <liferay-ui:input-editor name="text"/>
+                <aui:script>
+                    function <portlet:namespace />initEditor() {
+                        return "";
+                    }
+                </aui:script>
+                <aui:button-row>
+                    <aui:button value="Antwort absenden" type="submit"/>
+                </aui:button-row>
+            </aui:form>
+        </aui:container>
+    </c:if>
+
 </aui:container>

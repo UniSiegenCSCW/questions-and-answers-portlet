@@ -11,6 +11,7 @@
 <%@ page import="com.liferay.portal.kernel.model.User" %>
 <%@ page import="com.liferay.portal.kernel.service.UserLocalServiceUtil" %>
 <%@ page import="java.util.Collections" %>
+<%@ page import="org.sidate.qanda.portlet.QuestionsAndAnswersPortlet" %>
 <%@ include file="init.jsp" %>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
 
@@ -31,10 +32,14 @@
 </portlet:renderURL>
 
 <aui:container cssClass="qaQuestionOverviewWrapper">
-    <aui:button-row>
-        <%--<aui:button cssClass="pull-right" onClick="<%= testURL%>" value="Go to testing view"></aui:button>--%>
-        <aui:button cssClass="pull-left btn-primary" onClick="<%= newQuestionURL%>" value="Neue Frage stellen"></aui:button>
-    </aui:button-row>
+
+    <c:if test="<%= permissionChecker.hasPermission(scopeGroupId, "org.sidate.qanda.model", scopeGroupId, "ADD_QUESTION") %>">
+        <aui:button-row>
+            <%--<aui:button cssClass="pull-right" onClick="<%= testURL%>" value="Go to testing view"></aui:button>--%>
+            <aui:button cssClass="pull-left btn-primary" onClick="<%= newQuestionURL%>" value="Neue Frage stellen"></aui:button>
+        </aui:button-row>
+    </c:if>
+
     <aui:row>
         <aui:col span="10">
             <liferay-ui:tabs names="Neue Fragen,Beste Fragen" refresh="false" tabsValues="Neue Fragen,Beste Fragen">

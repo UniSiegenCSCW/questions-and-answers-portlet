@@ -164,9 +164,9 @@ public class QuestionImpl extends QuestionBaseImpl {
     public List<AssetCategory> safeGetCategories() {
         try {
             return getCategories();
-        } catch (Exception e) {
-            log.error(e);
-            return new ArrayList<>();
+        } catch (PortalException e) {
+            log.error("Fatal error in safeGetCategories!");
+			return new ArrayList<AssetCategory>();
         }
     }
 }

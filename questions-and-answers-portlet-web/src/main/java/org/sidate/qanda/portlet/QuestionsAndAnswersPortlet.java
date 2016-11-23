@@ -87,29 +87,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
 
-    /**
-     * Sets the correct answer ID, may also be used to unset the correct answer ID by
-     * passing 0 as the ID parameter.
-     */
-    public void setCorrectAnswer(ActionRequest request, ActionResponse response) throws PortalException {
-        long answerId = ParamUtil.getLong(request, "answerID");
-        Answer answer = AnswerLocalServiceUtil.getAnswer(answerId);
-        long questionId = answer.getQuestionId();
-        Question question = QuestionLocalServiceUtil.getQuestion(questionId);
-        question.setCorrectAnswer(answerId);
-        SessionMessages.add(request, "answerAccepted");
-        log.info("Answer " + answerId + " has been accepted");
-    }
-
-    public void unsetCorrectAnswer(ActionRequest request, ActionResponse response) throws PortalException {
-        long questionId = ParamUtil.getLong(request, "questionID");
-        Question question = QuestionLocalServiceUtil.getQuestion(questionId);
-        question.unsetCorrectAnswer();
-
-        SessionMessages.add(request, "answerUnset");
-        log.info("Answer for question " + questionId + " has been unset.");
-    }
-
     public void editQuestion(ActionRequest request, ActionResponse response) {
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
@@ -134,7 +111,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     }
 
 
-    public void deleteQuestion(ActionRequest request) {
+    public void deleteQuestion(ActionRequest request, ActionResponse response) {
         ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
         long questionId = ParamUtil.getLong(request, "questionID");
         QuestionLocalServiceUtil.deleteQuestion(questionId, serviceContext);
@@ -164,6 +141,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         log.info(filteredQuestions.size() + " questions filtered by category " + categoryId
                 + " have been passed to renderRequest");
     }
+
 
     private Optional<AssetCategory> getCategoryByName(String categoryName){
         List<AssetCategory> categories = AssetCategoryLocalServiceUtil.getCategories();
@@ -223,7 +201,6 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
                 .isAfter(currentDate.minusMonths(1));
     }
 
-
     private boolean filterByCategoryId(Question question, long idToFilter) {
         long[] categoryIds = question.getCategoryIds();
         return categoryIds != null && LongStream.of(categoryIds).anyMatch(categoryId -> categoryId == idToFilter);
@@ -232,6 +209,17 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     private boolean filterByTagName(Question question, String tagToFilter) {
         String[] tagNames = question.getTagNames();
         return tagNames != null && Arrays.stream(tagNames).anyMatch(tag -> tag.equals(tagToFilter));
+    }
+
+    public void unsetCorrectAnswer(ActionRequest request, ActionResponse response) {
+        long questionId = ParamUtil.getLong(request, "questionID");
+        QuestionLocalServiceUtil.unsetCorrectAnswer(questionId);
+    }
+
+    public void setCorrectAnswer(ActionRequest request, ActionResponse response) {
+        long questionId = ParamUtil.getLong(request, "questionID");
+        long answerId = ParamUtil.getLong(request, "answerID");
+        QuestionLocalServiceUtil.setCorrectAnswer(answerId, questionId);
     }
 
     // #### Answers ####
@@ -274,71 +262,52 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         redirectToRedirectUrl(request, response);
     }
 
+    // ### UTIL ###
+
     @Override
-    public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException, IOException {
+    public void render(RenderRequest renderRequest, RenderResponse renderResponse) {
         ServiceContext serviceContext = getServiceContext(renderRequest, Question.class.getName());
         long groupID = serviceContext.getScopeGroupId();
-        List<Question> questions = QuestionLocalServiceUtil.getQuestions(groupID);
-        List<Question> questionsSortedByRating = getQuestionsSortedByRating(serviceContext);
+
+        ArrayList<Question> questions = new ArrayList<>(QuestionLocalServiceUtil.getQuestions(groupID));
+        ArrayList<Question> questionsSortedByRating = new ArrayList<>(getQuestionsSortedByRating(serviceContext));
+
         getQuestionsFilteredByTag(renderRequest);
         getQuestionsFilteredByCategory(renderRequest);
+
         List<AssetCategory> categories = questions.stream()
                 .flatMap(q -> q.safeGetCategories().stream())
                 .distinct()
                 .collect(toList());
         List<AssetTag> tags = AssetTagLocalServiceUtil.getTags();
+
         if (!questions.isEmpty()) {
-            renderRequest.setAttribute("questions", new ArrayList<>(questions));
-            renderRequest.setAttribute("questionsSortedByRating",  new ArrayList<>(questionsSortedByRating));
+            renderRequest.setAttribute("questions", questions);
+            renderRequest.setAttribute("questionsSortedByRating",  questionsSortedByRating);
         }
         if (!categories.isEmpty()) {
-            renderRequest.setAttribute("categories",  new ArrayList<>(categories));
+            renderRequest.setAttribute("categories",  categories);
         }
         if (!tags.isEmpty()) {
             renderRequest.setAttribute("tags", tags);
         }
+
         log.info(categories.size() + " categories and " + tags.size() + " tags");
         log.info(questions.size() + " questions and  " + questionsSortedByRating.size()
                 + " sorted questions have been passed to renderRequest");
+
         hideDefaultSuccessMessage(renderRequest);
-        super.render(renderRequest, renderResponse);
-    }
 
-    public static boolean qandaPermissionContains(PermissionChecker permissionChecker, long groupId, String resourceName, String actionId) {
-        log.info("GroupId = " + groupId + " Resource Name = " + resourceName + " Action Id = " + actionId);
-        return permissionChecker.hasPermission(groupId, resourceName, groupId, actionId);
-    }
-
-    public static boolean questionPermissionContains(PermissionChecker permissionChecker, Question question, String actionId) {
-        String QUESTION_CLASS_NAME = Question.class.getName();
-        final long QUESTION_ID = question.getQuestionID();
-        final long GROUP_ID = question.getGroupId();
-        Boolean hasPermission = StagingPermissionUtil.hasPermission(permissionChecker, GROUP_ID, QUESTION_CLASS_NAME,
-                QUESTION_ID, question.getPortletId(), actionId);
-        if (hasPermission != null) {
-            return hasPermission;
+        try {
+            super.render(renderRequest, renderResponse);
+        } catch (IOException e) {
+            log.error("Portlet can not fulfill this request");
+        } catch (PortletException e) {
+            log.error("Fatal exception while processing render()");
         }
-        return permissionChecker.hasOwnerPermission(question.getCompanyId(), QUESTION_CLASS_NAME, QUESTION_ID,
-                question.getUserId(), actionId)
-                || permissionChecker.hasPermission(GROUP_ID, QUESTION_CLASS_NAME, QUESTION_ID, actionId);
     }
 
-    public static boolean answerPermissionContains(PermissionChecker permissionChecker, Answer answer, String actionId) {
-        String ANSWER_CLASS_NAME = Answer.class.getName();
-        final long ANSWER_ID = answer.getAnswerID();
-        final long GROUP_ID = answer.getGroupId();
-        Boolean hasPermission = StagingPermissionUtil.hasPermission(permissionChecker, GROUP_ID, ANSWER_CLASS_NAME,
-                ANSWER_ID, answer.getPortletId(), actionId);
-        if (hasPermission != null) {
-            return hasPermission;
-        }
-        return permissionChecker.hasOwnerPermission(answer.getCompanyId(), ANSWER_CLASS_NAME, ANSWER_ID,
-                answer.getUserId(), actionId)
-                || permissionChecker.hasPermission(GROUP_ID, ANSWER_CLASS_NAME, ANSWER_ID, actionId);
-    }
-
-
-    private ServiceContext getServiceContext(PortletRequest request, String className) {
+    private static ServiceContext getServiceContext(PortletRequest request, String className) {
         try {
             return ServiceContextFactory.getInstance(className, request);
         } catch (PortalException e) {
@@ -364,6 +333,35 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
     }
 
+    // ### PERMISSIONS ###
+
+    public static boolean questionPermissionContains(PermissionChecker permissionChecker, Question question,
+                                                     String actionId) {
+        String QUESTION_CLASS_NAME = Question.class.getName();
+        final long QUESTION_ID = question.getQuestionID();
+        final long GROUP_ID = question.getGroupId();
+
+        boolean userHasPermission = permissionChecker.hasPermission(GROUP_ID, QUESTION_CLASS_NAME, QUESTION_ID,
+                actionId);
+        boolean ownerHasPermission = permissionChecker.hasOwnerPermission(question.getCompanyId(), QUESTION_CLASS_NAME,
+                QUESTION_ID, question.getUserId(), actionId);
+
+        //log.info(actionId + " has site permission: " + userHasPermission);
+        //log.info(actionId + " has owner permission: " + ownerHasPermission);
+
+        return ownerHasPermission || userHasPermission;
+    }
+
+    public static boolean answerPermissionContains(PermissionChecker permissionChecker, Answer answer,
+                                                   String actionId) {
+        String ANSWER_CLASS_NAME = Answer.class.getName();
+        final long ANSWER_ID = answer.getAnswerID();
+        final long GROUP_ID = answer.getGroupId();
+
+        return permissionChecker.hasOwnerPermission(answer.getCompanyId(), ANSWER_CLASS_NAME, ANSWER_ID,
+                answer.getUserId(), actionId)
+                || permissionChecker.hasPermission(GROUP_ID, ANSWER_CLASS_NAME, ANSWER_ID, actionId);
+    }
 
     // #### Testing ####
 
