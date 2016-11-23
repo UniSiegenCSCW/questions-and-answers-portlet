@@ -11,7 +11,9 @@
 <%@ page import="com.liferay.portal.kernel.model.User" %>
 <%@ page import="com.liferay.portal.kernel.service.UserLocalServiceUtil" %>
 <%@ page import="java.util.Collections" %>
-<%@ page import="org.sidate.qanda.portlet.QuestionsAndAnswersPortlet" %>
+<%@ page import="com.liferay.portal.kernel.util.ListUtil" %>
+
+
 <%@ include file="init.jsp" %>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
 
@@ -32,14 +34,10 @@
 </portlet:renderURL>
 
 <aui:container cssClass="qaQuestionOverviewWrapper">
-
-    <c:if test="<%= permissionChecker.hasPermission(scopeGroupId, "org.sidate.qanda.model", scopeGroupId, "ADD_QUESTION") %>">
-        <aui:button-row>
-            <%--<aui:button cssClass="pull-right" onClick="<%= testURL%>" value="Go to testing view"></aui:button>--%>
-            <aui:button cssClass="pull-left btn-primary" onClick="<%= newQuestionURL%>" value="Neue Frage stellen"></aui:button>
-        </aui:button-row>
-    </c:if>
-
+    <aui:button-row>
+        <%--<aui:button cssClass="pull-right" onClick="<%= testURL%>" value="Go to testing view"></aui:button>--%>
+        <aui:button cssClass="pull-left btn-primary" onClick="<%= newQuestionURL%>" value="Neue Frage stellen"></aui:button>
+    </aui:button-row>
     <aui:row>
         <aui:col span="10">
             <liferay-ui:tabs names="Neue Fragen,Beste Fragen" refresh="false" tabsValues="Neue Fragen,Beste Fragen">
@@ -48,17 +46,31 @@
                     <% Collections.reverse(questions); %>
 
                     <aui:container cssClass="qaQuestionsOverviewContainer">
-                        <c:forEach var="question" items="${questions}">
-                            <%@ include file="_question.jsp" %>
-                        </c:forEach>
+                        <liferay-ui:search-container delta="10" emptyResultsMessage="Es gibt noch keine Fragen" total="<%=questions.size()%>">
+                            <liferay-ui:search-container-results results="<%= ListUtil.subList(questions, searchContainer.getStart(), searchContainer.getEnd()) %>" />
+                            <aui:container cssClass="qaQuestionsOverviewContainer">
+                                <liferay-ui:search-container-row modelVar="question"
+                                                                 className="org.sidate.qanda.model.Question">
+                                    <%@ include file="_question.jsp" %>
+                                </liferay-ui:search-container-row>
+                            </aui:container>
+                            <liferay-ui:search-iterator />
+                        </liferay-ui:search-container>
                     </aui:container>
                 </liferay-ui:section>
 
                 <liferay-ui:section>
                     <aui:container cssClass="qaQuestionsOverviewContainer">
-                        <c:forEach var="question" items="${questionsSortedByRating}">
-                            <%@ include file="_question.jsp" %>
-                        </c:forEach>
+                        <liferay-ui:search-container delta="10" emptyResultsMessage="Es gibt noch keine Fragen" total="<%=questions.size()%>">
+                            <liferay-ui:search-container-results results="<%= ListUtil.subList(questionsSortedByRating, searchContainer.getStart(), searchContainer.getEnd()) %>" />
+                            <aui:container cssClass="qaQuestionsOverviewContainer">
+                                <liferay-ui:search-container-row modelVar="question"
+                                                                 className="org.sidate.qanda.model.Question">
+                                    <%@ include file="_question.jsp" %>
+                                </liferay-ui:search-container-row>
+                            </aui:container>
+                            <liferay-ui:search-iterator />
+                        </liferay-ui:search-container>
                     </aui:container>
                 </liferay-ui:section>
             </liferay-ui:tabs>

@@ -1,5 +1,5 @@
 <%
-    Question question = (Question) pageContext.getAttribute("question");
+    //Question question = (Question) pageContext.getAttribute("question");
     List<AssetTag> tags = question.getTags();
     List<AssetCategory> categories = question.getCategories();
     List<Answer> answers = AnswerLocalServiceUtil.getAnswersForQuestion(question.getQuestionID());
@@ -34,8 +34,8 @@
                                         AssetTag tag_ = (AssetTag) pageContext.getAttribute("tag_");
                                         int code = tag_.getName().hashCode();
                                         // Modulo fix so that it works for negative integers
-                                        int index = (code % tagColors.length + tagColors.length) % tagColors.length;
-                                        String color = tagColors[index];
+                                        int color_index = (code % tagColors.length + tagColors.length) % tagColors.length;
+                                        String color = tagColors[color_index];
                                     %>
                                     <li style="background: <%= color %>">
                                         <a href="<%= tagsURL %>">${tag_.name}</a>
@@ -58,8 +58,8 @@
                                         AssetCategory category = (AssetCategory) pageContext.getAttribute("category");
                                         int code = category.getName().hashCode();
                                         // Modulo fix so that it works for negative integers
-                                        int index = (code % tagColors.length + tagColors.length) % tagColors.length;
-                                        String color = tagColors[index];
+                                        int color_index = (code % tagColors.length + tagColors.length) % tagColors.length;
+                                        String color = tagColors[color_index];
                                     %>
                                     <li style="background: <%= color %>">
                                         <a href="<%= categoryURL %>">${category.name}</a>
