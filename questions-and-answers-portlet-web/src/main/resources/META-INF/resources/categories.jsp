@@ -18,7 +18,6 @@
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.ListUtil" %>
 <%@ include file="init.jsp" %>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
 
 <jsp:useBean id="questionsFilteredByCategory" class="java.util.ArrayList" scope="request"/>
 

@@ -18,6 +18,8 @@
 
 <liferay-theme:defineObjects />
 
+<link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
+
 <%
     String tagColors[] = {
             "#1abc9c",

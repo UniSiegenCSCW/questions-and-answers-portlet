@@ -1,3 +1,20 @@
+.modal-header .close {
+    filter: none !important;
+}
+.modal-header .close:hover,
+.modal-header .close:focus {
+    filter: none !important;
+}
+
+.modal-header .close > .lexicon-icon {
+    opacity: 1.0;
+}
+
+.modal-header .close:hover > .lexicon-icon,
+.modal-header .close:focus > .lexicon-icon {
+    opacity: 0.5
+}
+
 .qaQuestionEntryContainer {
     border-bottom: 1px solid #ddd;
     padding: 1rem 0;

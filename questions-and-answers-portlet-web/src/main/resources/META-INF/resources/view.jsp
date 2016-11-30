@@ -15,8 +15,6 @@
 
 
 <%@ include file="init.jsp" %>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
-
 <jsp:useBean id="questions" class="java.util.ArrayList" scope="request"/>
 <jsp:useBean id="questionsSortedByRating" class="java.util.ArrayList" scope="request"/>
 
