@@ -46,14 +46,12 @@
                     <% Collections.reverse(questions); %>
 
                     <aui:container cssClass="qaQuestionsOverviewContainer">
-                        <liferay-ui:search-container delta="10" emptyResultsMessage="Es gibt noch keine Fragen" total="<%=questions.size()%>">
+                        <liferay-ui:search-container delta="10" deltaConfigurable="false" emptyResultsMessage="Es gibt noch keine Fragen" total="<%=questions.size()%>">
                             <liferay-ui:search-container-results results="<%= ListUtil.subList(questions, searchContainer.getStart(), searchContainer.getEnd()) %>" />
-                            <aui:container cssClass="qaQuestionsOverviewContainer">
-                                <liferay-ui:search-container-row modelVar="question"
-                                                                 className="org.sidate.qanda.model.Question">
-                                    <%@ include file="_question.jsp" %>
-                                </liferay-ui:search-container-row>
-                            </aui:container>
+                            <liferay-ui:search-container-row modelVar="question"
+                                                             className="org.sidate.qanda.model.Question">
+                                <%@ include file="_question.jsp" %>
+                            </liferay-ui:search-container-row>
                             <liferay-ui:search-iterator />
                         </liferay-ui:search-container>
                     </aui:container>
@@ -61,14 +59,12 @@
 
                 <liferay-ui:section>
                     <aui:container cssClass="qaQuestionsOverviewContainer">
-                        <liferay-ui:search-container delta="10" emptyResultsMessage="Es gibt noch keine Fragen" total="<%=questions.size()%>">
+                        <liferay-ui:search-container delta="10" deltaConfigurable="false" emptyResultsMessage="Es gibt noch keine Fragen" total="<%=questionsSortedByRating.size()%>">
                             <liferay-ui:search-container-results results="<%= ListUtil.subList(questionsSortedByRating, searchContainer.getStart(), searchContainer.getEnd()) %>" />
-                            <aui:container cssClass="qaQuestionsOverviewContainer">
-                                <liferay-ui:search-container-row modelVar="question"
-                                                                 className="org.sidate.qanda.model.Question">
-                                    <%@ include file="_question.jsp" %>
-                                </liferay-ui:search-container-row>
-                            </aui:container>
+                            <liferay-ui:search-container-row modelVar="question"
+                                                             className="org.sidate.qanda.model.Question">
+                                <%@ include file="_question.jsp" %>
+                            </liferay-ui:search-container-row>
                             <liferay-ui:search-iterator />
                         </liferay-ui:search-container>
                     </aui:container>
