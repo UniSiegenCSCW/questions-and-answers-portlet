@@ -16,8 +16,8 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="org.sidate.qanda.service.QuestionLocalServiceUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
+<%@ page import="com.liferay.portal.kernel.util.ListUtil" %>
 <%@ include file="init.jsp" %>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
 
 <jsp:useBean id="questionsFilteredByTag" class="java.util.ArrayList" scope="request"/>
 
@@ -51,9 +51,14 @@
     <% Collections.reverse(questionsFilteredByTag); %>
 
     <aui:container cssClass="qaQuestionsOverviewContainer">
-        <c:forEach var="question" items="${questionsFilteredByTag}">
-            <%@ include file="_question.jsp" %>
-        </c:forEach>
+        <liferay-ui:search-container delta="10" deltaConfigurable="false" emptyResultsMessage="Es gibt noch keine Fragen" total="<%=questionsFilteredByTag.size()%>">
+            <liferay-ui:search-container-results results="<%= ListUtil.subList(questionsFilteredByTag, searchContainer.getStart(), searchContainer.getEnd()) %>" />
+            <liferay-ui:search-container-row modelVar="question"
+                                             className="org.sidate.qanda.model.Question">
+                <%@ include file="_question.jsp" %>
+            </liferay-ui:search-container-row>
+            <liferay-ui:search-iterator />
+        </liferay-ui:search-container>
     </aui:container>
 
 

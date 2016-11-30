@@ -17,7 +17,6 @@
 <%@ page import="java.util.Locale" %>
 <%@ page import="org.sidate.qanda.portlet.QuestionsAndAnswersPortlet" %>
 <%@ include file="init.jsp" %>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
 
 <%
     long questionID = ParamUtil.getLong(renderRequest, "questionID");
