@@ -51,6 +51,9 @@
 />
 
 <aui:container cssClass="qaQuestionWrapper">
+    <c:if test="<%= question.getIsQuestionToProcedure()%>">
+        <a> Link zur Massnahme <%=question.getProcedureId()%></a>
+    </c:if>
     <aui:container>
         <aui:row>
             <aui:col cssClass="qaQuestionRatingCol" span="1">

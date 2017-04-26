@@ -18,6 +18,15 @@
         pageTitle = "Frage bearbeiten";
         questionText = UnicodeFormatter.toString(question.getText());
     }
+
+
+    String portletId = themeDisplay.getPortletDisplay().getId();
+
+    String isQuestionToProcedure = ParamUtil.getString(renderRequest, portletId+"_oper");
+    String procedureId = ParamUtil.getString(renderRequest, portletId+"_prid");
+
+    /*String isQuestionToProcedure="crqp";
+    String procedureId="123";*/
 %>
 
 <liferay-ui:header
@@ -57,6 +66,8 @@
                         return "<%= questionText %>";
                     }
                 </aui:script>
+            <aui:input name="isQuestionToProcedure" type="hidden" value="<%=isQuestionToProcedure%>" />
+            <aui:input name="procedureId" type="hidden" value="<%=procedureId%>" />
         </aui:fieldset>
     <aui:fieldset>
         <div>
@@ -89,6 +100,6 @@
             </script>
         </div>
     </aui:fieldset>
-    <aui:button type="submit"/>
+    <aui:button type="submit" />
     <aui:button type="cancel" onClick="<%= backURL %>"/>
 </aui:form>

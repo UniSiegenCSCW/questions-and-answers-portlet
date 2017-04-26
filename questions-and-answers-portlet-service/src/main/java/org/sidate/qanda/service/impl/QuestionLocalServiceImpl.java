@@ -74,7 +74,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         questionPersistence.update(question);
     }
 
-    public Question addQuestion(String title, String text, ServiceContext serviceContext) throws PortalException {
+    public Question addQuestion(String title, String text, boolean isQuestionToProcedure, long ProcedureId, ServiceContext serviceContext) throws PortalException {
 
         String portletId = serviceContext.getPortletId();
         long groupId = serviceContext.getScopeGroupId();
@@ -94,6 +94,8 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         question.setExpandoBridgeAttributes(serviceContext);
         question.setIsAnswered(false);
         question.setPortletId(portletId);
+        question.setIsQuestionToProcedure(isQuestionToProcedure);
+        question.setProcedureId(ProcedureId);
 
         questionPersistence.update(question);
 

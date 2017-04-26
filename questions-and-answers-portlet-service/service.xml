@@ -59,6 +59,9 @@
         <column name="isAnswered" type="Boolean" />
         <column name="correctAnswerId" type="long"/>
 
+        <column name="isQuestionToProcedure" type="Boolean" />
+        <column name="procedureId" type="long"/>
+
         <column name="editedBy" type="long"/>
         <column name="editedDate" type="Date" />
         <!-- Finder methods -->

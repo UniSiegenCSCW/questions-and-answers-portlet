@@ -65,6 +65,12 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
         String title = ParamUtil.getString(request, "title");
         String text = ParamUtil.getString(request, "text");
+        boolean isQuestionToProcedure = ParamUtil.getString(request, "isQuestionToProcedure").equals("crqp");
+        long procedureId = 0;
+        if(isQuestionToProcedure)
+            procedureId = Long.valueOf(ParamUtil.getString(request, "procedureId"));
+        System.out.println("isQuestionToProcedure: "+isQuestionToProcedure);
+        System.out.println("procedureId: "+procedureId);
         if (Validator.isNull(title)) {
             handleError(request, new EmptyQuestionTitleException(), "An error occurred during newQuestion");
             PortalUtil.copyRequestParameters(request, response);
@@ -78,7 +84,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
             return;
         }
         try {
-            QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
+            QuestionLocalServiceUtil.addQuestion(title, text, isQuestionToProcedure, procedureId, serviceContext);
         } catch (PortalException e) {
             handleError(request, e, "An error occured during newQuestion");
             return;
@@ -387,7 +393,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         String text = "Einzigartiger Text";
         ServiceContext serviceContext = getServiceContext(request, Question.class.getName());
         try {
-            QuestionLocalServiceUtil.addQuestion(title, text, serviceContext);
+            QuestionLocalServiceUtil.addQuestion(title, text, false, 0, serviceContext);
             SessionMessages.add(request, "questionAdded");
         } catch (Exception e) {
             SessionErrors.add(request, e.getClass().getName());
