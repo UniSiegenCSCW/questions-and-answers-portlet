@@ -313,6 +313,19 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         }
     }
 
+    @Override
+    public void doView(RenderRequest renderRequest, RenderResponse renderResponse)
+            throws IOException, PortletException {
+        String isQuestionToProcedure = renderRequest.getParameter("oper");
+
+        if(isQuestionToProcedure != null && isQuestionToProcedure.equals("crqp")) {
+            include("/editQuestion.jsp", renderRequest, renderResponse);
+        }
+        else {
+            include("/view.jsp", renderRequest, renderResponse);
+        }
+    }
+
     private static ServiceContext getServiceContext(PortletRequest request, String className) {
         try {
             return ServiceContextFactory.getInstance(className, request);
