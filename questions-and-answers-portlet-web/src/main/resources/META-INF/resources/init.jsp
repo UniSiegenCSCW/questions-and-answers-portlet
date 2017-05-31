@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css"/>
 
 <%
-    String tagColors[] = {
+    /*String tagColors[] = {
             "#449787",
             "#5c9d78",
             "#5e8fb0",
@@ -36,5 +36,8 @@
             "#ba8f4a",
             "#9d5e34",
             "#9e544c"
+    };*/
+    String tagColors[] = {
+            "#448AFF"
     };
 %>
