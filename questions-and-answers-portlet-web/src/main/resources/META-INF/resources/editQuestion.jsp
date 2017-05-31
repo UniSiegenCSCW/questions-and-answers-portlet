@@ -32,6 +32,7 @@
     if(isQuestionToProcedure != null && isQuestionToProcedure.equals("crqp")){
         //pageTitle = "Neue Frage zur Maßnahme stellen";
         categoryIds = AssetEntryLocalServiceUtil.getAssetEntry(Long.valueOf(procedureId)).getCategoryIds();
+        pageTitle = "Neue Frage zur Ma\u00DFnahme stellen.";
     }
 
     if (questionId > 0) {
