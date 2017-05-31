@@ -52,7 +52,7 @@
 
 <aui:container cssClass="qaQuestionWrapper">
     <c:if test="<%= question.getIsQuestionToProcedure()%>">
-        <a> Link zur Massnahme <%=question.getProcedureId()%></a>
+        <a href="<%=AssetEntryLocalServiceUtil.getAssetEntry(question.getProcedureId()).getAssetRenderer().getURLViewInContext(liferayPortletRequest, liferayPortletResponse, "")%>"> Dies Frage wurde zu einer Ma&szlig;nahme gestellt</a>
     </c:if>
     <aui:container>
         <aui:row>
