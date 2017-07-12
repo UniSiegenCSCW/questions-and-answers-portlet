@@ -36,6 +36,13 @@
 		</finder>
 
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
+
+        <reference package-path="com.liferay.portlet.social" entity="SocialActivity" />
+        <reference package-path="com.liferay.portlet.social" entity="SocialActivityCounter" />
+        <reference package-path="com.liferay.portlet.social" entity="SocialActivityInterpreter" />
+        <reference package-path="com.liferay.portlet.social" entity="SocialActivityLimit" />
+        <reference package-path="com.liferay.portlet.social" entity="SocialActivitySet" />
+        <reference package-path="com.liferay.portlet.social" entity="SocialActivitySetting" />
     </entity>
 
     <entity name="Question" uuid="true" local-service="true" remote-service="false">
@@ -73,6 +80,13 @@
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
         <reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
         <reference package-path="com.liferay.portlet.asset" entity="AssetTag" />
+
+        <reference package-path="com.liferay.portlet.social" entity="SocialActivity" />
+        <reference package-path="com.liferay.portlet.social" entity="SocialActivityCounter" />
+        <reference package-path="com.liferay.portlet.social" entity="SocialActivityInterpreter" />
+        <reference package-path="com.liferay.portlet.social" entity="SocialActivityLimit" />
+        <reference package-path="com.liferay.portlet.social" entity="SocialActivitySet" />
+        <reference package-path="com.liferay.portlet.social" entity="SocialActivitySetting" />
     </entity>
 
     <exceptions>

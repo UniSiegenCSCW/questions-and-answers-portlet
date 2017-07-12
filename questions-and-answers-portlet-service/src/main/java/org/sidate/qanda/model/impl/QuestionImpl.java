@@ -113,8 +113,8 @@ public class QuestionImpl extends QuestionBaseImpl {
         return ratingsStats.getTotalScore();
     }
 
-    public void setCorrectAnswer(long answerId) {
-        QuestionLocalServiceUtil.setCorrectAnswer(answerId, this.getQuestionID());
+    public void setCorrectAnswer(long answerId, ServiceContext serviceContext) throws PortalException {
+        QuestionLocalServiceUtil.setCorrectAnswer(answerId, this.getQuestionID(), serviceContext);
     }
 
     public void unsetCorrectAnswer() {

@@ -31,9 +31,12 @@ import org.sidate.qanda.exception.EmptyQuestionTextException;
 import org.sidate.qanda.exception.EmptyQuestionTitleException;
 import org.sidate.qanda.model.Answer;
 import org.sidate.qanda.model.Question;
+import org.sidate.qanda.service.AnswerLocalServiceUtil;
 import org.sidate.qanda.service.QuestionLocalService;
 import org.sidate.qanda.service.QuestionLocalServiceUtil;
 import org.sidate.qanda.service.base.QuestionLocalServiceBaseImpl;
+
+import com.liferay.social.kernel.model.SocialActivity;
 
 import java.util.Date;
 import java.util.List;
@@ -61,11 +64,13 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         return questionPersistence.findByGroupId(groupId);
     }
 
-    public void setCorrectAnswer(long answerId, long questionId) {
+    public void setCorrectAnswer(long answerId, long questionId, ServiceContext serviceContext) throws PortalException {
         Question question = questionPersistence.fetchByPrimaryKey(questionId);
         question.setCorrectAnswerId(answerId);
         question.setIsAnswered(true);
         questionPersistence.update(question);
+
+        socialActivityLocalService.addActivity(question.getUserId(), serviceContext.getScopeGroupId(), Answer.class.getName(), answerId, 3, "", AnswerLocalServiceUtil.getAnswer(answerId).getUserId());
     }
 
     public void unsetCorrectAnswer(long questionId) {
@@ -110,7 +115,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
         Indexer<Question> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Question.class);
         indexer.reindex(question);
 
-
+        socialActivityLocalService.addActivity(userId, groupId, Question.class.getName(), questionId, 1, "", 0);
 
         log.info("Question " + questionId + " has been added and indexed.");
 

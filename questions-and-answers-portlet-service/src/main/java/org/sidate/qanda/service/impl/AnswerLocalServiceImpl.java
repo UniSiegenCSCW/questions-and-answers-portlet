@@ -68,12 +68,13 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         Date createDate = serviceContext.getCreateDate();
         Date modifiedDate = serviceContext.getModifiedDate();
         String uuid = serviceContext.getUuid();
+        long userId = serviceContext.getUserId();
         Answer answer = answerPersistence.create(answerId);
 
         answer.setUuid(uuid);
         answer.setCreateDate(createDate);
         answer.setModifiedDate(modifiedDate);
-        answer.setUserId(serviceContext.getUserId());
+        answer.setUserId(userId);
         answer.setGroupId(groupId);
         answer.setExpandoBridgeAttributes(serviceContext);
         answer.setPortletId(portletId);
@@ -86,7 +87,7 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
         try {
             resourceLocalService.addModelResources(answer, serviceContext);
             assetEntryLocalService.updateEntry(
-                    serviceContext.getUserId(), answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
+                    userId, answer.getGroupId(), answer.getCreateDate(), answer.getModifiedDate(),
                     Answer.class.getName(), answer.getPrimaryKey(), answer.getUuid(), 0,
                     serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null,
                     null, null, ContentTypes.TEXT_HTML, QuestionLocalServiceUtil.getQuestion(questionId).getTitle(), text,
@@ -95,6 +96,8 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
             // Indexing
             Indexer<Answer> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Answer.class);
             indexer.reindex(answer);
+
+            socialActivityLocalService.addActivity(userId, groupId, Question.class.getName(), questionId, 2, "", QuestionLocalServiceUtil.getQuestion(questionId).getUserId());
 
         } catch (PortalException e) {
             e.printStackTrace();

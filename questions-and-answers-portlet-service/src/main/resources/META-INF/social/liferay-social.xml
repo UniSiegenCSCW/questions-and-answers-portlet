@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE liferay-social PUBLIC "-//Liferay//DTD Social 7.0.0//EN" "http://www.liferay.com/dtd/liferay-social_7_0_0.dtd">
+
+<liferay-social>
+    <activity>
+        <model-name>org.sidate.qanda.model.Question</model-name>
+        <activity-type>1</activity-type>
+        <language-key>ADD_QUESTION</language-key>
+        <log-activity>true</log-activity>
+        <contribution-value>0</contribution-value>
+        <participation-value>2</participation-value>
+    </activity>
+
+    <activity>
+        <model-name>org.sidate.qanda.model.Question</model-name>
+        <activity-type>2</activity-type>
+        <language-key>ADD_ANSWER</language-key>
+        <log-activity>true</log-activity>
+        <contribution-value>2</contribution-value>
+        <participation-value>2</participation-value>
+    </activity>
+
+    <activity>
+        <model-name>org.sidate.qanda.model.Answer</model-name>
+        <activity-type>3</activity-type>
+        <language-key>ACCEPT_ANSWER</language-key>
+        <log-activity>true</log-activity>
+        <contribution-value>2</contribution-value>
+        <participation-value>2</participation-value>
+    </activity>
+
+</liferay-social>

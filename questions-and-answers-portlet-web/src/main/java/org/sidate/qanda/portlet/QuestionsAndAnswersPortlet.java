@@ -225,7 +225,12 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
     public void setCorrectAnswer(ActionRequest request, ActionResponse response) {
         long questionId = ParamUtil.getLong(request, "questionID");
         long answerId = ParamUtil.getLong(request, "answerID");
-        QuestionLocalServiceUtil.setCorrectAnswer(answerId, questionId);
+        ServiceContext serviceContext = getServiceContext(request, Answer.class.getName());
+        try {
+            QuestionLocalServiceUtil.setCorrectAnswer(answerId, questionId, serviceContext);
+        } catch (PortalException e) {
+            e.printStackTrace();
+        }
     }
 
     // #### Answers ####
