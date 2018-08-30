@@ -75,7 +75,7 @@
         <aui:fieldset>
             <aui:input label="Titel der Frage" name="title" type="text" required="true" maxlength="40"/>
             <br/>
-                <liferay-ui:input-editor name="text" initMethod="initEditor"/>
+                <liferay-ui:input-editor name="text" configKey="qandaEditor" toolbarSet="liferay-article" initMethod="initEditor"/>
                 <aui:script>
                     function <portlet:namespace />initEditor() {
                         return "<%= questionText %>";
