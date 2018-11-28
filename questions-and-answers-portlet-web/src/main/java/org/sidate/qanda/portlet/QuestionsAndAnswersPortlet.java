@@ -69,8 +69,7 @@ public class QuestionsAndAnswersPortlet extends MVCPortlet {
         long procedureId = 0;
         if(isQuestionToProcedure)
             procedureId = Long.valueOf(ParamUtil.getString(request, "procedureId"));
-        System.out.println("isQuestionToProcedure: "+isQuestionToProcedure);
-        System.out.println("procedureId: "+procedureId);
+
         if (Validator.isNull(title)) {
             handleError(request, new EmptyQuestionTitleException(), "An error occurred during newQuestion");
             PortalUtil.copyRequestParameters(request, response);

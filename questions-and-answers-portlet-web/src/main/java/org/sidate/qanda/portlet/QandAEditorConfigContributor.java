@@ -28,8 +28,6 @@ public class QandAEditorConfigContributor extends BaseEditorConfigContributor {
     @Override
     public void populateConfigJSONObject(JSONObject jsonObject, Map<String, Object> inputEditorTaglibAttributes, ThemeDisplay themeDisplay, RequestBackedPortletURLFactory requestBackedPortletURLFactory) {
 
-        System.out.println("TEST!!!");
-
 
         JSONArray toolbarLiferayArticle = jsonObject.getJSONArray("toolbar_liferayArticle");
 
